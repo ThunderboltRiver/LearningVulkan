@@ -5,6 +5,11 @@
 #ifndef TUTORIAL_APPLICATION_H
 #define TUTORIAL_APPLICATION_H
 
+#include "ApplicationWindow.h"
+#include <GLFW/glfw3.h>
+
+using namespace Tutorial::WindowHelper;
+
 namespace Tutorial
 {
     struct Application {
@@ -14,11 +19,7 @@ namespace Tutorial
         /**
          * アプリケーションの実行
          */
-        void run() {
-            initializeGraphicsAPI();
-            mainLoop();
-            throwableResourceCleanup();
-        }
+        void run();
 
         /**
          * アプリケーションをデストラクト
@@ -26,11 +27,14 @@ namespace Tutorial
          */
         virtual ~Application();
     private:
+        static constexpr uint32_t WINDOW_WIDTH = 800;
+        static constexpr uint32_t WINDOW_HEIGHT = 720;
+        static constexpr const char* const WINDOW_TITLE = "Tutorial";
 
         /**
          * メインループの実行
          */
-        void mainLoop();
+        void mainLoop(const ApplicationWindow& applicationWindow);
 
         /**
          * グラフィックスAPIの初期化
