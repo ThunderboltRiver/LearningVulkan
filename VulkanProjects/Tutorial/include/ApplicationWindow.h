@@ -46,8 +46,6 @@ namespace Tutorial::WindowHelper {
          * @return ウィンドウへのポインタ
          */
         GLFWwindow* InitWindow(uint32_t windowWidth, uint32_t windowHeight, const char* windowTitle);
-
-
     };
 
 }

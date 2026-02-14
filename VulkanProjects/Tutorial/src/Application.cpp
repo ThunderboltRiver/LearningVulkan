@@ -2,16 +2,17 @@
 // Created by 沖田大河 on 2026/01/31.
 //
 
-#include <iostream>
-#include <Application.h>
-
 #include "ApplicationWindow.h"
+#include <iostream>
+
+#include "VulkanClient.h"
 #if defined(__INTELLISENSE__) || !defined(USE_CPP20_MODULES)
 #   include <vulkan/vulkan_raii.hpp>
 #else
 import vulkan_hpp;
 #endif
-#include <GLFW/glfw3.h>
+#include "Application.h"
+using namespace Tutorial::WindowHelper;
 
 namespace Tutorial
 {
@@ -20,18 +21,21 @@ namespace Tutorial
     void Application::run() {
         // 自身のウィンドウを作成
         ApplicationWindow applicationWindow(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TITLE);
+        constexpr vk::ApplicationInfo appInfo {
+            .pApplicationName = "Tutorial",
+            .applicationVersion =  VK_MAKE_VERSION(1, 0, 0),
+            .pEngineName = "No Engine",
+            .engineVersion = VK_MAKE_VERSION(1, 0, 0),
+            .apiVersion = vk::ApiVersion14
+        };
+        Graphics::VulkanClient vkClient(appInfo, _extensionsProvider);
         mainLoop(applicationWindow);
     }
 
-    void Application::mainLoop(const ApplicationWindow &applicationWindow) {
+    void Application::mainLoop(const ApplicationWindow& applicationWindow) {
         while (!applicationWindow.shouldClose()) {
             applicationWindow.pollEvents();
         }
-    }
-
-    void Application::initializeGraphicsAPI()
-    {
-        std::cout << "Tutorial Application initializeGraphicsAPI" << std::endl;
     }
 
     void Application::throwableResourceCleanup()
@@ -43,4 +47,4 @@ namespace Tutorial
     {
         std::cout << "destructor" << std::endl;
     }
-}
+};

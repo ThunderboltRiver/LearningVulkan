@@ -54,7 +54,10 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # Tutorialターゲットの作成
 add_executable(Tutorial src/main.cpp
         src/Application.cpp
-        src/ApplicationWindow.cpp)
+        src/ApplicationWindow.cpp
+        src/RequiredVulkanExtensionsProvider.cpp
+        src/VulkanClient.cpp
+)
 
 # Tutorialターゲットのヘッダをインポートする
 target_include_directories(Tutorial PRIVATE include)

@@ -5,8 +5,15 @@
 #ifndef TUTORIAL_APPLICATION_H
 #define TUTORIAL_APPLICATION_H
 
-#include "ApplicationWindow.h"
 #include <GLFW/glfw3.h>
+
+#include "RequiredVulkanExtensionsProvider.h"
+#if defined(__INTELLISENSE__) || !defined(USE_CPP20_MODULES)
+# include <vulkan/vulkan_raii.hpp>
+#else
+import vulkan_hpp;
+#endif
+#include "ApplicationWindow.h"
 
 using namespace Tutorial::WindowHelper;
 
@@ -30,16 +37,12 @@ namespace Tutorial
         static constexpr uint32_t WINDOW_WIDTH = 800;
         static constexpr uint32_t WINDOW_HEIGHT = 720;
         static constexpr const char* const WINDOW_TITLE = "Tutorial";
+        Graphics::RequiredVulkanExtensionsProvider _extensionsProvider;
 
         /**
          * メインループの実行
          */
         void mainLoop(const ApplicationWindow& applicationWindow);
-
-        /**
-         * グラフィックスAPIの初期化
-         */
-        void initializeGraphicsAPI();
 
         /**
          * 解放時に例外が発生し得るリソースの解放処理
