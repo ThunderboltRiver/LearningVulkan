@@ -8,7 +8,7 @@
 #include <iostream>
 #include <string>
 
-namespace Tutorial::Utility {
+namespace Tutorial::Debug {
     class Logger {
     public:
         // Logs a message to standard output only in debug builds
