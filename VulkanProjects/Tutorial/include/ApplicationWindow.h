@@ -21,7 +21,7 @@ namespace Tutorial::WindowHelper {
 
         /**
          * 閉じるべきか
-         * @return
+         * @return 閉じるべきならtrue、そうでないならfalse
          */
         [[nodiscard]] bool shouldClose() const;
 

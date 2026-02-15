@@ -15,8 +15,6 @@ import vulkan_hpp;
 #endif
 #include "ApplicationWindow.h"
 
-using namespace Tutorial::WindowHelper;
-
 namespace Tutorial
 {
     struct Application {
@@ -42,7 +40,7 @@ namespace Tutorial
         /**
          * メインループの実行
          */
-        void mainLoop(const ApplicationWindow& applicationWindow);
+        void mainLoop(const WindowHelper::ApplicationWindow& applicationWindow);
 
         /**
          * 解放時に例外が発生し得るリソースの解放処理

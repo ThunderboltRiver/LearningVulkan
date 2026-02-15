@@ -22,10 +22,14 @@ namespace Tutorial::Graphics {
 
         /**
          * サポートされる必要のあるVulkan拡張機能の名称一覧を取得する
-         * @returns
+         * @returns サポートされる必要のあるVulkan拡張機能の名称一覧
          */
         [[nodiscard]] std::vector<const char*> getRequiredVulkanExtensionNames() const;
 
+        /**
+         * Vulkanインスタンスの作成に必要なフラグビットを取得する
+         * @returns Vulkanインスタンスの作成に必要なフラグビット
+         */
         [[nodiscard]] VkInstanceCreateFlagBits getRequiredVulkanInstanceCreateFlagBits() const;
 
         ~RequiredVulkanExtensionsProvider() = default;
