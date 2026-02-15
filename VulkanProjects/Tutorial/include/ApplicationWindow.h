@@ -13,7 +13,7 @@ namespace Tutorial::WindowHelper {
             const uint32_t windowWidth,
             const uint32_t windowHeight,
             const char* const windowTitle):
-            _windowPtr(InitWindow(windowWidth, windowHeight, windowTitle)),
+            _windowPtr(initWindow(windowWidth, windowHeight, windowTitle)),
             _width(windowWidth),
             _height(windowHeight),
             _windowTitle(windowTitle)
@@ -45,7 +45,7 @@ namespace Tutorial::WindowHelper {
          * @param windowTitle ウィンドウのタイトル
          * @return ウィンドウへのポインタ
          */
-        GLFWwindow* InitWindow(uint32_t windowWidth, uint32_t windowHeight, const char* windowTitle);
+        GLFWwindow* initWindow(uint32_t windowWidth, uint32_t windowHeight, const char* windowTitle);
     };
 
 }

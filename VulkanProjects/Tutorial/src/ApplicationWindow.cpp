@@ -7,7 +7,7 @@
 
 namespace Tutorial::WindowHelper {
 
-    GLFWwindow *ApplicationWindow::InitWindow(uint32_t windowWidth, uint32_t windowHeight, const char* windowTitle) {
+    GLFWwindow *ApplicationWindow::initWindow(uint32_t windowWidth, uint32_t windowHeight, const char* windowTitle) {
         glfwInit();
         glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
         glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
