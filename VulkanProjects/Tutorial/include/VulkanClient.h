@@ -31,6 +31,10 @@ namespace Tutorial::Graphics {
         _requiredVulkanExtensionsProvider(requiredVulkanExtensionsProvider),
         _instance(instantiateVulkan()) {}
 
+        // vkInstanceの所有権を持つのは一つのインスタンスのみにするためコピー禁止
+        VulkanClient(const VulkanClient&) = delete;
+        VulkanClient& operator=(const VulkanClient&) = delete;
+
         ~VulkanClient();
     };
 

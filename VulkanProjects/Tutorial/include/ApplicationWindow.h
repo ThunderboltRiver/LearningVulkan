@@ -23,12 +23,16 @@ namespace Tutorial::WindowHelper {
          * 閉じるべきか
          * @return
          */
-        bool shouldClose() const;
+        [[nodiscard]] bool shouldClose() const;
 
         /**
          *  このウィンドウのイベントキューに詰められたイベントを即座に処理する
          */
         void pollEvents() const;
+
+        // コピー禁止。ウィンドウの所有権を持つのは一つのインスタンスのみにするため
+        ApplicationWindow(const ApplicationWindow&) = delete;
+        ApplicationWindow& operator=(const ApplicationWindow&) = delete;
 
         virtual ~ApplicationWindow();
     private:

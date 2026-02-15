@@ -22,6 +22,7 @@ namespace Tutorial
         // 自身のウィンドウを作成
         ApplicationWindow applicationWindow(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TITLE);
         constexpr VkApplicationInfo appInfo {
+            .sType = VK_STRUCTURE_TYPE_APPLICATION_INFO,
             .pApplicationName = "Tutorial",
             .applicationVersion =  VK_MAKE_VERSION(1, 0, 0),
             .pEngineName = "No Engine",
