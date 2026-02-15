@@ -8,38 +8,62 @@
 
 namespace Tutorial::Graphics {
 
-    vk::raii::Instance VulkanClient::instantiateVulkan() const {
+    VkInstance VulkanClient::instantiateVulkan() const {
         auto requiredExtensions = _requiredVulkanExtensionsProvider.getRequiredVulkanExtensionNames();
         const auto requiredExtensionCount = static_cast<uint32_t>(requiredExtensions.size());
 
-        validateExtensions();
+        validateRequiredExtensions(requiredExtensions.data(), requiredExtensionCount);
 
-        vk::InstanceCreateInfo instanceCreateInfo {
+        const VkInstanceCreateInfo instanceCreateInfo {
+            .sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,
             .flags = _requiredVulkanExtensionsProvider.getRequiredVulkanInstanceCreateFlagBits(),
             .pApplicationInfo = &_appInfo,
             .enabledExtensionCount = requiredExtensionCount,
             .ppEnabledExtensionNames = requiredExtensions.data(),
         };
-        auto instance = vk::raii::Instance(_context, instanceCreateInfo);
+        VkInstance instance;
+        if (const auto result = vkCreateInstance(&instanceCreateInfo, nullptr, &instance); result != VK_SUCCESS) {
+            throw std::runtime_error("Failed to create Vulkan instance: " + std::to_string(result));
+        }
         return instance;
     }
 
-    void VulkanClient::validateExtensions() const {
-        // サポートが必要となる拡張機能一覧を取得し、実際にサポートされている拡張機能に含まれているかを確認する
-        auto requiredExtensions = _requiredVulkanExtensionsProvider.getRequiredVulkanExtensionNames();
-        const auto requiredExtensionCount = static_cast<uint32_t>(requiredExtensions.size());
-        auto actualExtensions = _context.enumerateInstanceExtensionProperties();
-        for (uint32_t i = 0; i < requiredExtensionCount; i++) {
-            // 必須の拡張機能がサポートされている拡張機能の中に存在しないなら例外をスローする
-            auto requiredExtension = requiredExtensions[i];
-            if (std::ranges::none_of(
-                actualExtensions,
-                [requiredExtension](const auto& actualExtension) { return strcmp(actualExtension.extensionName, requiredExtension) == 0;}
-                )) {
-                throw std::runtime_error("Required extension not supported: " + std::string(requiredExtension));
-                };
-            std::cout << "extension:" + std::string(requiredExtension) + " is supported" << std::endl;
+    void VulkanClient::validateRequiredExtensions(const char* const* requiredExtensions, const uint32_t requiredExtensionCount) const {
+        // 実際にサポートされている拡張機能一覧を取得して、必須の拡張機能がサポートされているかを確認する
+        uint32_t supportedExtensionCount = getSupportedExtensionCount();
+        VkExtensionProperties supportedExtensions[supportedExtensionCount]; // TODO: これはC++20のVLA。自作の動的配列クラスに置き換えるべき
+        if (const auto result = vkEnumerateInstanceExtensionProperties(nullptr, &supportedExtensionCount, supportedExtensions); result != VK_SUCCESS) {
+            throw std::runtime_error("Failed to enumerate Vulkan instance extensions: " + std::to_string(result));
         }
+        // 必須の拡張機能がサポートされている拡張機能の中に存在しないなら例外をスローする
+        for (uint32_t i = 0; i < requiredExtensionCount; ++i) {
+            const auto requiredExtension = requiredExtensions[i];
+            if (!isExtensionSupported(requiredExtension, supportedExtensions, supportedExtensionCount)) {
+                throw std::runtime_error("Required Vulkan extension not supported: " + std::string(requiredExtension));
+            }
+        }
+    }
+
+    uint32_t VulkanClient::getSupportedExtensionCount() const {
+        uint32_t extensionCount = 0;
+        if (const auto result = vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr); result != VK_SUCCESS) {
+            throw std::runtime_error("Failed to enumerate Vulkan instance extensions: " + std::to_string(result));
+        }
+        return extensionCount;
+    }
+
+    bool VulkanClient::isExtensionSupported(const char* extensionName, const VkExtensionProperties* actualSupportedExtensions, const uint32_t extensionsCount) const {
+        for (uint32_t i = 0; i < extensionsCount; ++i) {
+            if (const auto actualSupportedExtension = actualSupportedExtensions[i]; strcmp(actualSupportedExtension.extensionName, extensionName) == 0) {
+                std::cout << "extension:" + std::string(extensionName) + " is supported" << std::endl;
+                return true;
+            }
+        }
+        return false;
+    }
+
+    VulkanClient::~VulkanClient() {
+        vkDestroyInstance(_instance, nullptr);
     }
 }
 

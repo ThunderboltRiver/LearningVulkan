@@ -4,7 +4,7 @@
 
 #include <vector>
 #if defined(__INTELLISENSE__) || !defined(USE_CPP20_MODULES)
-#   include <vulkan/vulkan_raii.hpp>
+#include <vulkan/vulkan.h>
 #else
 import vulkan_hpp;
 #endif
@@ -21,11 +21,11 @@ namespace Tutorial::Graphics {
         requiredExtensionNames.insert(requiredExtensionNames.end(),
                               glfwRequiredExtensions,
                               glfwRequiredExtensions + count);
-        requiredExtensionNames.push_back(vk::KHRPortabilityEnumerationExtensionName);
+        requiredExtensionNames.push_back(VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME);
         return requiredExtensionNames;
     }
 
-    vk::InstanceCreateFlagBits RequiredVulkanExtensionsProvider::getRequiredVulkanInstanceCreateFlagBits() const {
-        return vk::InstanceCreateFlagBits::eEnumeratePortabilityKHR;
+    VkInstanceCreateFlagBits RequiredVulkanExtensionsProvider::getRequiredVulkanInstanceCreateFlagBits() const {
+        return VK_INSTANCE_CREATE_ENUMERATE_PORTABILITY_BIT_KHR;
     }
 }

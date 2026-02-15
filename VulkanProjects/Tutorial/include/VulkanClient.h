@@ -7,28 +7,31 @@
 
 #include "RequiredVulkanExtensionsProvider.h"
 #if defined(__INTELLISENSE__) || !defined(USE_CPP20_MODULES)
-# include <vulkan/vulkan_raii.hpp>
+# include <vulkan/vulkan.h>
 #else
 import vulkan_hpp;
 #endif
 
 namespace Tutorial::Graphics {
     class VulkanClient {
-        const vk::ApplicationInfo& _appInfo;
+        const VkApplicationInfo& _appInfo;
         const RequiredVulkanExtensionsProvider& _requiredVulkanExtensionsProvider;
-        const vk::raii::Context _context;
-        const vk::raii::Instance _instance;
+        VkInstance _instance;
 
-        vk::raii::Instance instantiateVulkan() const;
-        void validateExtensions() const;
+        [[nodiscard]] VkInstance instantiateVulkan() const;
+        void validateRequiredExtensions(const char* const* requiredExtensions, uint32_t requiredExtensionCount) const;
+
+        [[nodiscard]] uint32_t getSupportedExtensionCount() const;
+
+        bool isExtensionSupported(const char *extensionName, const VkExtensionProperties *actualSupportedExtensions, uint32_t extensionsCount) const;
 
     public:
-        VulkanClient(const vk::ApplicationInfo& appInfo, const RequiredVulkanExtensionsProvider& requiredVulkanExtensionsProvider):
+        VulkanClient(const VkApplicationInfo& appInfo, const RequiredVulkanExtensionsProvider& requiredVulkanExtensionsProvider):
         _appInfo(appInfo),
         _requiredVulkanExtensionsProvider(requiredVulkanExtensionsProvider),
         _instance(instantiateVulkan()) {}
 
-        ~VulkanClient() = default;
+        ~VulkanClient();
     };
 
 }

@@ -7,7 +7,7 @@
 
 #include <vector>
 #if defined(__INTELLISENSE__) || !defined(USE_CPP20_MODULES)
-#   include <vulkan/vulkan_raii.hpp>
+#   include <vulkan/vulkan.h>
 #else
 import vulkan_hpp;
 #endif
@@ -24,9 +24,9 @@ namespace Tutorial::Graphics {
          * サポートされる必要のあるVulkan拡張機能の名称一覧を取得する
          * @returns
          */
-        std::vector<const char*> getRequiredVulkanExtensionNames() const;
+        [[nodiscard]] std::vector<const char*> getRequiredVulkanExtensionNames() const;
 
-        vk::InstanceCreateFlagBits getRequiredVulkanInstanceCreateFlagBits() const;
+        [[nodiscard]] VkInstanceCreateFlagBits getRequiredVulkanInstanceCreateFlagBits() const;
 
         ~RequiredVulkanExtensionsProvider() = default;
     };

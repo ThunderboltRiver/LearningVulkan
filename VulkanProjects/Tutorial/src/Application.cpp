@@ -7,7 +7,7 @@
 
 #include "VulkanClient.h"
 #if defined(__INTELLISENSE__) || !defined(USE_CPP20_MODULES)
-#   include <vulkan/vulkan_raii.hpp>
+#include <vulkan/vulkan.h>
 #else
 import vulkan_hpp;
 #endif
@@ -21,7 +21,7 @@ namespace Tutorial
     void Application::run() {
         // 自身のウィンドウを作成
         ApplicationWindow applicationWindow(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TITLE);
-        constexpr vk::ApplicationInfo appInfo {
+        constexpr VkApplicationInfo appInfo {
             .pApplicationName = "Tutorial",
             .applicationVersion =  VK_MAKE_VERSION(1, 0, 0),
             .pEngineName = "No Engine",
