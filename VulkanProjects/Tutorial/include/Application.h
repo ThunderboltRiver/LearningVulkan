@@ -5,6 +5,16 @@
 #ifndef TUTORIAL_APPLICATION_H
 #define TUTORIAL_APPLICATION_H
 
+#include <GLFW/glfw3.h>
+
+#include "RequiredVulkanExtensionsProvider.h"
+#if defined(__INTELLISENSE__) || !defined(USE_CPP20_MODULES)
+# include <vulkan/vulkan_raii.hpp>
+#else
+import vulkan_hpp;
+#endif
+#include "ApplicationWindow.h"
+
 namespace Tutorial
 {
     struct Application {
@@ -14,11 +24,7 @@ namespace Tutorial
         /**
          * アプリケーションの実行
          */
-        void run() {
-            initializeGraphicsAPI();
-            mainLoop();
-            throwableResourceCleanup();
-        }
+        void run();
 
         /**
          * アプリケーションをデストラクト
@@ -26,16 +32,15 @@ namespace Tutorial
          */
         virtual ~Application();
     private:
+        static constexpr uint32_t WINDOW_WIDTH = 800;
+        static constexpr uint32_t WINDOW_HEIGHT = 720;
+        static constexpr const char* const WINDOW_TITLE = "Tutorial";
+        Graphics::RequiredVulkanExtensionsProvider _extensionsProvider;
 
         /**
          * メインループの実行
          */
-        void mainLoop();
-
-        /**
-         * グラフィックスAPIの初期化
-         */
-        void initializeGraphicsAPI();
+        void mainLoop(const WindowHelper::ApplicationWindow& applicationWindow);
 
         /**
          * 解放時に例外が発生し得るリソースの解放処理
