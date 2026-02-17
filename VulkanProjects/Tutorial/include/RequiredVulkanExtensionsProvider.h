@@ -30,7 +30,7 @@ namespace Tutorial::Graphics {
          * Vulkanインスタンスの作成に必要なフラグビットを取得する
          * @returns Vulkanインスタンスの作成に必要なフラグビット
          */
-        [[nodiscard]] VkInstanceCreateFlagBits getRequiredVulkanInstanceCreateFlagBits() const;
+        [[nodiscard]] VkInstanceCreateFlags getRequiredVulkanInstanceCreateFlagBits() const;
 
         ~RequiredVulkanExtensionsProvider() = default;
     };

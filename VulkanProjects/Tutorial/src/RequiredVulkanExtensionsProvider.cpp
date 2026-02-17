@@ -15,7 +15,10 @@ namespace Tutorial::Graphics {
 
     std::vector<const char*> RequiredVulkanExtensionsProvider::getRequiredVulkanExtensionNames() const {
         uint32_t count = 0;
-        auto glfwRequiredExtensions = glfwGetRequiredInstanceExtensions(&count);
+        const auto glfwRequiredExtensions = glfwGetRequiredInstanceExtensions(&count);
+        if (glfwRequiredExtensions == nullptr) {
+            throw std::runtime_error("Failed to get required Vulkan extensions from GLFW");
+        }
         std::vector<const char*> requiredExtensionNames;
         requiredExtensionNames.reserve(count + 1);
         requiredExtensionNames.insert(requiredExtensionNames.end(),
@@ -25,7 +28,8 @@ namespace Tutorial::Graphics {
         return requiredExtensionNames;
     }
 
-    VkInstanceCreateFlagBits RequiredVulkanExtensionsProvider::getRequiredVulkanInstanceCreateFlagBits() const {
-        return VK_INSTANCE_CREATE_ENUMERATE_PORTABILITY_BIT_KHR;
+    VkInstanceCreateFlags RequiredVulkanExtensionsProvider::getRequiredVulkanInstanceCreateFlagBits() const {
+        constexpr auto flags = VK_INSTANCE_CREATE_ENUMERATE_PORTABILITY_BIT_KHR;
+        return flags;
     }
 }
