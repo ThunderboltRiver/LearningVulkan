@@ -7,6 +7,8 @@
 
 #include <iostream>
 
+#include "Span.h"
+
 namespace Tutorial::Graphics {
 
     VkInstance VulkanClient::instantiateVulkan() const {
@@ -32,14 +34,14 @@ namespace Tutorial::Graphics {
     void VulkanClient::validateRequiredExtensions(const char* const* requiredExtensions, const uint32_t requiredExtensionCount) const {
         // 実際にサポートされている拡張機能一覧を取得して、必須の拡張機能がサポートされているかを確認する
         uint32_t supportedExtensionCount = getSupportedExtensionCount();
-        VkExtensionProperties supportedExtensions[supportedExtensionCount]; // TODO: これはC++20のVLA。自作の動的配列クラスに置き換えるべき
-        if (const auto result = vkEnumerateInstanceExtensionProperties(nullptr, &supportedExtensionCount, supportedExtensions); result != VK_SUCCESS) {
+        const auto supportedExtensions = Span<VkExtensionProperties>::stackAlloc(supportedExtensionCount);
+        if (const auto result = vkEnumerateInstanceExtensionProperties(nullptr, &supportedExtensionCount, supportedExtensions.headPtr); result != VK_SUCCESS) {
             throw std::runtime_error("Failed to enumerate Vulkan instance extensions: " + std::to_string(result));
         }
         // 必須の拡張機能がサポートされている拡張機能の中に存在しないなら例外をスローする
         for (uint32_t i = 0; i < requiredExtensionCount; ++i) {
             const auto requiredExtension = requiredExtensions[i];
-            if (!isExtensionSupported(requiredExtension, supportedExtensions, supportedExtensionCount)) {
+            if (!isExtensionSupported(requiredExtension, supportedExtensions)) {
                 throw std::runtime_error("Required Vulkan extension not supported: " + std::string(requiredExtension));
             }
         }
@@ -53,8 +55,8 @@ namespace Tutorial::Graphics {
         return extensionCount;
     }
 
-    bool VulkanClient::isExtensionSupported(const char* extensionName, const VkExtensionProperties* actualSupportedExtensions, const uint32_t extensionsCount) const {
-        for (uint32_t i = 0; i < extensionsCount; ++i) {
+    bool VulkanClient::isExtensionSupported(const char* extensionName, const Span<VkExtensionProperties>& actualSupportedExtensions) const {
+        for (uint32_t i = 0; i < actualSupportedExtensions.count; ++i) {
             if (const auto actualSupportedExtension = actualSupportedExtensions[i]; strcmp(actualSupportedExtension.extensionName, extensionName) == 0) {
                 Debug::Logger::log("extension:" + std::string(extensionName) + " is supported");
                 return true;

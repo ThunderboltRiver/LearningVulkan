@@ -6,6 +6,7 @@
 #define TUTORIAL_VULKAN_CLIENT_H
 
 #include "RequiredVulkanExtensionsProvider.h"
+#include "Span.h"
 #if defined(__INTELLISENSE__) || !defined(USE_CPP20_MODULES)
 # include <vulkan/vulkan.h>
 #else
@@ -23,7 +24,7 @@ namespace Tutorial::Graphics {
 
         [[nodiscard]] uint32_t getSupportedExtensionCount() const;
 
-        bool isExtensionSupported(const char *extensionName, const VkExtensionProperties *actualSupportedExtensions, uint32_t extensionsCount) const;
+        bool isExtensionSupported(const char *extensionName, const Span<VkExtensionProperties> &actualSupportedExtensions) const;
 
     public:
         VulkanClient(const VkApplicationInfo& appInfo, const RequiredVulkanExtensionsProvider& requiredVulkanExtensionsProvider):
