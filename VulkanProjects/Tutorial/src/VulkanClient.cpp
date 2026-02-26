@@ -41,7 +41,7 @@ namespace Tutorial::Graphics {
         // 必須の拡張機能がサポートされている拡張機能の中に存在しないなら例外をスローする
         for (uint32_t i = 0; i < requiredExtensionCount; ++i) {
             const auto requiredExtension = requiredExtensions[i];
-            if (!isExtensionSupported(requiredExtension, supportedExtensions)) {
+            if (!isExtensionSupported(requiredExtension, supportedExtensions, supportedExtensionCount)) {
                 throw std::runtime_error("Required Vulkan extension not supported: " + std::string(requiredExtension));
             }
         }
@@ -55,8 +55,8 @@ namespace Tutorial::Graphics {
         return extensionCount;
     }
 
-    bool VulkanClient::isExtensionSupported(const char* extensionName, const Span<VkExtensionProperties>& actualSupportedExtensions) const {
-        for (uint32_t i = 0; i < actualSupportedExtensions.count; ++i) {
+    bool VulkanClient::isExtensionSupported(const char* extensionName, const Span<VkExtensionProperties>& actualSupportedExtensions, uint32_t actualCount) const {
+        for (uint32_t i = 0; i < actualCount; ++i) {
             if (const auto actualSupportedExtension = actualSupportedExtensions[i]; strcmp(actualSupportedExtension.extensionName, extensionName) == 0) {
                 Debug::Logger::log("extension:" + std::string(extensionName) + " is supported");
                 return true;

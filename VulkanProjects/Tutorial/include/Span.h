@@ -7,11 +7,14 @@
 
 #include "PlacementStackAllocator.h"
 #include "SpanAllocator.h"
+#include <type_traits>
 
 template<typename T>
 struct Span {
-    T* const headPtr;
-    const uint32_t count;
+    static_assert(std::is_trivially_destructible_v<T>, "Span only supports trivially destructible types");
+
+    T* headPtr;
+    uint32_t count;
 
     T& operator [](const uint32_t index) const {
         if (index >= count) {
@@ -28,23 +31,48 @@ struct Span {
     Span& operator=(const Span& other) = delete;
     Span(const Span& other) = delete;
 
-    ~Span() {
-        for (uint32_t i = 0; i < count; ++i) {
-            headPtr[count - 1 - i].~T();
-        }
-        SpanAllocator::getAllocator()->dealloc(_allocatedBytes);
+    Span(Span&& other) noexcept :
+        headPtr(other.headPtr),
+        count(other.count),
+        _allocator(other._allocator),
+        _allocatedBytes(other._allocatedBytes) {
+        other.headPtr = nullptr;
+        other.count = 0;
+        other._allocator = nullptr;
+        other._allocatedBytes = 0;
     }
 
-    template<typename U>
-    friend struct Span;
+    Span& operator=(Span&& other) noexcept {
+        if (this != &other) {
+            if (headPtr != nullptr && _allocator != nullptr) {
+                _allocator->dealloc(_allocatedBytes);
+            }
+            headPtr = other.headPtr;
+            count = other.count;
+            _allocator = other._allocator;
+            _allocatedBytes = other._allocatedBytes;
+            other.headPtr = nullptr;
+            other.count = 0;
+            other._allocator = nullptr;
+            other._allocatedBytes = 0;
+        }
+        return *this;
+    }
+
+    ~Span() noexcept {
+        if (headPtr != nullptr) {
+            _allocator->dealloc(_allocatedBytes);
+        }
+    }
 
 private:
-    const size_t _allocatedBytes;
-    inline static PlacementStackAllocator* _allocator = nullptr;
+    PlacementStackAllocator* _allocator;
+    size_t _allocatedBytes;
 
     explicit Span(PlacementStackAllocator::AllocResult<T> allocResult):
         headPtr(allocResult.headPtr),
         count(allocResult.count),
+        _allocator(SpanAllocator::getAllocator()),
         _allocatedBytes(allocResult.allocatedBytes) {
     }
 };

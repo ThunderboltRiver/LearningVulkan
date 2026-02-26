@@ -24,7 +24,7 @@ namespace Tutorial::Graphics {
 
         [[nodiscard]] uint32_t getSupportedExtensionCount() const;
 
-        bool isExtensionSupported(const char *extensionName, const Span<VkExtensionProperties> &actualSupportedExtensions) const;
+        bool isExtensionSupported(const char *extensionName, const Span<VkExtensionProperties> &actualSupportedExtensions, uint32_t actualCount) const;
 
     public:
         VulkanClient(const VkApplicationInfo& appInfo, const RequiredVulkanExtensionsProvider& requiredVulkanExtensionsProvider):
