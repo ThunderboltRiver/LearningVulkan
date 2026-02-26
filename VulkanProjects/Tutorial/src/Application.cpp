@@ -6,7 +6,7 @@
 #include <iostream>
 
 #include "PlacementStackAllocator.h"
-#include "Span.h"
+#include "SpanAllocator.h"
 #include "VulkanClient.h"
 #if defined(__INTELLISENSE__) || !defined(USE_CPP20_MODULES)
 #include <vulkan/vulkan.h>
@@ -23,7 +23,7 @@ namespace Tutorial
 
         // PlacementStackAllocatorのインスタンスを作成してSpanにセットする
         PlacementStackAllocator allocator(STACK_ALLOCATOR_1_MB_CAPACITY);
-        Span<void*>::SetAllocator(&allocator);
+        SpanAllocator::setAllocator(&allocator);
 
         // 自身のウィンドウを作成
         WindowHelper::ApplicationWindow applicationWindow(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TITLE);
@@ -38,7 +38,7 @@ namespace Tutorial
 
         Graphics::VulkanClient vkClient(appInfo, _extensionsProvider);
         mainLoop(applicationWindow);
-        Span<void*>::ResetAllocator();
+        SpanAllocator::resetAllocator();
     }
 
     void Application::mainLoop(const WindowHelper::ApplicationWindow& applicationWindow) {

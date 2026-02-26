@@ -2,42 +2,37 @@
 // Created by 沖田大河 on 2026/02/21.
 //
 
-#ifndef TUTORIAL_DYNAMICARRAY_H
-#define TUTORIAL_DYNAMICARRAY_H
+#ifndef TUTORIAL_SPAN_H
+#define TUTORIAL_SPAN_H
 
 #include "PlacementStackAllocator.h"
+#include "SpanAllocator.h"
 
 template<typename T>
 struct Span {
     T* const headPtr;
     const uint32_t count;
 
-    T operator [](const uint32_t index) const {
+    T& operator [](const uint32_t index) const {
         if (index >= count) {
             throw std::out_of_range("Span: index out of range");
         }
-        const auto result = headPtr[index];
-        return result;
-    }
-
-    void static SetAllocator(PlacementStackAllocator* const allocator) {
-        Span<void*>::_allocator = allocator;
-    }
-
-    void static ResetAllocator() {
-        Span<void*>::_allocator = nullptr;
+        return headPtr[index];
     }
 
     static Span stackAlloc(const uint32_t count) {
-        const auto allocResult = getAllocator()->stackAlloc<T>(count);
+        const auto allocResult = SpanAllocator::getAllocator()->stackAlloc<T>(count);
         return Span(allocResult);
     }
 
+    Span& operator=(const Span& other) = delete;
+    Span(const Span& other) = delete;
+
     ~Span() {
-        getAllocator()->dealloc(_allocatedBytes);
         for (uint32_t i = 0; i < count; ++i) {
             headPtr[count - 1 - i].~T();
         }
+        SpanAllocator::getAllocator()->dealloc(_allocatedBytes);
     }
 
     template<typename U>
@@ -52,14 +47,6 @@ private:
         count(allocResult.count),
         _allocatedBytes(allocResult.allocatedBytes) {
     }
-
-    static PlacementStackAllocator* getAllocator() {
-        if (Span<void*>::_allocator == nullptr) {
-            throw std::runtime_error("Span: allocator must be set before calling stackAlloc");
-        }
-        const auto allocator = Span<void*>::_allocator;
-        return allocator;
-    }
 };
 
-#endif //TUTORIAL_DYNAMICARRAY_H
+#endif //TUTORIAL_SPAN_H

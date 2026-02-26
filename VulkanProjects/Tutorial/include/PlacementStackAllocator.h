@@ -16,6 +16,8 @@ class PlacementStackAllocator {
     char* const _stackBottomElementPtr;
     std::size_t _occupied;
 
+    static const PlacementStackAllocator* instance;
+
 public:
 
     /**
@@ -47,7 +49,7 @@ public:
                 throw std::runtime_error("PlacementStackAllocator: headPtr must not be null");
             }
             if (count < 1) {
-                throw std::runtime_error("PlacementStackAllocator: count must be greater than 1");
+                throw std::runtime_error("PlacementStackAllocator: count must be greater than 0");
             }
             if (allocatedBytes < sizeof(T) * static_cast<std::size_t>(count)) {
                 throw std::runtime_error("PlacementStackAllocator: allocatedBytes must be at least sizeof(T) * count");
@@ -71,10 +73,8 @@ public:
         const auto tailAddress = reinterpret_cast<std::uintptr_t>(tailPtr);
 
         // アライメントを考慮してパディングを計算する
-        std::uintptr_t padding = 0;
-        if (tailAddress % alignof(T) != 0) {
-            padding = alignof(T) - tailAddress % alignof(T);
-        }
+        const std::uintptr_t paddedTailAddress = (tailAddress + alignof(T) - 1) & ~(alignof(T) - 1);
+        const auto padding = paddedTailAddress - tailAddress;
 
         // 必要となるメモリのバイト数を計算して、スタックの容量を超えるなら例外をスローする
         const auto requiredBytes = padding + sizeof(T) * static_cast<std::size_t>(count);
@@ -84,7 +84,7 @@ public:
 
         // 占有されている領域のバイト数を更新して、割り当てる領域の先頭へのポインタを返す
         _occupied += requiredBytes;
-        return AllocResult<T>(reinterpret_cast<T*>(tailPtr + padding), count, requiredBytes);
+        return AllocResult<T>(reinterpret_cast<T*>(paddedTailAddress), count, requiredBytes);
     }
 
     void dealloc(std::size_t allocatedBytes);

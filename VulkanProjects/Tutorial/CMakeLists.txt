@@ -59,6 +59,7 @@ add_executable(Tutorial src/main.cpp
         src/VulkanClient.cpp
         src/PlacementStackAllocator.cpp
         src/Span.cpp
+        src/SpanAllocator.cpp
 )
 
 # Tutorialターゲットのヘッダをインポートする

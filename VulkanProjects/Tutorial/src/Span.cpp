@@ -3,6 +3,3 @@
 //
 
 #include "Span.h"
-
-template<>
-PlacementStackAllocator* Span<void*>::_allocator = nullptr;
