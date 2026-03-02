@@ -18,6 +18,6 @@ void SpanAllocator::setAllocator(PlacementStackAllocator* pAllocator) {
     allocator = pAllocator;
 }
 
-void SpanAllocator::resetAllocator() {
+void SpanAllocator::resetAllocator() noexcept{
     allocator = nullptr;
 }

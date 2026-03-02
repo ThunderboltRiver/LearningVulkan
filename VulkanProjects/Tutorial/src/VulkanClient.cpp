@@ -56,7 +56,7 @@ namespace Tutorial::Graphics {
     }
 
     bool VulkanClient::isExtensionSupported(const char* extensionName, const Span<VkExtensionProperties>& actualSupportedExtensions) const {
-        for (uint32_t i = 0; i < actualSupportedExtensions.count; ++i) {
+        for (uint32_t i = 0; i < actualSupportedExtensions.maxElementCount; ++i) {
             if (const auto actualSupportedExtension = actualSupportedExtensions[i]; strcmp(actualSupportedExtension.extensionName, extensionName) == 0) {
                 Debug::Logger::log("extension:" + std::string(extensionName) + " is supported");
                 return true;

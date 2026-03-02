@@ -14,7 +14,7 @@ struct SpanAllocator {
 
     static void setAllocator(PlacementStackAllocator* pAllocator);
 
-    static void resetAllocator();
+    static void resetAllocator() noexcept;
 };
 
 #endif //TUTORIAL_SPANALLOCATOR_H

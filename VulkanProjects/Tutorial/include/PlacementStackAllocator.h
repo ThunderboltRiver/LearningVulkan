@@ -9,7 +9,7 @@
 #include <cstdint>
 #include <stdexcept>
 
-constexpr std::size_t STACK_ALLOCATOR_1_MB_CAPACITY = 1024 * 1024;
+constexpr std::size_t STACK_ALLOCATOR_12_MB_CAPACITY = 12 * 1024 * 1024;
 
 class PlacementStackAllocator {
     const std::size_t _capacity;

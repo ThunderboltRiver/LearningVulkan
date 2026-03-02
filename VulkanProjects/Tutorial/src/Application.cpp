@@ -22,7 +22,7 @@ namespace Tutorial
     void Application::run() {
 
         // PlacementStackAllocatorのインスタンスを作成してSpanにセットする
-        PlacementStackAllocator allocator(STACK_ALLOCATOR_1_MB_CAPACITY);
+        PlacementStackAllocator allocator(STACK_ALLOCATOR_12_MB_CAPACITY);
         SpanAllocator::setAllocator(&allocator);
 
         // 自身のウィンドウを作成
