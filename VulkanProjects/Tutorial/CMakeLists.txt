@@ -55,11 +55,11 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 add_executable(Tutorial src/main.cpp
         src/Application.cpp
         src/ApplicationWindow.cpp
-        src/RequiredVulkanExtensionsProvider.cpp
         src/VulkanClient.cpp
         src/PlacementStackAllocator.cpp
         src/Span.cpp
         src/SpanAllocator.cpp
+        src/WindowRequiredVulkanExtensionsProvider.cpp
 )
 
 # Tutorialターゲットのヘッダをインポートする

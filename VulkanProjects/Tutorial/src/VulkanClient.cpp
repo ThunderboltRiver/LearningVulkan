@@ -12,17 +12,18 @@
 namespace Tutorial::Graphics {
 
     VkInstance VulkanClient::instantiateVulkan() const {
-        auto requiredExtensions = _requiredVulkanExtensionsProvider.getRequiredVulkanExtensionNames();
-        const auto requiredExtensionCount = static_cast<uint32_t>(requiredExtensions.size());
+        const auto requiredExtensionCount = _requiredVulkanExtensionsProvider.getRequiredInstanceExtensionCount();
+        const auto requiredExtensions = Span<char const*>::stackAlloc(requiredExtensionCount);
+        _requiredVulkanExtensionsProvider.getRequiredInstanceExtensionNames(requiredExtensions);
 
-        validateRequiredExtensions(requiredExtensions.data(), requiredExtensionCount);
+        validateRequiredExtensions(requiredExtensions);
 
         const VkInstanceCreateInfo instanceCreateInfo {
             .sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,
             .flags = _requiredVulkanExtensionsProvider.getRequiredVulkanInstanceCreateFlagBits(),
             .pApplicationInfo = &_appInfo,
             .enabledExtensionCount = requiredExtensionCount,
-            .ppEnabledExtensionNames = requiredExtensions.data(),
+            .ppEnabledExtensionNames = requiredExtensions.headPtr,
         };
         VkInstance instance;
         if (const auto result = vkCreateInstance(&instanceCreateInfo, nullptr, &instance); result != VK_SUCCESS) {
@@ -31,7 +32,7 @@ namespace Tutorial::Graphics {
         return instance;
     }
 
-    void VulkanClient::validateRequiredExtensions(const char* const* requiredExtensions, const uint32_t requiredExtensionCount) const {
+    void VulkanClient::validateRequiredExtensions(const Span<char const*>& requiredExtensions) const {
         // 実際にサポートされている拡張機能一覧を取得して、必須の拡張機能がサポートされているかを確認する
         uint32_t supportedExtensionCount = getSupportedExtensionCount();
         const auto supportedExtensions = Span<VkExtensionProperties>::stackAlloc(supportedExtensionCount);
@@ -39,7 +40,7 @@ namespace Tutorial::Graphics {
             throw std::runtime_error("Failed to enumerate Vulkan instance extensions: " + std::to_string(result));
         }
         // 必須の拡張機能がサポートされている拡張機能の中に存在しないなら例外をスローする
-        for (uint32_t i = 0; i < requiredExtensionCount; ++i) {
+        for (uint32_t i = 0; i < requiredExtensions.maxElementCount; ++i) {
             const auto requiredExtension = requiredExtensions[i];
             if (!isExtensionSupported(requiredExtension, supportedExtensions)) {
                 throw std::runtime_error("Required Vulkan extension not supported: " + std::string(requiredExtension));

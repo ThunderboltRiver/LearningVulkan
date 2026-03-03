@@ -8,16 +8,12 @@
 #include "PlacementStackAllocator.h"
 #include "SpanAllocator.h"
 #include "VulkanClient.h"
-#if defined(__INTELLISENSE__) || !defined(USE_CPP20_MODULES)
-#include <vulkan/vulkan.h>
-#else
-import vulkan_hpp;
-#endif
+#include "WindowRequriedVulkanExtensionsProvider.h"
 #include "Application.h"
 
 namespace Tutorial
 {
-    Application::Application() {}
+    Application::Application() = default;
 
     void Application::run() {
 
@@ -27,18 +23,17 @@ namespace Tutorial
 
         // 自身のウィンドウを作成
         WindowHelper::ApplicationWindow applicationWindow(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TITLE);
-        constexpr VkApplicationInfo appInfo {
-            .sType = VK_STRUCTURE_TYPE_APPLICATION_INFO,
-            .pApplicationName = "Tutorial",
-            .applicationVersion =  VK_MAKE_VERSION(1, 0, 0),
-            .pEngineName = "No Engine",
-            .engineVersion = VK_MAKE_VERSION(1, 0, 0),
-            .apiVersion = VK_API_VERSION_1_4
-        };
 
-        Graphics::VulkanClient vkClient(appInfo, _extensionsProvider);
+        // ウィンドウが要求するVulkan拡張機能のプロバイダを作成してVulkanClientを作成する
+        const WindowHelper::WindowRequiredVulkanExtensionsProvider extensionsProvider;
+        Graphics::VulkanClient vkClient(appInfo, extensionsProvider);
         mainLoop(applicationWindow);
         SpanAllocator::resetAllocator();
+    }
+
+    Application::~Application()
+    {
+        std::cout << "destructor" << std::endl;
     }
 
     void Application::mainLoop(const WindowHelper::ApplicationWindow& applicationWindow) {
@@ -50,10 +45,5 @@ namespace Tutorial
     void Application::throwableResourceCleanup()
     {
         std::cout << "throwable resource cleanup" << std::endl;
-    }
-
-    Application::~Application()
-    {
-        std::cout << "destructor" << std::endl;
     }
 };
