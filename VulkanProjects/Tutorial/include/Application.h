@@ -6,13 +6,7 @@
 #define TUTORIAL_APPLICATION_H
 
 #include <GLFW/glfw3.h>
-
-#include "RequiredVulkanExtensionsProvider.h"
-#if defined(__INTELLISENSE__) || !defined(USE_CPP20_MODULES)
-# include <vulkan/vulkan_raii.hpp>
-#else
-import vulkan_hpp;
-#endif
+#include <vulkan/vulkan.h>
 #include "ApplicationWindow.h"
 
 namespace Tutorial
@@ -35,7 +29,14 @@ namespace Tutorial
         static constexpr uint32_t WINDOW_WIDTH = 800;
         static constexpr uint32_t WINDOW_HEIGHT = 720;
         static constexpr const char* const WINDOW_TITLE = "Tutorial";
-        Graphics::RequiredVulkanExtensionsProvider _extensionsProvider;
+        static constexpr VkApplicationInfo appInfo {
+            .sType = VK_STRUCTURE_TYPE_APPLICATION_INFO,
+            .pApplicationName = "Tutorial",
+            .applicationVersion =  VK_MAKE_VERSION(1, 0, 0),
+            .pEngineName = "No Engine",
+            .engineVersion = VK_MAKE_VERSION(1, 0, 0),
+            .apiVersion = VK_API_VERSION_1_4
+        };
 
         /**
          * メインループの実行

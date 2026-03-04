@@ -5,7 +5,7 @@
 #ifndef TUTORIAL_VULKAN_CLIENT_H
 #define TUTORIAL_VULKAN_CLIENT_H
 
-#include "RequiredVulkanExtensionsProvider.h"
+#include "IRequiredVulkanExtensionsProvider.h"
 #include "Span.h"
 #if defined(__INTELLISENSE__) || !defined(USE_CPP20_MODULES)
 # include <vulkan/vulkan.h>
@@ -16,18 +16,18 @@ import vulkan_hpp;
 namespace Tutorial::Graphics {
     class VulkanClient {
         const VkApplicationInfo& _appInfo;
-        const RequiredVulkanExtensionsProvider& _requiredVulkanExtensionsProvider;
+        const IRequiredVulkanExtensionsProvider& _requiredVulkanExtensionsProvider;
         VkInstance _instance;
 
         [[nodiscard]] VkInstance instantiateVulkan() const;
-        void validateRequiredExtensions(const char* const* requiredExtensions, uint32_t requiredExtensionCount) const;
+        void validateRequiredExtensions(const Span<char const *> &requiredExtensions) const;
 
         [[nodiscard]] uint32_t getSupportedExtensionCount() const;
 
         bool isExtensionSupported(const char *extensionName, const Span<VkExtensionProperties> &actualSupportedExtensions) const;
 
     public:
-        VulkanClient(const VkApplicationInfo& appInfo, const RequiredVulkanExtensionsProvider& requiredVulkanExtensionsProvider):
+        VulkanClient(const VkApplicationInfo& appInfo, const IRequiredVulkanExtensionsProvider& requiredVulkanExtensionsProvider):
         _appInfo(appInfo),
         _requiredVulkanExtensionsProvider(requiredVulkanExtensionsProvider),
         _instance(instantiateVulkan()) {}
