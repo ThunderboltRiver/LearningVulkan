@@ -16,12 +16,18 @@ namespace Tutorial::Graphics {
         const auto requiredExtensions = Span<char const*>::stackAlloc(requiredExtensionCount);
         _requiredVulkanExtensionsProvider.getRequiredInstanceExtensionNames(requiredExtensions);
 
+        uint32_t requiredLayerCount = 0;
+        const auto requiredLayers = getRequiredLayers(&requiredLayerCount);
+
+        validateRequiredLayer(requiredLayers, requiredLayerCount);
         validateRequiredExtensions(requiredExtensions);
 
         const VkInstanceCreateInfo instanceCreateInfo {
             .sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,
             .flags = _requiredVulkanExtensionsProvider.getRequiredVulkanInstanceCreateFlagBits(),
             .pApplicationInfo = &_appInfo,
+            .enabledLayerCount = requiredLayerCount,
+            .ppEnabledLayerNames = requiredLayers,
             .enabledExtensionCount = requiredExtensionCount,
             .ppEnabledExtensionNames = requiredExtensions.headPtr,
         };
@@ -30,6 +36,46 @@ namespace Tutorial::Graphics {
             throw std::runtime_error("Failed to create Vulkan instance: " + std::to_string(result));
         }
         return instance;
+    }
+
+    char const* const* VulkanClient::getRequiredLayers(uint32_t *pCount) const {
+       if constexpr (!enableValidationLayers) {
+            *pCount = 0;
+            return nullptr;
+        }
+        *pCount = std::size(validationLayerNames);
+        return validationLayerNames;
+    }
+
+    void VulkanClient::validateRequiredLayer(char const* const* requiredLayers, uint32_t count) const {
+        if (requiredLayers == nullptr || count == 0) {
+            return;
+        }
+        uint32_t supportedLayerCount = 0;
+        // 実際にサポートされているレイヤー一覧を取得して、必須のレイヤーがサポートされているかを確認する
+        if (vkEnumerateInstanceLayerProperties(&supportedLayerCount, nullptr) != VK_SUCCESS) {
+            throw std::runtime_error("Failed to enumerate Vulkan instance layers");
+        }
+        const auto supportedLayers = Span<VkLayerProperties>::stackAlloc(supportedLayerCount);
+        if (vkEnumerateInstanceLayerProperties(&supportedLayerCount, supportedLayers.headPtr) != VK_SUCCESS) {
+            throw std::runtime_error("Failed to enumerate Vulkan instance layers");
+        }
+        // 必須のレイヤーがサポートされているレイヤーの中に存在しないなら例外をスローする
+        for (const auto requiredLayerName : validationLayerNames) {
+            if (!isLayerSupported(requiredLayerName, supportedLayers)) {
+                throw std::runtime_error("Required Vulkan validation layer not supported: " + std::string(requiredLayerName));
+            }
+        }
+    }
+
+    bool VulkanClient::isLayerSupported(const char* layerName, const Span<VkLayerProperties>& actualSupportedLayers) const {
+        for (uint32_t i = 0; i < actualSupportedLayers.maxElementCount; ++i) {
+            if (const auto actualSupportedLayer = actualSupportedLayers[i]; strcmp(actualSupportedLayer.layerName, layerName) == 0) {
+                Debug::Logger::log("layer:" + std::string(layerName) + " is supported");
+                return true;
+            }
+        }
+        return false;
     }
 
     void VulkanClient::validateRequiredExtensions(const Span<char const*>& requiredExtensions) const {
