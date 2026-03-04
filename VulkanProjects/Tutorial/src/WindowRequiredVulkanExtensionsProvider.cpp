@@ -8,11 +8,17 @@
 #include "WindowRequiredVulkanExtensionsProvider.h"
 
 namespace Tutorial::WindowHelper {
-    uint32_t WindowRequiredVulkanExtensionsProvider::getRequiredInstanceExtensionCount() const {
-        uint32_t count = 0;
-        if (const auto glfwRequiredExtensions = glfwGetRequiredInstanceExtensions(&count); glfwRequiredExtensions == nullptr) {
+    char const * const * WindowRequiredVulkanExtensionsProvider::getGlfwInstanceExtensionNames(uint32_t *pCount) const {
+        const auto glfwRequiredExtensions = glfwGetRequiredInstanceExtensions(pCount);
+        if (glfwRequiredExtensions == nullptr) {
             throw std::runtime_error("Failed to get required Vulkan extensions from GLFW");
         }
+        return glfwRequiredExtensions;
+    }
+
+    uint32_t WindowRequiredVulkanExtensionsProvider::getRequiredInstanceExtensionCount() const {
+        uint32_t count = 0;
+        (void)getGlfwInstanceExtensionNames(&count);
         return count + 1; // GLFWが要求する拡張機能の数に、VK_KHR_portability_enumerationの分を加える
     }
 
@@ -23,10 +29,7 @@ namespace Tutorial::WindowHelper {
         }
 #endif
         uint32_t count = 0;
-        const auto glfwRequiredExtensions = glfwGetRequiredInstanceExtensions(&count);
-        if (glfwRequiredExtensions == nullptr) {
-            throw std::runtime_error("Failed to get required Vulkan extensions from GLFW");
-        }
+        const auto glfwRequiredExtensions = getGlfwInstanceExtensionNames(&count);
         for (uint32_t i = 0; i < count; ++i) {
             *(result.pointerAt(i)) = glfwRequiredExtensions[i];
         }

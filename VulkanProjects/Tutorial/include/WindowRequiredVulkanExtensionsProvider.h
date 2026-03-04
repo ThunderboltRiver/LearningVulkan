@@ -10,6 +10,9 @@
 namespace Tutorial::WindowHelper {
     // GLFWが要求するVulkan拡張機能のプロバイダ
     class WindowRequiredVulkanExtensionsProvider : public Graphics::IRequiredVulkanExtensionsProvider {
+
+        char const* const* getGlfwInstanceExtensionNames(uint32_t* pCount) const;
+
     public:
         WindowRequiredVulkanExtensionsProvider() = default;
 
