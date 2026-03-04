@@ -5,14 +5,8 @@
 #ifndef TUTORIAL_REQUIRED_VULKAN_EXTENSIONS_PROVIDER_H
 #define TUTORIAL_REQUIRED_VULKAN_EXTENSIONS_PROVIDER_H
 
-#include <vector>
-
 #include "Span.h"
-#if defined(__INTELLISENSE__) || !defined(USE_CPP20_MODULES)
-#   include <vulkan/vulkan.h>
-#else
-import vulkan_hpp;
-#endif
+#include <vulkan/vulkan.h>
 
 namespace Tutorial::Graphics {
     /**
