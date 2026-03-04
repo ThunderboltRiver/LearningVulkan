@@ -17,9 +17,22 @@ namespace Tutorial::Graphics {
     class VulkanClient {
         const VkApplicationInfo& _appInfo;
         const IRequiredVulkanExtensionsProvider& _requiredVulkanExtensionsProvider;
+        constexpr static char const* validationLayerNames[] = { "VK_LAYER_KHRONOS_validation" };
+#ifndef NDEBUG
+        constexpr static bool enableValidationLayers = true;
+#elif
+        constexpr static bool enableValidationLayers = false;
+#endif
         VkInstance _instance;
 
         [[nodiscard]] VkInstance instantiateVulkan() const;
+
+        char const* const* getRequiredLayers(uint32_t *pCount) const;
+
+        void validateRequiredLayer(char const* const* requiredLayers, uint32_t count) const;
+
+        bool isLayerSupported(const char *layerName, const Span<VkLayerProperties> &actualSupportedLayers) const;
+
         void validateRequiredExtensions(const Span<char const *> &requiredExtensions) const;
 
         [[nodiscard]] uint32_t getSupportedExtensionCount() const;
