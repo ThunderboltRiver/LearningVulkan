@@ -5,7 +5,7 @@
 #include <GLFW/glfw3.h>
 #include <vulkan/vulkan_core.h>
 #include "Span.h"
-#include "WindowRequriedVulkanExtensionsProvider.h"
+#include "WindowRequiredVulkanExtensionsProvider.h"
 
 namespace Tutorial::WindowHelper {
     uint32_t WindowRequiredVulkanExtensionsProvider::getRequiredInstanceExtensionCount() const {

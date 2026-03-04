@@ -8,7 +8,7 @@
 #include "PlacementStackAllocator.h"
 #include "SpanAllocator.h"
 #include "VulkanClient.h"
-#include "WindowRequriedVulkanExtensionsProvider.h"
+#include "WindowRequiredVulkanExtensionsProvider.h"
 #include "Application.h"
 
 namespace Tutorial
