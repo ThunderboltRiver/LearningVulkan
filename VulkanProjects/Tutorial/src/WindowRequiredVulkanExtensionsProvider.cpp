@@ -19,7 +19,11 @@ namespace Tutorial::WindowHelper {
     uint32_t WindowRequiredVulkanExtensionsProvider::getRequiredInstanceExtensionCount() const {
         uint32_t count = 0;
         (void)getGlfwInstanceExtensionNames(&count);
+#ifndef NDEBUG
+        return count + 2; // GLFWが要求する拡張機能の数に、VK_KHR_portability_enumerationとVK_EXT_debug_utilsの分を加える
+#else
         return count + 1; // GLFWが要求する拡張機能の数に、VK_KHR_portability_enumerationの分を加える
+#endif
     }
 
     void WindowRequiredVulkanExtensionsProvider::getRequiredInstanceExtensionNames(const Span<char const*>& result) const {
@@ -34,6 +38,9 @@ namespace Tutorial::WindowHelper {
             *(result.pointerAt(i)) = glfwRequiredExtensions[i];
         }
         *(result.pointerAt(count)) = VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME;
+#ifndef NDEBUG
+        *(result.pointerAt(count + 1)) = VK_EXT_DEBUG_UTILS_EXTENSION_NAME;
+#endif
     }
 
     VkInstanceCreateFlags WindowRequiredVulkanExtensionsProvider::getRequiredVulkanInstanceCreateFlagBits() const {
