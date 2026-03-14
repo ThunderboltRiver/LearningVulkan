@@ -61,8 +61,8 @@ namespace Tutorial::Graphics {
             throw std::runtime_error("Failed to enumerate Vulkan instance layers");
         }
         // 必須のレイヤーがサポートされているレイヤーの中に存在しないなら例外をスローする
-        for (const auto requiredLayerName : validationLayerNames) {
-            if (!isLayerSupported(requiredLayerName, supportedLayers)) {
+        for (uint32_t i = 0; i < count; ++i) {
+            if (const auto requiredLayerName = requiredLayers[i]; !isLayerSupported(requiredLayerName, supportedLayers)) {
                 throw std::runtime_error("Required Vulkan validation layer not supported: " + std::string(requiredLayerName));
             }
         }

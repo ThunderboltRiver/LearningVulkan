@@ -20,7 +20,7 @@ namespace Tutorial::Graphics {
         constexpr static char const* validationLayerNames[] = { "VK_LAYER_KHRONOS_validation" };
 #ifndef NDEBUG
         constexpr static bool enableValidationLayers = true;
-#elif
+#else
         constexpr static bool enableValidationLayers = false;
 #endif
         VkInstance _instance;
