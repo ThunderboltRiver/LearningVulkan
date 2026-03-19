@@ -20,7 +20,7 @@ namespace Tutorial::Graphics {
          * @param physicalDevice 物理デバイス
          * @return 物理デバイスがサポートするキューファミリーのプロパティの配列
          */
-        [[nodiscard]] const Span<VkQueueFamilyProperties2>& getQueueFamilyProperties(const VulkanPhysicalDevice &physicalDevice) const;
+        [[nodiscard]] Span<VkQueueFamilyProperties2> getQueueFamilyProperties(const VulkanPhysicalDevice &physicalDevice) const;
 
     public:
         VulkanPhysicalDeviceQueueFamilyRequirements() = default;

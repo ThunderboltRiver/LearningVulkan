@@ -9,7 +9,7 @@ namespace Tutorial::Graphics {
     bool VulkanPhysicalDeviceQueueFamilyRequirements::findSatisfiedQueueFamilyIndex(const VulkanPhysicalDevice &physicalDevice,
                                                                                     uint32_t *queueFamilyIndex) const {
         // 物理デバイスがサポートするキューファミリーのプロパティの配列を取得する
-        const auto& queueFamilies = getQueueFamilyProperties(physicalDevice);
+        const auto queueFamilies = getQueueFamilyProperties(physicalDevice);
 
         // 物理デバイスが必要なキューファミリーのプロパティをサポートしているかを確認する
         uint32_t index = 0;
@@ -24,16 +24,16 @@ namespace Tutorial::Graphics {
         return false;
     }
 
-    const Span<VkQueueFamilyProperties2>& VulkanPhysicalDeviceQueueFamilyRequirements::getQueueFamilyProperties(const VulkanPhysicalDevice &physicalDevice) const {
+    Span<VkQueueFamilyProperties2> VulkanPhysicalDeviceQueueFamilyRequirements::getQueueFamilyProperties(const VulkanPhysicalDevice &physicalDevice) const {
         // 物理デバイスがサポートするキューファミリーのプロパティの配列を取得する
         uint32_t queueFamilyPropertyCount = 0;
         physicalDevice.getQueueFamilyProperties2(&queueFamilyPropertyCount, nullptr);
-        const auto& queueFamilies = Span<VkQueueFamilyProperties2>::stackAlloc(queueFamilyPropertyCount);
+        auto queueFamilies = Span<VkQueueFamilyProperties2>::stackAlloc(queueFamilyPropertyCount);
         for (auto& queueFamilyProperty : queueFamilies) {
             queueFamilyProperty.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2;
             queueFamilyProperty.pNext = nullptr;
         }
-        physicalDevice.getQueueFamilyProperties2(&queueFamilyPropertyCount, queueFamilies.headPtr);
+        physicalDevice.getQueueFamilyProperties2(&queueFamilyPropertyCount, queueFamilies.getHeadPtr());
         return queueFamilies;
     }
 } // Graphics

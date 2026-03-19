@@ -24,7 +24,7 @@ namespace Tutorial::WindowHelper {
 
     void WindowRequiredVulkanExtensionsProvider::getRequiredInstanceExtensionNames(const Span<char const*>& result) const {
 #ifndef NDEBUG
-        if (result.maxElementCount != getRequiredInstanceExtensionCount()) {
+        if (result.getMaxElementCount() != getRequiredInstanceExtensionCount()) {
             throw std::runtime_error("WindowRequiredVulkanExtensionsProvider: result span must have a maxElementCount equal to getRequiredInstanceExtensionCount()");
         }
 #endif

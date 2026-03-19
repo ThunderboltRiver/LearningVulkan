@@ -35,7 +35,7 @@ namespace Tutorial::Graphics {
          * この要件をDevice拡張名称の配列として返す
          * @return この要件をDevice拡張名称の配列として返す
          */
-        const Span<const char*>& AsVkDeviceExtensionNames() const;
+        [[nodiscard]] Span<const char*> AsVkDeviceExtensionNames() const;
     };
 }
 

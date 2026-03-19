@@ -28,22 +28,6 @@ namespace Tutorial::Graphics {
     }
 
     const VkPhysicalDeviceFeatures2& VulkanPhysicalDeviceFeatureRequirements::asDeviceFeature() const {
-        VkPhysicalDeviceExtendedDynamicStateFeaturesEXT extendedDynamicStateFeatures{
-            .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTENDED_DYNAMIC_STATE_FEATURES_EXT,
-            .pNext = nullptr,
-            .extendedDynamicState = VK_TRUE,
-        };
-
-        VkPhysicalDeviceVulkan13Features vulkan13Features{
-            .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_3_FEATURES,
-            .pNext = &extendedDynamicStateFeatures,
-            .dynamicRendering = VK_TRUE,
-        };
-
-        const VkPhysicalDeviceFeatures2& supportedFeatures{
-            .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2,
-            .pNext = &vulkan13Features,
-        };
-        return supportedFeatures;
+        return _requiredFeatures;
     }
 } // Graphics

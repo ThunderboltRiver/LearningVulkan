@@ -12,6 +12,24 @@ namespace Tutorial::Graphics {
      *  物理デバイス機能に対する要求を表すクラス
      */
     class VulkanPhysicalDeviceFeatureRequirements {
+
+        VkPhysicalDeviceExtendedDynamicStateFeaturesEXT _extendedDynamicStateFeatures{
+            .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTENDED_DYNAMIC_STATE_FEATURES_EXT,
+            .pNext = nullptr,
+            .extendedDynamicState = VK_TRUE,
+        };
+
+        VkPhysicalDeviceVulkan13Features _vulkan13Features{
+            .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_3_FEATURES,
+            .pNext = &_extendedDynamicStateFeatures,
+            .dynamicRendering = VK_TRUE,
+        };
+
+        VkPhysicalDeviceFeatures2 _requiredFeatures{
+            .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2,
+            .pNext = &_vulkan13Features,
+        };
+
     public:
         VulkanPhysicalDeviceFeatureRequirements() = default;
 

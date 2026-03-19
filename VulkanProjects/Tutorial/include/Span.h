@@ -16,14 +16,16 @@ template<typename T>
 struct Span {
 
     /**
-     * 先頭のメモリアドレスへのポインタ
+     * 先頭のメモリアドレスへのポインタを取得する
+     * @return 先頭のメモリアドレスへのポインタ
      */
-    T* const headPtr;
+    [[nodiscard]] T* getHeadPtr() const { return _headPtr; }
 
     /**
-     * この範囲に格納できる最大要素数
+     * この範囲に格納できる最大要素数を取得する
+     * @return この範囲に格納できる最大要素数
      */
-    const uint32_t maxElementCount;
+    [[nodiscard]] uint32_t getMaxElementCount() const { return _maxElementCount; }
 
     /**
      * 指定されたインデックスが指す実体への参照を返す
@@ -44,19 +46,19 @@ struct Span {
      * @return 指定されたインデックスが指す実体へのポインタ
      */
     T* pointerAt(const uint32_t index) const {
-        if (index >= maxElementCount) {
+        if (index >= _maxElementCount) {
             throw std::out_of_range("Span: index out of range");
         }
-        auto elementPtr = headPtr + index;
+        auto elementPtr = _headPtr + index;
         return elementPtr;
     }
 
     T* begin() const {
-        return headPtr;
+        return _headPtr;
     }
 
     T* end() const {
-        return headPtr + maxElementCount;
+        return _headPtr + _maxElementCount;
     }
 
     /**
@@ -74,11 +76,32 @@ struct Span {
     Span& operator=(const Span& other) = delete;
     Span(const Span& other) = delete;
 
+    // ムーブ代入は禁止
+    Span& operator=(Span&& other) = delete;
+
+    /**
+     * ムーブコンストラクタ。所有権をムーブ元からムーブ先に移動する。
+     * ムーブ元は空の状態になり、デストラクタでは何もしない。
+     */
+    Span(Span&& other) noexcept
+        : _headPtr(other._headPtr),
+          _maxElementCount(other._maxElementCount),
+          _allocatedBytes(other._allocatedBytes) {
+        // ムーブ元を空にする。これにより、ムーブ元のデストラクタは何も解放しない
+        other._headPtr = nullptr;
+        other._maxElementCount = 0;
+        other._allocatedBytes = 0;
+    }
+
     ~Span() {
+        // ムーブ済み（空）の場合は何もしない
+        if (_headPtr == nullptr) {
+            return;
+        }
         // このSpanが所有する領域に格納されている要素をすべて破棄してから、スタックアロケータに領域を解放する
         // 無効なポインタの場合はデストラクタで例外がスローされ、リークする可能性があるが、それはこのクラスを使用する側の責任とする
-        for (uint32_t i = 0; i < maxElementCount; ++i) {
-            auto elementPtr = pointerAt(maxElementCount - 1 - i);
+        for (uint32_t i = 0; i < _maxElementCount; ++i) {
+            auto elementPtr = pointerAt(_maxElementCount - 1 - i);
             elementPtr->~T();
         }
         SpanAllocator::getAllocator()->dealloc(_allocatedBytes);
@@ -87,14 +110,24 @@ struct Span {
 private:
 
     /**
+     * 先頭のメモリアドレスへのポインタ
+     */
+    T* _headPtr;
+
+    /**
+     * この範囲に格納できる最大要素数
+     */
+    uint32_t _maxElementCount;
+
+    /**
      * スタックアロケータから割り当てられた領域のバイト数。解放の際に必要
      */
-    const size_t _allocatedBytes;
+    size_t _allocatedBytes;
 
     // stackAlloc経由でしかインスタンス化できないようにするため、コンストラクタはprivateにする
     explicit Span(PlacementStackAllocator::AllocResult<T> allocResult):
-        headPtr(allocResult.headPtr),
-        maxElementCount(allocResult.count),
+        _headPtr(allocResult.headPtr),
+        _maxElementCount(allocResult.count),
         _allocatedBytes(allocResult.allocatedBytes) {
     }
 };

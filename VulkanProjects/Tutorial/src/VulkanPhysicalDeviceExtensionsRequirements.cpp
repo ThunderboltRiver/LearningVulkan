@@ -28,7 +28,7 @@ namespace Tutorial::Graphics {
         uint32_t deviceExtensionCount = 0;
         physicalDevice.enumerateExtensionProperties(nullptr, &deviceExtensionCount, nullptr);
         const auto supportedDeviceExtensionProperties = Span<VkExtensionProperties>::stackAlloc(deviceExtensionCount);
-        physicalDevice.enumerateExtensionProperties(nullptr, &deviceExtensionCount, supportedDeviceExtensionProperties.headPtr);
+        physicalDevice.enumerateExtensionProperties(nullptr, &deviceExtensionCount, supportedDeviceExtensionProperties.getHeadPtr());
 
         // サポートが必要なデバイス拡張機能すべてが、物理デバイスがサポートするデバイス拡張機能の中に存在するかを確認する
         for (const auto& requiredDeviceExtensionName : requiredDeviceExtensionNames) {
@@ -36,11 +36,12 @@ namespace Tutorial::Graphics {
                 return false;
             }
         }
+        return true;
     }
 
-    const Span<char const *> & VulkanPhysicalDeviceExtensionsRequirements::AsVkDeviceExtensionNames() const {
+    Span<char const *> VulkanPhysicalDeviceExtensionsRequirements::AsVkDeviceExtensionNames() const {
         uint32_t deviceExtensionCount = std::size(requiredDeviceExtensionNames);
-        const auto& result = Span<char const *>::stackAlloc(deviceExtensionCount);
+        auto result = Span<char const *>::stackAlloc(deviceExtensionCount);
         uint32_t index = 0;
         for (auto& extensionName : result) {
             extensionName = requiredDeviceExtensionNames[index];
