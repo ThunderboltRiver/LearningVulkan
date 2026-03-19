@@ -7,8 +7,9 @@
 
 #include "PlacementStackAllocator.h"
 #include "SpanAllocator.h"
-#include "VulkanClient.h"
+#include "VulkanInstance.h"
 #include "WindowRequiredVulkanExtensionsProvider.h"
+#include "VulkanPhysicalDeviceSelectionStrategy.h"
 #include "Application.h"
 
 namespace Tutorial
@@ -24,11 +25,33 @@ namespace Tutorial
         // 自身のウィンドウを作成
         WindowHelper::ApplicationWindow applicationWindow(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TITLE);
 
-        // ウィンドウが要求するVulkan拡張機能のプロバイダを作成してVulkanClientを作成する
-        const WindowHelper::WindowRequiredVulkanExtensionsProvider extensionsProvider;
-        Graphics::VulkanClient vkClient(appInfo, extensionsProvider);
+        // Vulkanを初期化する
+        initializeVulkan();
+
+        // メインループを実行する
         mainLoop(applicationWindow);
         SpanAllocator::resetAllocator();
+    }
+
+    void Application::initializeVulkan() {
+        // ウィンドウが要求するVulkan拡張機能のプロバイダを作成してVulkanClientを作成する
+        const WindowHelper::WindowRequiredVulkanExtensionsProvider extensionsProvider;
+
+        const Graphics::VulkanInstance vulkanInstance(appInfo, extensionsProvider);
+        const Graphics::VulkanPhysicalDeviceSelectionStrategy physicalDeviceSelectionStrategy(vulkanInstance);
+        const auto vulkanPhysicalDevice = physicalDeviceSelectionStrategy.selectPhysicalDevice();
+        const Graphics::VulkanPhysicalDeviceQueueFamilyRequirements queueFamilyRequirements;
+        uint32_t graphicsQueueFamilyIndex;
+        if (!queueFamilyRequirements.findSatisfiedQueueFamilyIndex(vulkanPhysicalDevice, &graphicsQueueFamilyIndex)) {
+            throw std::runtime_error("Failed to find a queue family that supports graphics commands");
+        }
+        float queuePriority = 0.5f;
+        VkDeviceQueueCreateInfo queueCreateInfo = {
+            .sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
+            .queueFamilyIndex = graphicsQueueFamilyIndex,
+            .queueCount = 1,
+            .pQueuePriorities = &queuePriority,
+        };
     }
 
     Application::~Application()

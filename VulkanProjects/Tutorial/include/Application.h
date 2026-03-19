@@ -21,6 +21,11 @@ namespace Tutorial
         void run();
 
         /**
+         * Vulkanの初期化
+         */
+        void initializeVulkan();
+
+        /**
          * アプリケーションをデストラクト
          * 基本的には不要になった解放に安全なリソースの解放を行う
          */
