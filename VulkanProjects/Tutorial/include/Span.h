@@ -51,6 +51,14 @@ struct Span {
         return elementPtr;
     }
 
+    T* begin() const {
+        return headPtr;
+    }
+
+    T* end() const {
+        return headPtr + maxElementCount;
+    }
+
     /**
      * スタックアロケータを使用して、指定された要素数のSpanを割り当てる
      * 各要素は未初期化の状態で割り当てられる。割り当てられた領域に要素を配置する際は、placement newなどを使用して明示的に要素を初期化する必要がある
