@@ -2,7 +2,7 @@
 // Created by 沖田大河 on 2026/02/14.
 //
 
-#include "VulkanClient.h"
+#include "VulkanInstance.h"
 #include "Logger.h"
 
 #include <iostream>
@@ -11,7 +11,7 @@
 
 namespace Tutorial::Graphics {
 
-    VkInstance VulkanClient::instantiateVulkan() const {
+    VkInstance VulkanInstance::instantiateVulkan() const {
         const auto requiredExtensionCount = _requiredVulkanExtensionsProvider.getRequiredInstanceExtensionCount();
         const auto requiredExtensions = Span<char const*>::stackAlloc(requiredExtensionCount);
         _requiredVulkanExtensionsProvider.getRequiredInstanceExtensionNames(requiredExtensions);
@@ -38,7 +38,7 @@ namespace Tutorial::Graphics {
         return instance;
     }
 
-    char const* const* VulkanClient::getRequiredLayers(uint32_t *pCount) const {
+    char const* const* VulkanInstance::getRequiredLayers(uint32_t *pCount) const {
        if constexpr (!enableValidationLayers) {
             *pCount = 0;
             return nullptr;
@@ -47,7 +47,7 @@ namespace Tutorial::Graphics {
         return validationLayerNames;
     }
 
-    void VulkanClient::validateRequiredLayer(char const* const* requiredLayers, uint32_t count) const {
+    void VulkanInstance::validateRequiredLayer(char const* const* requiredLayers, uint32_t count) const {
         if (requiredLayers == nullptr || count == 0) {
             return;
         }
@@ -68,7 +68,7 @@ namespace Tutorial::Graphics {
         }
     }
 
-    bool VulkanClient::isLayerSupported(const char* layerName, const Span<VkLayerProperties>& actualSupportedLayers) const {
+    bool VulkanInstance::isLayerSupported(const char* layerName, const Span<VkLayerProperties>& actualSupportedLayers) const {
         for (uint32_t i = 0; i < actualSupportedLayers.maxElementCount; ++i) {
             if (const auto actualSupportedLayer = actualSupportedLayers[i]; strcmp(actualSupportedLayer.layerName, layerName) == 0) {
                 Debug::Logger::log("layer:" + std::string(layerName) + " is supported");
@@ -78,7 +78,7 @@ namespace Tutorial::Graphics {
         return false;
     }
 
-    void VulkanClient::validateRequiredExtensions(const Span<char const*>& requiredExtensions) const {
+    void VulkanInstance::validateRequiredExtensions(const Span<char const*>& requiredExtensions) const {
         // 実際にサポートされている拡張機能一覧を取得して、必須の拡張機能がサポートされているかを確認する
         uint32_t supportedExtensionCount = getSupportedExtensionCount();
         const auto supportedExtensions = Span<VkExtensionProperties>::stackAlloc(supportedExtensionCount);
@@ -94,7 +94,7 @@ namespace Tutorial::Graphics {
         }
     }
 
-    uint32_t VulkanClient::getSupportedExtensionCount() const {
+    uint32_t VulkanInstance::getSupportedExtensionCount() const {
         uint32_t extensionCount = 0;
         if (const auto result = vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr); result != VK_SUCCESS) {
             throw std::runtime_error("Failed to enumerate Vulkan instance extensions: " + std::to_string(result));
@@ -102,7 +102,7 @@ namespace Tutorial::Graphics {
         return extensionCount;
     }
 
-    bool VulkanClient::isExtensionSupported(const char* extensionName, const Span<VkExtensionProperties>& actualSupportedExtensions) const {
+    bool VulkanInstance::isExtensionSupported(const char* extensionName, const Span<VkExtensionProperties>& actualSupportedExtensions) const {
         for (uint32_t i = 0; i < actualSupportedExtensions.maxElementCount; ++i) {
             if (const auto actualSupportedExtension = actualSupportedExtensions[i]; strcmp(actualSupportedExtension.extensionName, extensionName) == 0) {
                 Debug::Logger::log("extension:" + std::string(extensionName) + " is supported");
@@ -112,7 +112,25 @@ namespace Tutorial::Graphics {
         return false;
     }
 
-    VulkanClient::~VulkanClient() {
+    uint32_t VulkanInstance::getPhysicalDevicesCount() const {
+        uint32_t physicalDeviceCount = 0;
+        if (const auto resultOfEnumerate = vkEnumeratePhysicalDevices(_instance, &physicalDeviceCount, nullptr); resultOfEnumerate != VK_SUCCESS) {
+            throw std::runtime_error("Failed to enumerate Vulkan physical devices: " + std::to_string(resultOfEnumerate));
+        }
+        return physicalDeviceCount;
+    }
+
+    void VulkanInstance::enumeratePhysicalDevices(const Span<VkPhysicalDevice> &result) const {
+        auto physicalDeviceCount = getPhysicalDevicesCount();
+        if (result.maxElementCount != physicalDeviceCount) {
+            throw std::runtime_error("VulkanInstance::enumeratePhysicalDevices: result span must have a maxElementCount equal to getPhysicalDevicesCount()");
+        }
+        if (const auto resultOfEnumerate = vkEnumeratePhysicalDevices(_instance, &physicalDeviceCount, result.headPtr); resultOfEnumerate != VK_SUCCESS) {
+            throw std::runtime_error("Failed to enumerate Vulkan physical devices: " + std::to_string(resultOfEnumerate));
+        }
+    }
+
+    VulkanInstance::~VulkanInstance() {
         vkDestroyInstance(_instance, nullptr);
     }
 }
