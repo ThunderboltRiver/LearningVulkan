@@ -28,6 +28,18 @@ namespace Tutorial::Graphics {
         other._device = VK_NULL_HANDLE;
     }
 
+    VulkanDeviceQueue VulkanLogicalDevice::getQueue(uint32_t queueFamilyIndex, uint32_t queueIndex) const {
+        VkQueue queue;
+        vkGetDeviceQueue(_device, queueFamilyIndex, queueIndex, &queue);
+        return VulkanDeviceQueue(queue);
+    }
+
+    VkDeviceQueueCreateInfo const* VulkanLogicalDevice::getQueueCreateInfos(uint32_t *pCount) const {
+        *pCount = _deviceCreateInfo.queueCreateInfoCount;
+        return _deviceCreateInfo.pQueueCreateInfos;
+    }
+
+
     VulkanLogicalDevice::~VulkanLogicalDevice() {
         if (_device != VK_NULL_HANDLE) {
             vkDestroyDevice(_device, nullptr);

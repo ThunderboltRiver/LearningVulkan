@@ -44,7 +44,10 @@ namespace Tutorial
         const Graphics::VulkanLogicalDeviceCreationStrategy logicalDeviceCreationStrategy;
         const auto vulkanPhysicalDevice = physicalDeviceSelectionStrategy.selectPhysicalDevice();
         const auto vulkanLogicalDevice = logicalDeviceCreationStrategy.createLogicalDevice(vulkanPhysicalDevice);
-
+        uint32_t count;
+        const auto queueCreateInfos = vulkanLogicalDevice.getQueueCreateInfos(&count);
+        const auto queueFamilyIndex = queueCreateInfos[0].queueFamilyIndex;
+        const auto vulkanDeviceQueue = vulkanLogicalDevice.getQueue(queueFamilyIndex, 0);
 
     }
 

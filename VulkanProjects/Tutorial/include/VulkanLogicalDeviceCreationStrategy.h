@@ -7,6 +7,7 @@
 
 #include <vulkan/vulkan.h>
 
+#include "VulkanLogicalDevice.h"
 #include "VulkanPhysicalDevice.h"
 #include "VulkanPhysicalDeviceExtensionsRequirements.h"
 #include "VulkanPhysicalDeviceFeatureRequirements.h"

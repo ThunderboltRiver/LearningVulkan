@@ -4,6 +4,7 @@
 
 #ifndef TUTORIAL_VULKANPHYSICALDEVICEEXTENSIONSREQUIREMENTS_H
 #define TUTORIAL_VULKANPHYSICALDEVICEEXTENSIONSREQUIREMENTS_H
+#include "IRequiredVulkanExtensionsProvider.h"
 #include "Span.h"
 #include "VulkanPhysicalDevice.h"
 
@@ -31,11 +32,15 @@ namespace Tutorial::Graphics {
          */
         bool isSatisfiedBy(const VulkanPhysicalDevice &physicalDevice) const;
 
+        Span<VkExtensionProperties> getDeviceExtensionProperties(const VulkanPhysicalDevice &physicalDevice) const;
+
+        bool hasVK_KHR_PORTABILITY_SUBSET_EXTENSION_NAME(const VulkanPhysicalDevice &physicalDevice) const;
+
         /**
          * この要件をDevice拡張名称の配列として返す
          * @return この要件をDevice拡張名称の配列として返す
          */
-        [[nodiscard]] Span<const char*> AsVkDeviceExtensionNames() const;
+        [[nodiscard]] Span<const char*> AsVkDeviceExtensionNames(const VulkanPhysicalDevice &physicalDevice) const;
     };
 }
 

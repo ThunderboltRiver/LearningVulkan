@@ -4,8 +4,6 @@
 
 #include "VulkanPhysicalDeviceSelectionStrategy.h"
 
-#include <cstring>
-
 #include "Logger.h"
 
 namespace Tutorial::Graphics {

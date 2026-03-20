@@ -86,7 +86,6 @@ public:
 
         // 占有されている領域のバイト数を更新して、割り当てる領域の先頭へのポインタを返す
         _occupied += requiredBytes;
-        Tutorial::Debug::Logger::log("PlacementStackAllocator: Allocated " + std::to_string(requiredBytes) + " bytes for " + std::to_string(count) + " elements of type " + typeid(T).name() + " with alignment " + std::to_string(alignof(T)) + ". Total occupied bytes: " + std::to_string(_occupied) + "/" + std::to_string(_capacity) + " address:" + std::to_string(paddedTailAddress));
         return AllocResult<T>(reinterpret_cast<T*>(paddedTailAddress), count, requiredBytes);
     }
 

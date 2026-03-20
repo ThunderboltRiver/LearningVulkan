@@ -7,8 +7,6 @@
 
 #include <vulkan/vulkan.h>
 
-#include "VulkanLogicalDevice.h"
-
 namespace Tutorial::Graphics {
 
     /**
@@ -17,10 +15,10 @@ namespace Tutorial::Graphics {
     class VulkanPhysicalDevice {
 
         // 物理デバイスのハンドル
-        const VkPhysicalDevice& _physicalDevice;
+        VkPhysicalDevice _physicalDevice;
 
     public:
-        explicit VulkanPhysicalDevice(const VkPhysicalDevice& physicalDevice) : _physicalDevice(physicalDevice) {}
+        explicit VulkanPhysicalDevice(VkPhysicalDevice physicalDevice) : _physicalDevice(physicalDevice) {}
 
         void getProperties2(VkPhysicalDeviceProperties2& properties) const;
 

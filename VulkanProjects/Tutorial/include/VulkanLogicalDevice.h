@@ -4,6 +4,9 @@
 
 #ifndef TUTORIAL_VULKAN_LOGICAL_DEVICE_H
 #define TUTORIAL_VULKAN_LOGICAL_DEVICE_H
+#include <stdexcept>
+
+#include "VulkanDeviceQueue.h"
 #include "VulkanPhysicalDevice.h"
 
 namespace Tutorial::Graphics {
@@ -28,6 +31,10 @@ namespace Tutorial::Graphics {
 
         // ムーブコンストラクタ
         VulkanLogicalDevice(VulkanLogicalDevice&& other) noexcept;
+
+        VulkanDeviceQueue getQueue(uint32_t queueFamilyIndex, uint32_t queueIndex) const;
+
+        VkDeviceQueueCreateInfo const* getQueueCreateInfos(uint32_t *pCount) const;
 
         ~VulkanLogicalDevice();
     };

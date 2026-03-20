@@ -39,13 +39,35 @@ namespace Tutorial::Graphics {
         return true;
     }
 
-    Span<char const *> VulkanPhysicalDeviceExtensionsRequirements::AsVkDeviceExtensionNames() const {
-        uint32_t deviceExtensionCount = std::size(requiredDeviceExtensionNames);
-        auto result = Span<char const *>::stackAlloc(deviceExtensionCount);
-        uint32_t index = 0;
-        for (auto& extensionName : result) {
-            extensionName = requiredDeviceExtensionNames[index];
-            ++index;
+    Span<VkExtensionProperties> VulkanPhysicalDeviceExtensionsRequirements::getDeviceExtensionProperties(const VulkanPhysicalDevice &physicalDevice) const {
+        uint32_t deviceExtensionCount = 0;
+        physicalDevice.enumerateExtensionProperties(nullptr, &deviceExtensionCount, nullptr);
+        auto supportedDeviceExtensionProperties = Span<VkExtensionProperties>::stackAlloc(deviceExtensionCount);
+        physicalDevice.enumerateExtensionProperties(nullptr, &deviceExtensionCount, supportedDeviceExtensionProperties.getHeadPtr());
+        return supportedDeviceExtensionProperties;
+    }
+
+    bool VulkanPhysicalDeviceExtensionsRequirements::hasVK_KHR_PORTABILITY_SUBSET_EXTENSION_NAME(const VulkanPhysicalDevice &physicalDevice) const {
+        const auto deviceExtensionProperties = getDeviceExtensionProperties(physicalDevice);
+        for (auto deviceExtensionProperty : deviceExtensionProperties) {
+            if (strcmp(deviceExtensionProperty.extensionName, "VK_KHR_portability_subset") == 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    Span<char const *> VulkanPhysicalDeviceExtensionsRequirements::AsVkDeviceExtensionNames(const VulkanPhysicalDevice &physicalDevice) const {
+        uint32_t requiredExtensionCount = std::size(requiredDeviceExtensionNames);
+        if (hasVK_KHR_PORTABILITY_SUBSET_EXTENSION_NAME(physicalDevice)) {
+            ++requiredExtensionCount; // VK_KHR_portability_subsetの分を加える
+        }
+        auto result = Span<char const *>::stackAlloc(requiredExtensionCount);
+        for (auto i = 0; i <  std::size(requiredDeviceExtensionNames); ++i) {
+            *(result.pointerAt(i)) = requiredDeviceExtensionNames[i];
+        }
+        if (hasVK_KHR_PORTABILITY_SUBSET_EXTENSION_NAME(physicalDevice)) {
+            *(result.pointerAt(requiredExtensionCount - 1)) = "VK_KHR_portability_subset";
         }
         return result;
     }
