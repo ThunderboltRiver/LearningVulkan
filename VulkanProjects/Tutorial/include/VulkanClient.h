@@ -24,6 +24,9 @@ namespace Tutorial::Graphics {
         constexpr static bool enableValidationLayers = false;
 #endif
         VkInstance _instance;
+#ifndef NDEBUG
+        VkDebugUtilsMessengerEXT _debugMessenger{};
+#endif
 
         [[nodiscard]] VkInstance instantiateVulkan() const;
 
@@ -39,11 +42,26 @@ namespace Tutorial::Graphics {
 
         bool isExtensionSupported(const char *extensionName, const Span<VkExtensionProperties> &actualSupportedExtensions) const;
 
+#ifndef NDEBUG
+        [[nodiscard]] bool checkValidationLayerSupport() const;
+        void setupDebugMessenger();
+
+        static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
+            VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
+            VkDebugUtilsMessageTypeFlagsEXT messageType,
+            const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
+            void* pUserData);
+#endif
+
     public:
         VulkanClient(const VkApplicationInfo& appInfo, const IRequiredVulkanExtensionsProvider& requiredVulkanExtensionsProvider):
         _appInfo(appInfo),
         _requiredVulkanExtensionsProvider(requiredVulkanExtensionsProvider),
-        _instance(instantiateVulkan()) {}
+        _instance(instantiateVulkan()) {
+#ifndef NDEBUG
+            setupDebugMessenger();
+#endif
+        }
 
         // vkInstanceの所有権を持つのは一つのインスタンスのみにするためコピー禁止
         VulkanClient(const VulkanClient&) = delete;
