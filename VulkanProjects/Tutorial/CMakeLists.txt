@@ -66,6 +66,8 @@ add_executable(Tutorial src/main.cpp
         src/VulkanPhysicalDeviceFeatureRequirements.cpp
         src/VulkanPhysicalDeviceExtensionsRequirements.cpp
         src/VulkanPhysicalDeviceAPIVersionRequirements.cpp
+        src/VulkanLogicalDevice.cpp
+        src/VulkanLogicalDeviceCreationStrategy.cpp
 )
 
 # Tutorialターゲットのヘッダをインポートする

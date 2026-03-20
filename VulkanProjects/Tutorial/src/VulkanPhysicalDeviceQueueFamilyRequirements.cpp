@@ -4,6 +4,8 @@
 
 #include "VulkanPhysicalDeviceQueueFamilyRequirements.h"
 
+#include "Logger.h"
+
 namespace Tutorial::Graphics {
 
     bool VulkanPhysicalDeviceQueueFamilyRequirements::findSatisfiedQueueFamilyIndex(const VulkanPhysicalDevice &physicalDevice,
@@ -27,12 +29,13 @@ namespace Tutorial::Graphics {
     Span<VkQueueFamilyProperties2> VulkanPhysicalDeviceQueueFamilyRequirements::getQueueFamilyProperties(const VulkanPhysicalDevice &physicalDevice) const {
         // 物理デバイスがサポートするキューファミリーのプロパティの配列を取得する
         uint32_t queueFamilyPropertyCount = 0;
-        physicalDevice.getQueueFamilyProperties2(&queueFamilyPropertyCount, nullptr);
+        physicalDevice.getQueueFamilyProperties2(&queueFamilyPropertyCount, VK_NULL_HANDLE);
         auto queueFamilies = Span<VkQueueFamilyProperties2>::stackAlloc(queueFamilyPropertyCount);
         for (auto& queueFamilyProperty : queueFamilies) {
-            queueFamilyProperty.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2;
-            queueFamilyProperty.pNext = nullptr;
+            queueFamilyProperty.sType = VK_STRUCTURE_TYPE_QUEUE_FAMILY_PROPERTIES_2;
+            queueFamilyProperty.pNext = VK_NULL_HANDLE;
         }
+        Debug::Logger::log("Physical device supports " + std::to_string(queueFamilyPropertyCount) + "queue families pointer: " + std::to_string(reinterpret_cast<uintptr_t>(queueFamilies.getHeadPtr())));
         physicalDevice.getQueueFamilyProperties2(&queueFamilyPropertyCount, queueFamilies.getHeadPtr());
         return queueFamilies;
     }

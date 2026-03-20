@@ -7,6 +7,8 @@
 
 #include <vulkan/vulkan.h>
 
+#include "VulkanLogicalDevice.h"
+
 namespace Tutorial::Graphics {
 
     /**
@@ -27,6 +29,9 @@ namespace Tutorial::Graphics {
         void enumerateExtensionProperties(const char* pLayerName, uint32_t* pPropertyCount, VkExtensionProperties* pProperties) const;
 
         void getFeatures2(VkPhysicalDeviceFeatures2& features) const;
+
+        VkResult createDevice(const VkDeviceCreateInfo &deviceCreateInfo, const VkAllocationCallbacks *pAllocator,
+                              VkDevice *pLogicalDevice) const;
     };
 } // Graphics
 

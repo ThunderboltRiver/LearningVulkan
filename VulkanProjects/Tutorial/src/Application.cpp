@@ -12,6 +12,8 @@
 #include "VulkanPhysicalDeviceSelectionStrategy.h"
 #include "Application.h"
 
+#include "VulkanLogicalDeviceCreationStrategy.h"
+
 namespace Tutorial
 {
     Application::Application() = default;
@@ -39,19 +41,11 @@ namespace Tutorial
 
         const Graphics::VulkanInstance vulkanInstance(appInfo, extensionsProvider);
         const Graphics::VulkanPhysicalDeviceSelectionStrategy physicalDeviceSelectionStrategy(vulkanInstance);
+        const Graphics::VulkanLogicalDeviceCreationStrategy logicalDeviceCreationStrategy;
         const auto vulkanPhysicalDevice = physicalDeviceSelectionStrategy.selectPhysicalDevice();
-        const Graphics::VulkanPhysicalDeviceQueueFamilyRequirements queueFamilyRequirements;
-        uint32_t graphicsQueueFamilyIndex;
-        if (!queueFamilyRequirements.findSatisfiedQueueFamilyIndex(vulkanPhysicalDevice, &graphicsQueueFamilyIndex)) {
-            throw std::runtime_error("Failed to find a queue family that supports graphics commands");
-        }
-        float queuePriority = 0.5f;
-        VkDeviceQueueCreateInfo queueCreateInfo = {
-            .sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
-            .queueFamilyIndex = graphicsQueueFamilyIndex,
-            .queueCount = 1,
-            .pQueuePriorities = &queuePriority,
-        };
+        const auto vulkanLogicalDevice = logicalDeviceCreationStrategy.createLogicalDevice(vulkanPhysicalDevice);
+
+
     }
 
     Application::~Application()

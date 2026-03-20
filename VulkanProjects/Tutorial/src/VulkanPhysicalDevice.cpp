@@ -21,4 +21,7 @@ namespace Tutorial::Graphics {
         vkGetPhysicalDeviceFeatures2(_physicalDevice, &features);
     }
 
+    VkResult VulkanPhysicalDevice::createDevice(const VkDeviceCreateInfo &deviceCreateInfo, const VkAllocationCallbacks *pAllocator, VkDevice *pLogicalDevice) const {
+        return vkCreateDevice(_physicalDevice, &deviceCreateInfo, pAllocator, pLogicalDevice);
+    }
 } // Graphics

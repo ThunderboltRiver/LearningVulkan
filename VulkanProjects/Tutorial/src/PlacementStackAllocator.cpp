@@ -21,6 +21,7 @@ void PlacementStackAllocator::dealloc(const std::size_t allocatedBytes) {
         throw std::runtime_error("PlacementStackAllocator: Cannot deallocate more bytes than currently occupied");
     }
     _occupied -= allocatedBytes;
+    Tutorial::Debug::Logger::log("dealloc" + std::to_string(allocatedBytes) + " bytes, now occupied: " + std::to_string(_occupied) + " bytes" + " tail address: " + std::to_string(reinterpret_cast<uintptr_t>(_stackBottomElementPtr + _occupied)));
 }
 
 PlacementStackAllocator::~PlacementStackAllocator() {
