@@ -76,8 +76,23 @@ struct Span {
     Span& operator=(const Span& other) = delete;
     Span(const Span& other) = delete;
 
-    // ムーブ代入は禁止
-    Span& operator=(Span&& other) = delete;
+    Span& operator=(Span&& other) noexcept {
+        if (this != &other) {
+            // 既にこのインスタンスが所有している領域を解放する
+            this->~Span();
+
+            // ムーブ元からムーブ先に所有権を移動する
+            _headPtr = other._headPtr;
+            _maxElementCount = other._maxElementCount;
+            _allocatedBytes = other._allocatedBytes;
+
+            // ムーブ元を空にする。これにより、ムーブ元のデストラクタは何も解放しない
+            other._headPtr = nullptr;
+            other._maxElementCount = 0;
+            other._allocatedBytes = 0;
+        }
+        return *this;
+    }
 
     /**
      * ムーブコンストラクタ。所有権をムーブ元からムーブ先に移動する。

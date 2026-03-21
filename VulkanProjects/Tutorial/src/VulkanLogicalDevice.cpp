@@ -5,6 +5,9 @@
 #include "../include/VulkanLogicalDevice.h"
 
 #include <stdexcept>
+#include <new>
+
+#include "Span.h"
 
 namespace Tutorial::Graphics {
     VkDevice VulkanLogicalDevice::initialize(const VulkanPhysicalDevice &physicalDevice, const VkDeviceCreateInfo &deviceCreateInfo) const {
@@ -18,13 +21,13 @@ namespace Tutorial::Graphics {
     VulkanLogicalDevice::VulkanLogicalDevice(const VulkanPhysicalDevice &physicalDevice, const VkDeviceCreateInfo &deviceCreateInfo) noexcept:
         _device(initialize(physicalDevice, deviceCreateInfo)),
         _physicalDevice(physicalDevice),
-        _deviceCreateInfo(deviceCreateInfo) {
+        _deviceQueueCreateInfos(getQueueCreateInfosFromDeviceInfo(deviceCreateInfo)) {
     }
 
     VulkanLogicalDevice::VulkanLogicalDevice(VulkanLogicalDevice &&other) noexcept :
         _device(other._device),
         _physicalDevice(other._physicalDevice),
-        _deviceCreateInfo(other._deviceCreateInfo) {
+        _deviceQueueCreateInfos(std::move(other._deviceQueueCreateInfos )) {
         other._device = VK_NULL_HANDLE;
     }
 
@@ -34,11 +37,23 @@ namespace Tutorial::Graphics {
         return VulkanDeviceQueue(queue);
     }
 
-    VkDeviceQueueCreateInfo const* VulkanLogicalDevice::getQueueCreateInfos(uint32_t *pCount) const {
-        *pCount = _deviceCreateInfo.queueCreateInfoCount;
-        return _deviceCreateInfo.pQueueCreateInfos;
+    Span<VkDeviceQueueCreateInfo const> VulkanLogicalDevice::getQueueCreateInfosFromDeviceInfo(const VkDeviceCreateInfo &deviceCreateInfo) const {
+        auto result = Span<VkDeviceQueueCreateInfo const>::stackAlloc(deviceCreateInfo.queueCreateInfoCount);
+        for (uint32_t i = 0; i < deviceCreateInfo.queueCreateInfoCount; ++i) {
+            auto pElement = (void*) result.pointerAt(i);
+            new (pElement) VkDeviceQueueCreateInfo(deviceCreateInfo.pQueueCreateInfos[i]);
+        }
+        return result;
     }
 
+    Span<uint32_t const> VulkanLogicalDevice::getQueueFamilyIndices() const {
+        auto result = Span<uint32_t const>::stackAlloc(_deviceQueueCreateInfos.getMaxElementCount());
+        for (uint32_t i = 0; i < _deviceQueueCreateInfos.getMaxElementCount(); ++i) {
+            auto pElement = (void*) result.pointerAt(i);
+            new (pElement) uint32_t(_deviceQueueCreateInfos[i].queueFamilyIndex);
+        }
+        return result;
+    }
 
     VulkanLogicalDevice::~VulkanLogicalDevice() {
         if (_device != VK_NULL_HANDLE) {

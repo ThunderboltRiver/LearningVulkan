@@ -9,8 +9,6 @@
 #include <cstdint>
 #include <stdexcept>
 
-#include "Logger.h"
-
 constexpr std::size_t STACK_ALLOCATOR_12_MB_CAPACITY = 12 * 1024 * 1024;
 
 class PlacementStackAllocator {

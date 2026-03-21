@@ -6,6 +6,7 @@
 #define TUTORIAL_VULKAN_LOGICAL_DEVICE_H
 #include <stdexcept>
 
+#include "Span.h"
 #include "VulkanDeviceQueue.h"
 #include "VulkanPhysicalDevice.h"
 
@@ -17,10 +18,12 @@ namespace Tutorial::Graphics {
      */
     class VulkanLogicalDevice {
         VkDevice _device = VK_NULL_HANDLE;
-        const VulkanPhysicalDevice& _physicalDevice;
-        const VkDeviceCreateInfo& _deviceCreateInfo;
+        const VulkanPhysicalDevice _physicalDevice;
+        Span<VkDeviceQueueCreateInfo const> _deviceQueueCreateInfos;
 
         [[nodiscard]] VkDevice initialize(const VulkanPhysicalDevice& physicalDevice, const VkDeviceCreateInfo& deviceCreateInfo) const;
+
+        [[nodiscard]] Span<VkDeviceQueueCreateInfo const> getQueueCreateInfosFromDeviceInfo(const VkDeviceCreateInfo &deviceCreateInfo) const;
 
     public:
         VulkanLogicalDevice(const VulkanPhysicalDevice& physicalDevice, const VkDeviceCreateInfo& deviceCreateInfo) noexcept;
@@ -32,9 +35,9 @@ namespace Tutorial::Graphics {
         // ムーブコンストラクタ
         VulkanLogicalDevice(VulkanLogicalDevice&& other) noexcept;
 
-        VulkanDeviceQueue getQueue(uint32_t queueFamilyIndex, uint32_t queueIndex) const;
+        [[nodiscard]] VulkanDeviceQueue getQueue(uint32_t queueFamilyIndex, uint32_t queueIndex) const;
 
-        VkDeviceQueueCreateInfo const* getQueueCreateInfos(uint32_t *pCount) const;
+        [[nodiscard]] Span<uint32_t const> getQueueFamilyIndices() const;
 
         ~VulkanLogicalDevice();
     };

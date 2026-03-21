@@ -30,12 +30,7 @@ namespace Tutorial::Graphics {
             const VulkanPhysicalDeviceQueueFamilyRequirements& queueFamilyRequirements,
             const VulkanPhysicalDeviceFeatureRequirements& deviceFeatureRequirements,
             const VulkanPhysicalDeviceExtensionsRequirements& deviceExtensionRequirements
-        ) :
-        _queueFamilyRequirements(queueFamilyRequirements),
-        _deviceFeatureRequirements(deviceFeatureRequirements),
-        _deviceExtensionRequirements(deviceExtensionRequirements) {
-
-        }
+        );
 
         VulkanLogicalDeviceCreationStrategy() = default;
 

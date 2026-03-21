@@ -5,6 +5,16 @@
 #include "VulkanLogicalDeviceCreationStrategy.h"
 
 namespace Tutorial::Graphics {
+    VulkanLogicalDeviceCreationStrategy::VulkanLogicalDeviceCreationStrategy(
+        const VulkanPhysicalDeviceQueueFamilyRequirements &queueFamilyRequirements,
+        const VulkanPhysicalDeviceFeatureRequirements &deviceFeatureRequirements,
+        const VulkanPhysicalDeviceExtensionsRequirements &deviceExtensionRequirements):
+        _queueFamilyRequirements(queueFamilyRequirements),
+        _deviceFeatureRequirements(deviceFeatureRequirements),
+        _deviceExtensionRequirements(deviceExtensionRequirements) {
+
+    }
+
     VulkanLogicalDevice VulkanLogicalDeviceCreationStrategy::createLogicalDevice(const VulkanPhysicalDevice &physicalDevice) const {
         uint32_t graphicsQueueFamilyIndex;
         if (!_queueFamilyRequirements.findSatisfiedQueueFamilyIndex(physicalDevice, &graphicsQueueFamilyIndex)) {
@@ -26,6 +36,7 @@ namespace Tutorial::Graphics {
             .enabledExtensionCount = deviceExtensions.getMaxElementCount(),
             .ppEnabledExtensionNames = deviceExtensions.getHeadPtr(),
         };
+
         VulkanLogicalDevice logicalDevice(physicalDevice, deviceCreateInfo);
         return logicalDevice;
     }
