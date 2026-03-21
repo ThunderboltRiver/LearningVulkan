@@ -55,7 +55,7 @@ namespace Tutorial::Graphics {
         [[nodiscard]] uint32_t getPhysicalDevicesCount() const;
 
         // 物理デバイスのハンドルをresultに格納する。resultはgetPhysicalDevicesCount()で返される数の要素を持つSpanでなければならない
-        void enumeratePhysicalDevices(const Span<VkPhysicalDevice> &result) const;
+        void enumeratePhysicalDevices(Span<VkPhysicalDevice> &result) const;
 
         ~VulkanInstance();
     };

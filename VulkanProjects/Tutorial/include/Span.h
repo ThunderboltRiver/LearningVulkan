@@ -67,6 +67,36 @@ struct Span {
         ++emptyIndex;
     }
 
+    /**
+     * 外部（Vulkan APIなど）がgetHeadPtr()経由でバッファに直接書き込んだ後に呼び出す。
+     * emptyIndexを指定された要素数に設定する。
+     * @param count 書き込まれた要素数。省略した場合はmaxElementCount（全要素が書き込まれたとみなす）
+     */
+    void markFilled(uint32_t count) {
+        if (count > _maxElementCount) {
+            throw std::out_of_range("Span::markFilled: count exceeds maxElementCount");
+        }
+        emptyIndex = count;
+    }
+
+    void markFilled() {
+        emptyIndex = _maxElementCount;
+    }
+
+    /**
+     * 指定されたインデックスが指す実体への書き込み可能なポインタを返す。
+     * Addを使わず、直接要素を初期化する場合に使用する。
+     * emptyIndexは更新されないため、呼び出し後にmarkFilledを呼ぶこと。
+     * @param index インデックス
+     * @return 指定されたインデックスが指す実体への書き込み可能なポインタ
+     */
+    StorageType* mutablePointerAt(const uint32_t index) {
+        if (index >= _maxElementCount) {
+            throw std::out_of_range("Span: index out of range");
+        }
+        return _headPtr + index;
+    }
+
     T* begin() const {
         return reinterpret_cast<T*>(_headPtr);
     }
@@ -99,11 +129,13 @@ struct Span {
             _headPtr = other._headPtr;
             _maxElementCount = other._maxElementCount;
             _allocatedBytes = other._allocatedBytes;
+            emptyIndex = other.emptyIndex;
 
             // ムーブ元を空にする。これにより、ムーブ元のデストラクタは何も解放しない
             other._headPtr = nullptr;
             other._maxElementCount = 0;
             other._allocatedBytes = 0;
+            other.emptyIndex = 0;
         }
         return *this;
     }
@@ -115,11 +147,13 @@ struct Span {
     Span(Span&& other) noexcept
         : _headPtr(other._headPtr),
           _maxElementCount(other._maxElementCount),
+          emptyIndex(other.emptyIndex),
           _allocatedBytes(other._allocatedBytes) {
         // ムーブ元を空にする。これにより、ムーブ元のデストラクタは何も解放しない
         other._headPtr = nullptr;
         other._maxElementCount = 0;
         other._allocatedBytes = 0;
+        other.emptyIndex = 0;
     }
 
     ~Span() {

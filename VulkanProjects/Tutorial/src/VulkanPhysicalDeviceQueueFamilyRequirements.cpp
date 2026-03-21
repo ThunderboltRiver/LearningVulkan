@@ -31,12 +31,14 @@ namespace Tutorial::Graphics {
         uint32_t queueFamilyPropertyCount = 0;
         physicalDevice.getQueueFamilyProperties2(&queueFamilyPropertyCount, VK_NULL_HANDLE);
         auto queueFamilies = Span<VkQueueFamilyProperties2>::stackAlloc(queueFamilyPropertyCount);
-        for (auto& queueFamilyProperty : queueFamilies) {
-            queueFamilyProperty.sType = VK_STRUCTURE_TYPE_QUEUE_FAMILY_PROPERTIES_2;
-            queueFamilyProperty.pNext = VK_NULL_HANDLE;
+        for (uint32_t i = 0; i < queueFamilyPropertyCount; ++i) {
+            auto* prop = queueFamilies.mutablePointerAt(i);
+            prop->sType = VK_STRUCTURE_TYPE_QUEUE_FAMILY_PROPERTIES_2;
+            prop->pNext = VK_NULL_HANDLE;
         }
         Debug::Logger::log("Physical device supports " + std::to_string(queueFamilyPropertyCount) + "queue families pointer: " + std::to_string(reinterpret_cast<uintptr_t>(queueFamilies.getHeadPtr())));
         physicalDevice.getQueueFamilyProperties2(&queueFamilyPropertyCount, queueFamilies.getHeadPtr());
+        queueFamilies.markFilled();
         return queueFamilies;
     }
 } // Graphics

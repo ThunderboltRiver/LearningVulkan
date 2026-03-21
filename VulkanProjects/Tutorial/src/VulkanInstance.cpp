@@ -56,10 +56,11 @@ namespace Tutorial::Graphics {
         if (vkEnumerateInstanceLayerProperties(&supportedLayerCount, nullptr) != VK_SUCCESS) {
             throw std::runtime_error("Failed to enumerate Vulkan instance layers");
         }
-        const auto supportedLayers = Span<VkLayerProperties>::stackAlloc(supportedLayerCount);
+        auto supportedLayers = Span<VkLayerProperties>::stackAlloc(supportedLayerCount);
         if (vkEnumerateInstanceLayerProperties(&supportedLayerCount, supportedLayers.getHeadPtr()) != VK_SUCCESS) {
             throw std::runtime_error("Failed to enumerate Vulkan instance layers");
         }
+        supportedLayers.markFilled();
         // 必須のレイヤーがサポートされているレイヤーの中に存在しないなら例外をスローする
         for (uint32_t i = 0; i < count; ++i) {
             if (const auto requiredLayerName = requiredLayers[i]; !isLayerSupported(requiredLayerName, supportedLayers)) {
@@ -81,10 +82,11 @@ namespace Tutorial::Graphics {
     void VulkanInstance::validateRequiredExtensions(const Span<char const*>& requiredExtensions) const {
         // 実際にサポートされている拡張機能一覧を取得して、必須の拡張機能がサポートされているかを確認する
         uint32_t supportedExtensionCount = getSupportedExtensionCount();
-        const auto supportedExtensions = Span<VkExtensionProperties>::stackAlloc(supportedExtensionCount);
+        auto supportedExtensions = Span<VkExtensionProperties>::stackAlloc(supportedExtensionCount);
         if (const auto result = vkEnumerateInstanceExtensionProperties(nullptr, &supportedExtensionCount, supportedExtensions.getHeadPtr()); result != VK_SUCCESS) {
             throw std::runtime_error("Failed to enumerate Vulkan instance extensions: " + std::to_string(result));
         }
+        supportedExtensions.markFilled();
         // 必須の拡張機能がサポートされている拡張機能の中に存在しないなら例外をスローする
         for (uint32_t i = 0; i < requiredExtensions.getMaxElementCount(); ++i) {
             const auto requiredExtension = requiredExtensions[i];
@@ -120,7 +122,7 @@ namespace Tutorial::Graphics {
         return physicalDeviceCount;
     }
 
-    void VulkanInstance::enumeratePhysicalDevices(const Span<VkPhysicalDevice> &result) const {
+    void VulkanInstance::enumeratePhysicalDevices(Span<VkPhysicalDevice> &result) const {
         auto physicalDeviceCount = getPhysicalDevicesCount();
         if (result.getMaxElementCount() != physicalDeviceCount) {
             throw std::runtime_error("VulkanInstance::enumeratePhysicalDevices: result span must have a maxElementCount equal to getPhysicalDevicesCount()");
@@ -128,6 +130,7 @@ namespace Tutorial::Graphics {
         if (const auto resultOfEnumerate = vkEnumeratePhysicalDevices(_instance, &physicalDeviceCount, result.getHeadPtr()); resultOfEnumerate != VK_SUCCESS) {
             throw std::runtime_error("Failed to enumerate Vulkan physical devices: " + std::to_string(resultOfEnumerate));
         }
+        result.markFilled();
     }
 
     VulkanInstance::~VulkanInstance() {

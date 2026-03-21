@@ -13,7 +13,7 @@ namespace Tutorial::Graphics {
         if (physicalDeviceCount == 0) {
             throw std::runtime_error("Failed to find GPUs with Vulkan support");
         }
-        const auto physicalDevices = Span<VkPhysicalDevice>::stackAlloc(physicalDeviceCount);
+        auto physicalDevices = Span<VkPhysicalDevice>::stackAlloc(physicalDeviceCount);
         _vulkanInstance.enumeratePhysicalDevices(physicalDevices);
 
         for (const auto& physicalDevice : physicalDevices) {

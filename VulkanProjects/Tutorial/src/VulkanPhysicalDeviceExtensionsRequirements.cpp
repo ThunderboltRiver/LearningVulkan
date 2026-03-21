@@ -27,8 +27,9 @@ namespace Tutorial::Graphics {
         // 実際に物理デバイスがサポートするデバイス拡張機能の配列を取得する
         uint32_t deviceExtensionCount = 0;
         physicalDevice.enumerateExtensionProperties(nullptr, &deviceExtensionCount, nullptr);
-        const auto supportedDeviceExtensionProperties = Span<VkExtensionProperties>::stackAlloc(deviceExtensionCount);
+        auto supportedDeviceExtensionProperties = Span<VkExtensionProperties>::stackAlloc(deviceExtensionCount);
         physicalDevice.enumerateExtensionProperties(nullptr, &deviceExtensionCount, supportedDeviceExtensionProperties.getHeadPtr());
+        supportedDeviceExtensionProperties.markFilled();
 
         // サポートが必要なデバイス拡張機能すべてが、物理デバイスがサポートするデバイス拡張機能の中に存在するかを確認する
         for (const auto& requiredDeviceExtensionName : requiredDeviceExtensionNames) {
@@ -44,6 +45,7 @@ namespace Tutorial::Graphics {
         physicalDevice.enumerateExtensionProperties(nullptr, &deviceExtensionCount, nullptr);
         auto supportedDeviceExtensionProperties = Span<VkExtensionProperties>::stackAlloc(deviceExtensionCount);
         physicalDevice.enumerateExtensionProperties(nullptr, &deviceExtensionCount, supportedDeviceExtensionProperties.getHeadPtr());
+        supportedDeviceExtensionProperties.markFilled();
         return supportedDeviceExtensionProperties;
     }
 
