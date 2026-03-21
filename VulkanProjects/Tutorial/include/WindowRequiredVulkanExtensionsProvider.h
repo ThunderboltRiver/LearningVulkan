@@ -18,7 +18,7 @@ namespace Tutorial::WindowHelper {
 
         [[nodiscard]] uint32_t getRequiredInstanceExtensionCount() const override;
 
-        void getRequiredInstanceExtensionNames(const Span<char const*>& result) const override;
+        void getRequiredInstanceExtensionNames(Span<char const*>& result) const override;
 
         [[nodiscard]] VkInstanceCreateFlags getRequiredVulkanInstanceCreateFlagBits() const override;
     };

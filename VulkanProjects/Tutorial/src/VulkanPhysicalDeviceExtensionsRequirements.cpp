@@ -63,11 +63,11 @@ namespace Tutorial::Graphics {
             ++requiredExtensionCount; // VK_KHR_portability_subsetの分を加える
         }
         auto result = Span<char const *>::stackAlloc(requiredExtensionCount);
-        for (auto i = 0; i <  std::size(requiredDeviceExtensionNames); ++i) {
-            *(result.pointerAt(i)) = requiredDeviceExtensionNames[i];
+        for (auto requiredDeviceExtensionName : requiredDeviceExtensionNames) {
+            result.Add(requiredDeviceExtensionName);
         }
         if (hasVK_KHR_PORTABILITY_SUBSET_EXTENSION_NAME(physicalDevice)) {
-            *(result.pointerAt(requiredExtensionCount - 1)) = "VK_KHR_portability_subset";
+            result.Add("VK_KHR_portability_subset");
         }
         return result;
     }

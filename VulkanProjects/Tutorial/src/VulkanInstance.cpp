@@ -13,7 +13,7 @@ namespace Tutorial::Graphics {
 
     VkInstance VulkanInstance::instantiateVulkan() const {
         const auto requiredExtensionCount = _requiredVulkanExtensionsProvider.getRequiredInstanceExtensionCount();
-        const auto requiredExtensions = Span<char const*>::stackAlloc(requiredExtensionCount);
+        auto requiredExtensions = Span<char const*>::stackAlloc(requiredExtensionCount);
         _requiredVulkanExtensionsProvider.getRequiredInstanceExtensionNames(requiredExtensions);
 
         uint32_t requiredLayerCount = 0;

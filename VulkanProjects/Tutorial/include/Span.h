@@ -15,11 +15,13 @@
 template<typename T>
 struct Span {
 
+    using StorageType = std::remove_const_t<T>;
+
     /**
      * 先頭のメモリアドレスへのポインタを取得する
      * @return 先頭のメモリアドレスへのポインタ
      */
-    [[nodiscard]] T* getHeadPtr() const { return _headPtr; }
+    [[nodiscard]] T* getHeadPtr() const { return reinterpret_cast<T*>(_headPtr); }
 
     /**
      * この範囲に格納できる最大要素数を取得する
@@ -45,20 +47,32 @@ struct Span {
      * @param index インデックス
      * @return 指定されたインデックスが指す実体へのポインタ
      */
-    T* pointerAt(const uint32_t index) const {
+    const T* pointerAt(const uint32_t index) const {
         if (index >= _maxElementCount) {
             throw std::out_of_range("Span: index out of range");
         }
         auto elementPtr = _headPtr + index;
-        return elementPtr;
+        return reinterpret_cast<T*>(elementPtr);
+    }
+
+    void Add(const T& content) {
+        if (_maxElementCount == 0) {
+            throw std::runtime_error("Span: cannot add element to a span with maxElementCount of 0");
+        }
+        if (emptyIndex >= _maxElementCount) {
+            throw std::runtime_error("Span: cannot add element to a span that is already full");
+        }
+        auto elementPtr = _headPtr + emptyIndex;
+        new (elementPtr) StorageType(content);
+        ++emptyIndex;
     }
 
     T* begin() const {
-        return _headPtr;
+        return reinterpret_cast<T*>(_headPtr);
     }
 
     T* end() const {
-        return _headPtr + _maxElementCount;
+        return reinterpret_cast<T*>(_headPtr + _maxElementCount);
     }
 
     /**
@@ -68,7 +82,7 @@ struct Span {
      * @return 割り当てられたSpan
      */
     static Span stackAlloc(const uint32_t count) {
-        const auto allocResult = SpanAllocator::getAllocator()->stackAlloc<T>(count);
+        const auto allocResult = SpanAllocator::getAllocator()->stackAlloc<StorageType>(count);
         return Span(allocResult);
     }
 
@@ -127,7 +141,7 @@ private:
     /**
      * 先頭のメモリアドレスへのポインタ
      */
-    T* _headPtr;
+    StorageType* _headPtr;
 
     /**
      * この範囲に格納できる最大要素数
@@ -135,12 +149,17 @@ private:
     uint32_t _maxElementCount;
 
     /**
+     * まだ要素が配置されていないインデックス。Addなどで要素を配置する際に使用する
+     */
+    uint32_t emptyIndex = 0;
+
+    /**
      * スタックアロケータから割り当てられた領域のバイト数。解放の際に必要
      */
     size_t _allocatedBytes;
 
     // stackAlloc経由でしかインスタンス化できないようにするため、コンストラクタはprivateにする
-    explicit Span(PlacementStackAllocator::AllocResult<T> allocResult):
+    explicit Span(PlacementStackAllocator::AllocResult<StorageType> allocResult):
         _headPtr(allocResult.headPtr),
         _maxElementCount(allocResult.count),
         _allocatedBytes(allocResult.allocatedBytes) {

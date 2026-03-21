@@ -27,7 +27,7 @@ namespace Tutorial::Graphics {
          * サポートされる必要のあるInstance-拡張機能の名称一覧を取得する
          * @param result サポートされる必要のあるInstance-拡張機能の名称を格納するためのchar const*型の配列へのSpan
          */
-        virtual void getRequiredInstanceExtensionNames(const Span<char const*>& result) const = 0;
+        virtual void getRequiredInstanceExtensionNames(Span<char const*>& result) const = 0;
 
         /**
          * Vulkanインスタンスの作成に必要なフラグビットを取得する

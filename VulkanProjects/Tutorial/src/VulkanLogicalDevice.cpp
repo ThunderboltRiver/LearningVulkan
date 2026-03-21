@@ -40,8 +40,7 @@ namespace Tutorial::Graphics {
     Span<VkDeviceQueueCreateInfo const> VulkanLogicalDevice::getQueueCreateInfosFromDeviceInfo(const VkDeviceCreateInfo &deviceCreateInfo) const {
         auto result = Span<VkDeviceQueueCreateInfo const>::stackAlloc(deviceCreateInfo.queueCreateInfoCount);
         for (uint32_t i = 0; i < deviceCreateInfo.queueCreateInfoCount; ++i) {
-            auto pElement = (void*) result.pointerAt(i);
-            new (pElement) VkDeviceQueueCreateInfo(deviceCreateInfo.pQueueCreateInfos[i]);
+            result.Add(deviceCreateInfo.pQueueCreateInfos[i]);
         }
         return result;
     }
@@ -49,8 +48,8 @@ namespace Tutorial::Graphics {
     Span<uint32_t const> VulkanLogicalDevice::getQueueFamilyIndices() const {
         auto result = Span<uint32_t const>::stackAlloc(_deviceQueueCreateInfos.getMaxElementCount());
         for (uint32_t i = 0; i < _deviceQueueCreateInfos.getMaxElementCount(); ++i) {
-            auto pElement = (void*) result.pointerAt(i);
-            new (pElement) uint32_t(_deviceQueueCreateInfos[i].queueFamilyIndex);
+            uint32_t queueFamilyIndex = _deviceQueueCreateInfos[i].queueFamilyIndex;
+            result.Add(queueFamilyIndex);
         }
         return result;
     }
