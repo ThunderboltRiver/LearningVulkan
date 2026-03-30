@@ -98,12 +98,20 @@ struct Span {
         return _headPtr + index;
     }
 
-    T* begin() const {
+    T* begin() {
         return reinterpret_cast<T*>(_headPtr);
     }
 
-    T* end() const {
-        return reinterpret_cast<T*>(_headPtr + _maxElementCount);
+    const T* begin() const {
+        return reinterpret_cast<T*>(_headPtr);
+    }
+
+    T* end() {
+        return reinterpret_cast<T*>(_headPtr + emptyIndex);
+    }
+
+    const T* end() const {
+        return reinterpret_cast<T*>(_headPtr + emptyIndex);
     }
 
     /**
