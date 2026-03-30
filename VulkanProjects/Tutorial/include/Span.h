@@ -7,6 +7,7 @@
 
 #include "PlacementStackAllocator.h"
 #include "SpanAllocator.h"
+#include "type_traits"
 
 /**
  * 特定の型に限定された連続したメモリ領域を表す構造体
@@ -116,27 +117,47 @@ struct Span {
         return Span(allocResult);
     }
 
+    /**
+     * ムーブされていない場合に、割り当てられた領域をすべて破棄してスタックアロケータに返す。
+     * ムーブされた（空の）場合は何もしない。これにより、ムーブ元のデストラクタは何も解放しない。
+     */
+    void deallocAllWhenNonMoved() {
+        // ムーブ済み（空）の場合は何もしない
+        if (_headPtr == nullptr) {
+            return;
+        }
+        // 初期化された要素をすべて破棄
+        for (uint32_t i = 0; i < emptyIndex; ++i) {
+            auto elementPtr = pointerAt(emptyIndex - 1 - i);
+            elementPtr->~T();
+        }
+
+        // 割り当てられた領域をスタックアロケータに返す
+        SpanAllocator::getAllocator()->dealloc(_allocatedBytes);
+
+        // このインスタンスを空にする。これにより、デストラクタで二重解放が起こるのを防ぐ
+        _headPtr = nullptr;
+        _maxElementCount = 0;
+        _allocatedBytes = 0;
+        emptyIndex = 0;
+    }
+
     // コピー禁止。割り当てられた領域の所有権を持つのは一つのインスタンスのみにするため
     Span& operator=(const Span& other) = delete;
     Span(const Span& other) = delete;
 
     Span& operator=(Span&& other) noexcept {
-        if (this != &other) {
-            // 既にこのインスタンスが所有している領域を解放する
-            this->~Span();
-
-            // ムーブ元からムーブ先に所有権を移動する
-            _headPtr = other._headPtr;
-            _maxElementCount = other._maxElementCount;
-            _allocatedBytes = other._allocatedBytes;
-            emptyIndex = other.emptyIndex;
-
-            // ムーブ元を空にする。これにより、ムーブ元のデストラクタは何も解放しない
-            other._headPtr = nullptr;
-            other._maxElementCount = 0;
-            other._allocatedBytes = 0;
-            other.emptyIndex = 0;
+        // SpanはStackAlloc経由でインスタンス化されるため、自己代入に加えて
+        // ムーブ元がムーブ先よりも先にstackAllocされていることをチェックする必要がある
+        // 例えば、span1 = span2のようなコードがあった場合、span2はspan1よりも先にstackAllocされている必要がある
+        // そうでない場合、span1のストレージの解放がspan2のストレージの解放よりも先に行われてしまい、span2のデストラクタで無効なポインタを解放しようとして例外がスローされる可能性がある
+        if (this != &other && other._headPtr < _headPtr) {
+            this->deallocAllWhenNonMoved();
         }
+        _headPtr = other._headPtr;
+        _maxElementCount = other._maxElementCount;
+        _allocatedBytes = other._allocatedBytes;
+        emptyIndex = other.emptyIndex;
         return *this;
     }
 
@@ -157,17 +178,7 @@ struct Span {
     }
 
     ~Span() {
-        // ムーブ済み（空）の場合は何もしない
-        if (_headPtr == nullptr) {
-            return;
-        }
-        // このSpanが所有する領域に格納されている要素をすべて破棄してから、スタックアロケータに領域を解放する
-        // 無効なポインタの場合はデストラクタで例外がスローされ、リークする可能性があるが、それはこのクラスを使用する側の責任とする
-        for (uint32_t i = 0; i < _maxElementCount; ++i) {
-            auto elementPtr = pointerAt(_maxElementCount - 1 - i);
-            elementPtr->~T();
-        }
-        SpanAllocator::getAllocator()->dealloc(_allocatedBytes);
+        deallocAllWhenNonMoved();
     }
 
 private:
