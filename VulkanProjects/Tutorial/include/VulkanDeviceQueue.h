@@ -15,7 +15,7 @@ namespace Tutorial::Graphics {
         VkQueue _queue;
     public:
 
-        explicit VulkanDeviceQueue(VkQueue queue) : _queue(queue) {}
+        explicit VulkanDeviceQueue(VkQueue queue);
     };
 }
 

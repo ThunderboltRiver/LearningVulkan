@@ -3,3 +3,7 @@
 //
 
 #include "../include/VulkanDeviceQueue.h"
+
+namespace Tutorial::Graphics {
+    VulkanDeviceQueue::VulkanDeviceQueue(VkQueue queue) : _queue(queue) {}
+} // Graphics
