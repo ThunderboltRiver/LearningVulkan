@@ -49,7 +49,10 @@ struct Span {
      * @return 指定されたインデックスが指す実体へのポインタ
      */
     const T* pointerAt(const uint32_t index) const {
-        if (index >= _maxElementCount) {
+        if (_headPtr == nullptr) {
+            throw std::runtime_error("Span: headPtr is deleted or not initialized");
+        }
+        if (index >= emptyIndex) {
             throw std::out_of_range("Span: index out of range");
         }
         auto elementPtr = _headPtr + index;

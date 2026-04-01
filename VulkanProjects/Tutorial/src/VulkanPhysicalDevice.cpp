@@ -13,8 +13,8 @@ namespace Tutorial::Graphics {
         vkGetPhysicalDeviceQueueFamilyProperties2(_physicalDevice, pQueueFamilyPropertyCount, pQueueFamilyProperties);
     }
 
-    void VulkanPhysicalDevice::enumerateExtensionProperties(const char* pLayerName, uint32_t* pPropertyCount, VkExtensionProperties* pProperties) const {
-        vkEnumerateDeviceExtensionProperties(_physicalDevice, pLayerName, pPropertyCount, pProperties);
+    VkResult VulkanPhysicalDevice::enumerateExtensionProperties(const char* pLayerName, uint32_t* pPropertyCount, VkExtensionProperties* pProperties) const {
+        return vkEnumerateDeviceExtensionProperties(_physicalDevice, pLayerName, pPropertyCount, pProperties);
     }
 
     void VulkanPhysicalDevice::getFeatures2(VkPhysicalDeviceFeatures2& features) const {

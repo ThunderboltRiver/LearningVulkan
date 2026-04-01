@@ -26,14 +26,15 @@ namespace Tutorial::Graphics {
         [[nodiscard]] Span<VkDeviceQueueCreateInfo const> getQueueCreateInfosFromDeviceInfo(const VkDeviceCreateInfo &deviceCreateInfo) const;
 
     public:
-        VulkanLogicalDevice(const VulkanPhysicalDevice& physicalDevice, const VkDeviceCreateInfo& deviceCreateInfo) noexcept;
+
+        VulkanLogicalDevice(const VulkanPhysicalDevice& physicalDevice, const VkDeviceCreateInfo& deviceCreateInfo);
 
         // コピー禁止。論理デバイスの所有権を持つのは一つのインスタンスのみにするため
         VulkanLogicalDevice(const VulkanLogicalDevice&) = delete;
         VulkanLogicalDevice& operator=(const VulkanLogicalDevice&) = delete;
 
         // ムーブコンストラクタ
-        VulkanLogicalDevice(VulkanLogicalDevice&& other) noexcept;
+        VulkanLogicalDevice(VulkanLogicalDevice&& other);
 
         [[nodiscard]] VulkanDeviceQueue getQueue(uint32_t queueFamilyIndex, uint32_t queueIndex) const;
 

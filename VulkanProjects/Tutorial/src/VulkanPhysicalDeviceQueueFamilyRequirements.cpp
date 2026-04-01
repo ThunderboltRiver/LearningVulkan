@@ -36,7 +36,7 @@ namespace Tutorial::Graphics {
             prop->sType = VK_STRUCTURE_TYPE_QUEUE_FAMILY_PROPERTIES_2;
             prop->pNext = VK_NULL_HANDLE;
         }
-        Debug::Logger::log("Physical device supports " + std::to_string(queueFamilyPropertyCount) + "queue families pointer: " + std::to_string(reinterpret_cast<uintptr_t>(queueFamilies.getHeadPtr())));
+        Debug::Logger::log("Physical device supports " + std::to_string(queueFamilyPropertyCount) + " queue families pointer: " + std::to_string(reinterpret_cast<uintptr_t>(queueFamilies.getHeadPtr())));
         physicalDevice.getQueueFamilyProperties2(&queueFamilyPropertyCount, queueFamilies.getHeadPtr());
         queueFamilies.markFilled();
         return queueFamilies;

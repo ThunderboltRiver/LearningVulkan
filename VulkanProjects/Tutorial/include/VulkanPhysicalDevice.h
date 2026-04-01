@@ -24,7 +24,7 @@ namespace Tutorial::Graphics {
 
         void getQueueFamilyProperties2(uint32_t* pQueueFamilyPropertyCount, VkQueueFamilyProperties2* pQueueFamilyProperties) const;
 
-        void enumerateExtensionProperties(const char* pLayerName, uint32_t* pPropertyCount, VkExtensionProperties* pProperties) const;
+        VkResult enumerateExtensionProperties(const char* pLayerName, uint32_t* pPropertyCount, VkExtensionProperties* pProperties) const;
 
         void getFeatures2(VkPhysicalDeviceFeatures2& features) const;
 

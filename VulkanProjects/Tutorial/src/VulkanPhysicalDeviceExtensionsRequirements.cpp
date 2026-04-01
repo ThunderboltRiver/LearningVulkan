@@ -26,9 +26,13 @@ namespace Tutorial::Graphics {
     bool VulkanPhysicalDeviceExtensionsRequirements::isSatisfiedBy(const VulkanPhysicalDevice &physicalDevice) const {
         // 実際に物理デバイスがサポートするデバイス拡張機能の配列を取得する
         uint32_t deviceExtensionCount = 0;
-        physicalDevice.enumerateExtensionProperties(nullptr, &deviceExtensionCount, nullptr);
+        if (physicalDevice.enumerateExtensionProperties(nullptr, &deviceExtensionCount, nullptr) != VK_SUCCESS) {
+            return false;
+        }
         auto supportedDeviceExtensionProperties = Span<VkExtensionProperties>::stackAlloc(deviceExtensionCount);
-        physicalDevice.enumerateExtensionProperties(nullptr, &deviceExtensionCount, supportedDeviceExtensionProperties.getHeadPtr());
+        if (physicalDevice.enumerateExtensionProperties(nullptr, &deviceExtensionCount, supportedDeviceExtensionProperties.getHeadPtr()) != VK_SUCCESS) {
+            return false;
+        }
         supportedDeviceExtensionProperties.markFilled();
 
         // サポートが必要なデバイス拡張機能すべてが、物理デバイスがサポートするデバイス拡張機能の中に存在するかを確認する
@@ -61,14 +65,15 @@ namespace Tutorial::Graphics {
 
     Span<char const *> VulkanPhysicalDeviceExtensionsRequirements::AsVkDeviceExtensionNames(const VulkanPhysicalDevice &physicalDevice) const {
         uint32_t requiredExtensionCount = std::size(requiredDeviceExtensionNames);
-        if (hasVK_KHR_PORTABILITY_SUBSET_EXTENSION_NAME(physicalDevice)) {
+        auto isSupportedVK_KHR_portability_subset = hasVK_KHR_PORTABILITY_SUBSET_EXTENSION_NAME(physicalDevice);
+        if (isSupportedVK_KHR_portability_subset) {
             ++requiredExtensionCount; // VK_KHR_portability_subsetの分を加える
         }
         auto result = Span<char const *>::stackAlloc(requiredExtensionCount);
         for (auto requiredDeviceExtensionName : requiredDeviceExtensionNames) {
             result.Add(requiredDeviceExtensionName);
         }
-        if (hasVK_KHR_PORTABILITY_SUBSET_EXTENSION_NAME(physicalDevice)) {
+        if (isSupportedVK_KHR_portability_subset) {
             result.Add("VK_KHR_portability_subset");
         }
         return result;

@@ -36,7 +36,7 @@ namespace Tutorial
     }
 
     void Application::initializeVulkan() {
-        // ウィンドウが要求するVulkan拡張機能のプロバイダを作成してVulkanClientを作成する
+        // ウィンドウが要求するVulkan拡張機能のプロバイダを作成してVulkanInstanceを作成する
         const WindowHelper::WindowRequiredVulkanExtensionsProvider extensionsProvider;
         const Graphics::VulkanInstance vulkanInstance(appInfo, extensionsProvider);
         const Graphics::VulkanPhysicalDeviceSelectionStrategy physicalDeviceSelectionStrategy(vulkanInstance);

@@ -6,13 +6,17 @@
 #define TUTORIAL_VULKAN_DEVICE_QUEUE_H
 #include "vulkan/vulkan.h"
 
+namespace Tutorial::Graphics {
 
-class VulkanDeviceQueue {
-    VkQueue _queue;
+    /**
+     * Vulkanのキューを表すクラス
+     */
+    class VulkanDeviceQueue {
+        VkQueue _queue;
+    public:
 
-public:
-    explicit VulkanDeviceQueue(VkQueue queue) : _queue(queue) {}
-};
-
+        explicit VulkanDeviceQueue(VkQueue queue) : _queue(queue) {}
+    };
+}
 
 #endif //TUTORIAL_VULKAN_DEVICE_QUEUE_H

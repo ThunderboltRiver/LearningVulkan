@@ -18,13 +18,13 @@ namespace Tutorial::Graphics {
         return logicalDevice;
     }
 
-    VulkanLogicalDevice::VulkanLogicalDevice(const VulkanPhysicalDevice &physicalDevice, const VkDeviceCreateInfo &deviceCreateInfo) noexcept:
+    VulkanLogicalDevice::VulkanLogicalDevice(const VulkanPhysicalDevice &physicalDevice, const VkDeviceCreateInfo &deviceCreateInfo):
         _device(initialize(physicalDevice, deviceCreateInfo)),
         _physicalDevice(physicalDevice),
         _deviceQueueCreateInfos(getQueueCreateInfosFromDeviceInfo(deviceCreateInfo)) {
     }
 
-    VulkanLogicalDevice::VulkanLogicalDevice(VulkanLogicalDevice &&other) noexcept :
+    VulkanLogicalDevice::VulkanLogicalDevice(VulkanLogicalDevice &&other):
         _device(other._device),
         _physicalDevice(other._physicalDevice),
         _deviceQueueCreateInfos(std::move(other._deviceQueueCreateInfos )) {
