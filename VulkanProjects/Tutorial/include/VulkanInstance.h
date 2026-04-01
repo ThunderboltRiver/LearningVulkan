@@ -2,8 +2,10 @@
 // Created by 沖田大河 on 2026/02/14.
 //
 
-#ifndef TUTORIAL_VULKAN_CLIENT_H
-#define TUTORIAL_VULKAN_CLIENT_H
+#ifndef TUTORIAL_VULKAN_INSTANCE_H
+#define TUTORIAL_VULKAN_INSTANCE_H
+
+#include <sys/types.h>
 
 #include "IRequiredVulkanExtensionsProvider.h"
 #include "Span.h"
@@ -14,7 +16,7 @@ import vulkan_hpp;
 #endif
 
 namespace Tutorial::Graphics {
-    class VulkanClient {
+    class VulkanInstance {
         const VkApplicationInfo& _appInfo;
         const IRequiredVulkanExtensionsProvider& _requiredVulkanExtensionsProvider;
         constexpr static char const* validationLayerNames[] = { "VK_LAYER_KHRONOS_validation" };
@@ -40,17 +42,23 @@ namespace Tutorial::Graphics {
         bool isExtensionSupported(const char *extensionName, const Span<VkExtensionProperties> &actualSupportedExtensions) const;
 
     public:
-        VulkanClient(const VkApplicationInfo& appInfo, const IRequiredVulkanExtensionsProvider& requiredVulkanExtensionsProvider):
+        VulkanInstance(const VkApplicationInfo& appInfo, const IRequiredVulkanExtensionsProvider& requiredVulkanExtensionsProvider):
         _appInfo(appInfo),
         _requiredVulkanExtensionsProvider(requiredVulkanExtensionsProvider),
         _instance(instantiateVulkan()) {}
 
         // vkInstanceの所有権を持つのは一つのインスタンスのみにするためコピー禁止
-        VulkanClient(const VulkanClient&) = delete;
-        VulkanClient& operator=(const VulkanClient&) = delete;
+        VulkanInstance(const VulkanInstance&) = delete;
+        VulkanInstance& operator=(const VulkanInstance&) = delete;
 
-        ~VulkanClient();
+        // 物理デバイスの数を返す
+        [[nodiscard]] uint32_t getPhysicalDevicesCount() const;
+
+        // 物理デバイスのハンドルをresultに格納する。resultはgetPhysicalDevicesCount()で返される数の要素を持つSpanでなければならない
+        void enumeratePhysicalDevices(Span<VkPhysicalDevice> &result) const;
+
+        ~VulkanInstance();
     };
 
 }
-#endif //TUTORIAL_VULKAN_CLIENT_H
+#endif //TUTORIAL_VULKAN_INSTANCE_H
