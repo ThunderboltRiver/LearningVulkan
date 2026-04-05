@@ -35,6 +35,14 @@ namespace Tutorial::Graphics {
          * vkGetPhysicalDeviceSurfaceSupportKHR のラッパー。
          */
         VkResult getSurfaceSupportKHR(uint32_t queueFamilyIndex, VkSurfaceKHR surface, VkBool32* pSupported) const;
+
+        /**
+         * 指定されたキューファミリーが、指定されたサーフェスに対してプレゼンテーションをサポートしているかを返す。
+         * @param queueFamilyIndex キューファミリーのインデックス
+         * @param surface サーフェス
+         * @return 指定されたキューファミリーが、指定されたサーフェスに対してプレゼンテーションをサポートしているならtrue、そうでないならfalse
+         */
+        bool isPresentationSupported(uint32_t queueFamilyIndex, VkSurfaceKHR surface) const;
     };
 } // Graphics
 
