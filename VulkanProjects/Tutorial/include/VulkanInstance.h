@@ -47,6 +47,8 @@ namespace Tutorial::Graphics {
         _requiredVulkanExtensionsProvider(requiredVulkanExtensionsProvider),
         _instance(instantiateVulkan()) {}
 
+        const VkInstance& getInstance() const;
+
         // vkInstanceの所有権を持つのは一つのインスタンスのみにするためコピー禁止
         VulkanInstance(const VulkanInstance&) = delete;
         VulkanInstance& operator=(const VulkanInstance&) = delete;

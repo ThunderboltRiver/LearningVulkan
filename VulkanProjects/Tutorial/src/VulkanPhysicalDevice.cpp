@@ -4,6 +4,9 @@
 
 #include "VulkanPhysicalDevice.h"
 
+#include <stdexcept>
+#include <string>
+
 namespace Tutorial::Graphics {
     void VulkanPhysicalDevice::getProperties2(VkPhysicalDeviceProperties2& properties) const {
         vkGetPhysicalDeviceProperties2(_physicalDevice, &properties);
@@ -23,5 +26,17 @@ namespace Tutorial::Graphics {
 
     VkResult VulkanPhysicalDevice::createDevice(const VkDeviceCreateInfo &deviceCreateInfo, const VkAllocationCallbacks *pAllocator, VkDevice *pLogicalDevice) const {
         return vkCreateDevice(_physicalDevice, &deviceCreateInfo, pAllocator, pLogicalDevice);
+    }
+
+    VkResult VulkanPhysicalDevice::getSurfaceSupportKHR(uint32_t queueFamilyIndex, VkSurfaceKHR surface, VkBool32 *pSupported) const {
+        return vkGetPhysicalDeviceSurfaceSupportKHR(_physicalDevice, queueFamilyIndex, surface, pSupported);
+    }
+
+    bool VulkanPhysicalDevice::isPresentationSupported(uint32_t queueFamilyIndex, VkSurfaceKHR surface) const {
+        VkBool32 isSupported;
+        if (const auto result = getSurfaceSupportKHR(queueFamilyIndex, surface, &isSupported); result != VK_SUCCESS) {
+            throw std::runtime_error("Failed to get surface support for queue family index " + std::to_string(queueFamilyIndex) + ": " + std::to_string(result));
+        }
+        return isSupported == VK_TRUE;
     }
 } // Graphics

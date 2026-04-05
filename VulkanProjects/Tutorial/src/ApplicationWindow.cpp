@@ -5,7 +5,7 @@
 #include "ApplicationWindow.h"
 
 #include <stdexcept>
-#include <GLFW/glfw3.h>
+#include <string>
 
 namespace Tutorial::WindowHelper {
 
@@ -28,6 +28,15 @@ namespace Tutorial::WindowHelper {
 
     void ApplicationWindow::pollEvents() const {
         glfwPollEvents();
+    }
+
+    Graphics::VulkanSurface ApplicationWindow::createVulkanSurface(
+        const Graphics::VulkanInstance &vulkanInstance) const {
+        VkSurfaceKHR surface;
+        if (const auto result = glfwCreateWindowSurface(vulkanInstance.getInstance(), _windowPtr, nullptr, &surface); result != VK_SUCCESS) {
+            throw std::runtime_error("Failed to create Vulkan surface: " + std::to_string(result));
+        }
+        return Graphics::VulkanSurface(surface, vulkanInstance.getInstance());
     }
 
     ApplicationWindow::~ApplicationWindow() {

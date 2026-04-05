@@ -20,16 +20,23 @@ namespace Tutorial::Graphics {
     class VulkanPhysicalDeviceSelectionStrategy {
 
         const VulkanInstance &_vulkanInstance;
-        const VulkanPhysicalDeviceAPIVersionRequirements _apiVersionRequirements;
-        const VulkanPhysicalDeviceQueueFamilyRequirements _queueFamilyRequirements;
-        const VulkanPhysicalDeviceFeatureRequirements _deviceFeatureRequirements;
-        const VulkanPhysicalDeviceExtensionsRequirements _deviceExtensionRequirements;
+        const VulkanPhysicalDeviceAPIVersionRequirements& _apiVersionRequirements;
+        const VulkanPhysicalDeviceQueueFamilyRequirements& _queueFamilyRequirements;
+        const VulkanPhysicalDeviceFeatureRequirements& _deviceFeatureRequirements;
+        const VulkanPhysicalDeviceExtensionsRequirements& _deviceExtensionRequirements;
 
     public:
         explicit VulkanPhysicalDeviceSelectionStrategy(
-            const VulkanInstance &vulkanInstance
-            ):
-            _vulkanInstance(vulkanInstance){
+            const VulkanInstance &vulkanInstance,
+            const VulkanPhysicalDeviceAPIVersionRequirements& apiVersionRequirements,
+            const VulkanPhysicalDeviceQueueFamilyRequirements& queueFamilyRequirements,
+            const VulkanPhysicalDeviceFeatureRequirements& deviceFeatureRequirements,
+            const VulkanPhysicalDeviceExtensionsRequirements& deviceExtensionRequirements):
+            _vulkanInstance(vulkanInstance),
+            _apiVersionRequirements(apiVersionRequirements),
+            _queueFamilyRequirements(queueFamilyRequirements),
+            _deviceFeatureRequirements(deviceFeatureRequirements),
+            _deviceExtensionRequirements(deviceExtensionRequirements) {
         }
 
         /**

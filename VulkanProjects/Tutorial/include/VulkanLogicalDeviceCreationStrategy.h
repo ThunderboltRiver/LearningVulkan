@@ -20,9 +20,9 @@ namespace Tutorial::Graphics {
      */
     class VulkanLogicalDeviceCreationStrategy {
 
-        const VulkanPhysicalDeviceQueueFamilyRequirements _queueFamilyRequirements;
-        const VulkanPhysicalDeviceFeatureRequirements _deviceFeatureRequirements;
-        const VulkanPhysicalDeviceExtensionsRequirements _deviceExtensionRequirements;
+        const VulkanPhysicalDeviceQueueFamilyRequirements& _queueFamilyRequirements;
+        const VulkanPhysicalDeviceFeatureRequirements& _deviceFeatureRequirements;
+        const VulkanPhysicalDeviceExtensionsRequirements& _deviceExtensionRequirements;
 
     public:
 
@@ -31,8 +31,6 @@ namespace Tutorial::Graphics {
             const VulkanPhysicalDeviceFeatureRequirements& deviceFeatureRequirements,
             const VulkanPhysicalDeviceExtensionsRequirements& deviceExtensionRequirements
         );
-
-        VulkanLogicalDeviceCreationStrategy() = default;
 
         /**
          * 物理デバイスから論理デバイスを作成する
