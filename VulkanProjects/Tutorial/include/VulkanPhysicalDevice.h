@@ -30,6 +30,11 @@ namespace Tutorial::Graphics {
 
         VkResult createDevice(const VkDeviceCreateInfo &deviceCreateInfo, const VkAllocationCallbacks *pAllocator,
                               VkDevice *pLogicalDevice) const;
+
+        /**
+         * vkGetPhysicalDeviceSurfaceSupportKHR のラッパー。
+         */
+        VkResult getSurfaceSupportKHR(uint32_t queueFamilyIndex, VkSurfaceKHR surface, VkBool32* pSupported) const;
     };
 } // Graphics
 

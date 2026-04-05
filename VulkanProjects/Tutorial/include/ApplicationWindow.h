@@ -4,6 +4,9 @@
 
 #ifndef TUTORIAL_APPLICATIONWINDOW_H
 #define TUTORIAL_APPLICATIONWINDOW_H
+
+#include "VulkanInstance.h"
+#include "VulkanSurface.h"
 #include <GLFW/glfw3.h>
 
 namespace Tutorial::WindowHelper {
@@ -33,6 +36,13 @@ namespace Tutorial::WindowHelper {
         // コピー禁止。ウィンドウの所有権を持つのは一つのインスタンスのみにするため
         ApplicationWindow(const ApplicationWindow&) = delete;
         ApplicationWindow& operator=(const ApplicationWindow&) = delete;
+
+        /**
+         *　このウィンドウのVulkanSurfaceを作成する
+         * @param vulkanInstance
+         * @return このウィンドウのVulkanSurface
+         */
+        [[nodiscard]] Graphics::VulkanSurface createVulkanSurface(const Graphics::VulkanInstance &vulkanInstance) const;
 
         virtual ~ApplicationWindow();
     private:

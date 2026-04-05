@@ -23,7 +23,7 @@ namespace Tutorial
         /**
          * Vulkanの初期化
          */
-        void initializeVulkan();
+        void initializeVulkan(WindowHelper::ApplicationWindow& applicationWindow);
 
         /**
          * アプリケーションをデストラクト

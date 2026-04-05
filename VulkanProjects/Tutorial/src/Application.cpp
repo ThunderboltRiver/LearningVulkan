@@ -28,19 +28,34 @@ namespace Tutorial
         WindowHelper::ApplicationWindow applicationWindow(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TITLE);
 
         // Vulkanを初期化する
-        initializeVulkan();
+        initializeVulkan(applicationWindow);
 
         // メインループを実行する
         mainLoop(applicationWindow);
         SpanAllocator::resetAllocator();
     }
 
-    void Application::initializeVulkan() {
+    void Application::initializeVulkan(WindowHelper::ApplicationWindow& applicationWindow) {
         // ウィンドウが要求するVulkan拡張機能のプロバイダを作成してVulkanInstanceを作成する
         const WindowHelper::WindowRequiredVulkanExtensionsProvider extensionsProvider;
         const Graphics::VulkanInstance vulkanInstance(appInfo, extensionsProvider);
-        const Graphics::VulkanPhysicalDeviceSelectionStrategy physicalDeviceSelectionStrategy(vulkanInstance);
-        const Graphics::VulkanLogicalDeviceCreationStrategy logicalDeviceCreationStrategy;
+        const Graphics::VulkanSurface& vulkanSurface = applicationWindow.createVulkanSurface(vulkanInstance);
+        const Graphics::VulkanPhysicalDeviceAPIVersionRequirements apiVersionRequirements;
+        const Graphics::VulkanPhysicalDeviceQueueFamilyRequirements queueFamilyRequirements(vulkanSurface);
+        const Graphics::VulkanPhysicalDeviceFeatureRequirements deviceFeatureRequirements;
+        const Graphics::VulkanPhysicalDeviceExtensionsRequirements deviceExtensionRequirements;
+        const Graphics::VulkanPhysicalDeviceSelectionStrategy physicalDeviceSelectionStrategy(
+            vulkanInstance,
+            apiVersionRequirements,
+            queueFamilyRequirements,
+            deviceFeatureRequirements,
+            deviceExtensionRequirements
+            );
+        const Graphics::VulkanLogicalDeviceCreationStrategy logicalDeviceCreationStrategy(
+            queueFamilyRequirements,
+            deviceFeatureRequirements,
+            deviceExtensionRequirements
+        );
         const auto vulkanPhysicalDevice = physicalDeviceSelectionStrategy.selectPhysicalDevice();
         const auto vulkanLogicalDevice = logicalDeviceCreationStrategy.createLogicalDevice(vulkanPhysicalDevice);
         const auto queueFamilyIndices = vulkanLogicalDevice.getQueueFamilyIndices();

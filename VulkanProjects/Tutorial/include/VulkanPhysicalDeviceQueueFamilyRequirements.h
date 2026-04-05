@@ -7,6 +7,7 @@
 
 #include "Span.h"
 #include "VulkanPhysicalDevice.h"
+#include "VulkanSurface.h"
 
 namespace Tutorial::Graphics {
 
@@ -14,6 +15,8 @@ namespace Tutorial::Graphics {
      * 物理デバイスのキューファミリーに対する要求を表すクラス
      */
     class VulkanPhysicalDeviceQueueFamilyRequirements {
+
+        const VulkanSurface& _vulkanSurface;
 
         /**
          * 物理デバイスがサポートするキューファミリーのプロパティの配列を取得する
@@ -23,7 +26,7 @@ namespace Tutorial::Graphics {
         [[nodiscard]] Span<VkQueueFamilyProperties2> getQueueFamilyProperties(const VulkanPhysicalDevice &physicalDevice) const;
 
     public:
-        VulkanPhysicalDeviceQueueFamilyRequirements() = default;
+        explicit VulkanPhysicalDeviceQueueFamilyRequirements(const VulkanSurface& surface);
 
         /**
          *　物理デバイスがサポートするキューファミリーの中からこの要求を満たすものを見つけ、そのインデックスを取得する

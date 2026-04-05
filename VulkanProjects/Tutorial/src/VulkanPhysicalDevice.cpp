@@ -24,4 +24,8 @@ namespace Tutorial::Graphics {
     VkResult VulkanPhysicalDevice::createDevice(const VkDeviceCreateInfo &deviceCreateInfo, const VkAllocationCallbacks *pAllocator, VkDevice *pLogicalDevice) const {
         return vkCreateDevice(_physicalDevice, &deviceCreateInfo, pAllocator, pLogicalDevice);
     }
+
+    VkResult VulkanPhysicalDevice::getSurfaceSupportKHR(uint32_t queueFamilyIndex, VkSurfaceKHR surface, VkBool32 *pSupported) const {
+        return vkGetPhysicalDeviceSurfaceSupportKHR(_physicalDevice, queueFamilyIndex, surface, pSupported);
+    }
 } // Graphics

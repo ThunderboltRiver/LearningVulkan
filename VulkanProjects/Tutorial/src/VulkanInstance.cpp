@@ -114,6 +114,8 @@ namespace Tutorial::Graphics {
         return false;
     }
 
+    const VkInstance& VulkanInstance::getInstance() const { return _instance; }
+
     uint32_t VulkanInstance::getPhysicalDevicesCount() const {
         uint32_t physicalDeviceCount = 0;
         if (const auto resultOfEnumerate = vkEnumeratePhysicalDevices(_instance, &physicalDeviceCount, nullptr); resultOfEnumerate != VK_SUCCESS) {

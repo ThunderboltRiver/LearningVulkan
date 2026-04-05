@@ -69,6 +69,7 @@ add_executable(Tutorial src/main.cpp
         src/VulkanLogicalDevice.cpp
         src/VulkanLogicalDeviceCreationStrategy.cpp
         src/VulkanDeviceQueue.cpp
+        src/VulkanSurface.cpp
 )
 
 # Tutorialターゲットのヘッダをインポートする
