@@ -14,9 +14,9 @@ namespace Tutorial::Graphics {
         _instance(instance) {
     }
 
-    VulkanSurface::VulkanSurface(VulkanSurface &&moveOrigin) noexcept {
-        _surface = moveOrigin._surface;
-        _instance = moveOrigin._instance;
+    VulkanSurface::VulkanSurface(VulkanSurface &&moveOrigin) noexcept:
+        _surface(moveOrigin._surface),
+        _instance(moveOrigin._instance) {
         moveOrigin._surface = VK_NULL_HANDLE;
         moveOrigin._instance = VK_NULL_HANDLE;
     }

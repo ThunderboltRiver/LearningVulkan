@@ -32,7 +32,7 @@ namespace Tutorial::Graphics {
          *　物理デバイスがサポートするキューファミリーの中からこの要求を満たすものを見つけ、そのインデックスを取得する
          * @param physicalDevice 確認対象の物理デバイス
          * @param queueFamilyIndex この要求を満たすキューファミリーのインデックスを格納するためのポインタ
-         * @return この要求を満たすキューファミリーのインデックスを見つけることができたならtrue、そうでないならfalse
+         * @return この要求を満たすキューファミリーのインデックスを見つけられたならtrue、そうでないならfalse
          */
         bool findSatisfiedQueueFamilyIndex(const VulkanPhysicalDevice &physicalDevice, uint32_t* queueFamilyIndex) const;
     };

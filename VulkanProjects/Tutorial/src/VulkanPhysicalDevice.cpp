@@ -34,8 +34,8 @@ namespace Tutorial::Graphics {
 
     bool VulkanPhysicalDevice::isPresentationSupported(uint32_t queueFamilyIndex, VkSurfaceKHR surface) const {
         VkBool32 isSupported;
-        if (getSurfaceSupportKHR(queueFamilyIndex, surface, &isSupported) != VK_SUCCESS) {
-            throw std::runtime_error("Failed to get surface support for queue family index " + std::to_string(queueFamilyIndex));
+        if (const auto result = getSurfaceSupportKHR(queueFamilyIndex, surface, &isSupported); result != VK_SUCCESS) {
+            throw std::runtime_error("Failed to get surface support for queue family index " + std::to_string(queueFamilyIndex) + ": " + std::to_string(result));
         }
         return isSupported == VK_TRUE;
     }
