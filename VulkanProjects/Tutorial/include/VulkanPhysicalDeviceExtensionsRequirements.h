@@ -20,7 +20,15 @@ namespace Tutorial::Graphics {
          * @param requiredExtensionName サポートが必要なデバイス拡張機能の名前
          * @return サポートが必要なデバイス拡張機能をサポートしているならtrue、そうでないならfalse
          */
-        bool isRequiredDeviceExtensionSupported(const Span<VkExtensionProperties>& supportedDeviceExtensions, const char* requiredExtensionName) const;
+        bool isDeviceExtensionSupported(const Span<VkExtensionProperties>& supportedDeviceExtensions, const char* requiredExtensionName) const;
+
+        /**
+         * 物理デバイスがサポートするデバイス拡張機能の中に、サポートが必要なデバイス拡張機能がいくつ存在するかを返す
+         * @param supportedDeviceExtensions 物理デバイスがサポートするデバイス拡張機能の配列
+         * @return 物理デバイスがサポートするデバイス拡張機能の中に存在するサポートが必要なデバイス拡張機能の数
+         */
+        [[nodiscard]] uint32_t getCountOfRequiredDeviceExtensionsIfSupported(const Span<VkExtensionProperties> &supportedDeviceExtensions) const;
+
 
     public:
         VulkanPhysicalDeviceExtensionsRequirements() = default;
@@ -32,15 +40,11 @@ namespace Tutorial::Graphics {
          */
         bool isSatisfiedBy(const VulkanPhysicalDevice &physicalDevice) const;
 
-        Span<VkExtensionProperties> getDeviceExtensionProperties(const VulkanPhysicalDevice &physicalDevice) const;
-
-        bool hasVK_KHR_PORTABILITY_SUBSET_EXTENSION_NAME(const VulkanPhysicalDevice &physicalDevice) const;
-
         /**
          * この要件をDevice拡張名称の配列として返す
          * @return この要件をDevice拡張名称の配列として返す
          */
-        [[nodiscard]] Span<const char*> AsVkDeviceExtensionNames(const VulkanPhysicalDevice &physicalDevice) const;
+        [[nodiscard]] Span<const char*> asVkDeviceExtensionNames(const VulkanPhysicalDevice &physicalDevice) const;
     };
 }
 

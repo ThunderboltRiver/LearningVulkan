@@ -32,6 +32,19 @@ namespace Tutorial::Graphics {
         return vkGetPhysicalDeviceSurfaceSupportKHR(_physicalDevice, queueFamilyIndex, surface, pSupported);
     }
 
+    Span<VkExtensionProperties> VulkanPhysicalDevice::enumerateExtensionProperties(char const* pLayerName) const {
+        uint32_t extensionCount = 0;
+        if (vkEnumerateDeviceExtensionProperties(_physicalDevice, pLayerName, &extensionCount, nullptr) != VK_SUCCESS) {
+            throw std::runtime_error("Failed to enumerate device extension properties");
+        }
+        auto extensions = Span<VkExtensionProperties>::stackAlloc(extensionCount);
+        if (vkEnumerateDeviceExtensionProperties(_physicalDevice, pLayerName, &extensionCount, extensions.getHeadPtr()) != VK_SUCCESS) {
+            throw std::runtime_error("Failed to enumerate device extension properties");
+        }
+        extensions.markFilled();
+        return extensions;
+    }
+
     bool VulkanPhysicalDevice::isPresentationSupported(uint32_t queueFamilyIndex, VkSurfaceKHR surface) const {
         VkBool32 isSupported;
         if (const auto result = getSurfaceSupportKHR(queueFamilyIndex, surface, &isSupported); result != VK_SUCCESS) {
