@@ -34,7 +34,7 @@ struct Span {
     * この範囲に現在格納されている要素数を取得する
     * @return この範囲に現在格納されている要素数
     */
-    [[nodiscard]]uint32_t elementCount() const { return emptyIndex; }
+    [[nodiscard]]uint32_t getElementCount() const { return emptyIndex; }
 
     /**
      * 指定されたインデックスが指す実体への参照を返す
