@@ -7,6 +7,8 @@
 
 #include <vulkan/vulkan.h>
 
+#include "Span.h"
+
 namespace Tutorial::Graphics {
 
     /**
@@ -35,6 +37,13 @@ namespace Tutorial::Graphics {
          * vkGetPhysicalDeviceSurfaceSupportKHR のラッパー。
          */
         VkResult getSurfaceSupportKHR(uint32_t queueFamilyIndex, VkSurfaceKHR surface, VkBool32* pSupported) const;
+
+        /**
+         * この物理デバイスがサポートする拡張機能のプロパティからなる配列を取得する
+         * @param pLayerName 拡張機能のプロパティを取得する対象のレイヤーの名前。nullptrを指定すると、レイヤーに依存しない拡張機能のプロパティが取得される
+         * @return 物理デバイスがサポートする拡張機能のプロパティの配列
+         */
+        [[nodiscard]] Span<VkExtensionProperties> enumerateExtensionProperties(const char* pLayerName) const;
 
         /**
          * 指定されたキューファミリーが、指定されたサーフェスに対してプレゼンテーションをサポートしているかを返す。

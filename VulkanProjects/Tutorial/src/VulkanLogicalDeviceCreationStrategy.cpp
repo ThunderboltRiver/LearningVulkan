@@ -20,7 +20,7 @@ namespace Tutorial::Graphics {
         if (!_queueFamilyRequirements.findSatisfiedQueueFamilyIndex(physicalDevice, &graphicsQueueFamilyIndex)) {
             throw std::runtime_error("Failed to find a queue family that supports graphics commands");
         }
-        const auto deviceExtensions = _deviceExtensionRequirements.AsVkDeviceExtensionNames(physicalDevice);
+        const auto deviceExtensions = _deviceExtensionRequirements.asVkDeviceExtensionNames(physicalDevice);
         float queuePriority = 0.5f;
         VkDeviceQueueCreateInfo queueCreateInfo = {
             .sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,

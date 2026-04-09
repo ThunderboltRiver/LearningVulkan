@@ -9,11 +9,22 @@
 
 namespace Tutorial::Graphics {
 
+    /**
+     * このアプリケーションが物理デバイスに対して必要とするデバイス拡張機能の名前の配列
+     */
     constexpr static char const* requiredDeviceExtensionNames[] = {
         VK_KHR_SWAPCHAIN_EXTENSION_NAME,
     };
 
-    bool VulkanPhysicalDeviceExtensionsRequirements::isRequiredDeviceExtensionSupported(
+    /**
+     * 物理デバイスによっては必ず有効化する必要のあるデバイス拡張機能の名前の配列
+     * この配列に含まれる拡張をサポートする物理デバイスは、必ずその拡張機能を有効化する必要がある
+     */
+    constexpr static char const* requiredDeviceExtensionNamesIfSupported[] = {
+        "VK_KHR_portability_subset",
+    };
+
+    bool VulkanPhysicalDeviceExtensionsRequirements::isDeviceExtensionSupported(
     const Span<VkExtensionProperties>& supportedDeviceExtensions, const char *requiredExtensionName) const {
         for (const auto& supportedDeviceExtensionProperty : supportedDeviceExtensions) {
             if (strcmp(requiredExtensionName, supportedDeviceExtensionProperty.extensionName) == 0) {
@@ -23,58 +34,44 @@ namespace Tutorial::Graphics {
         return false;
     }
 
-    bool VulkanPhysicalDeviceExtensionsRequirements::isSatisfiedBy(const VulkanPhysicalDevice &physicalDevice) const {
-        // 実際に物理デバイスがサポートするデバイス拡張機能の配列を取得する
-        uint32_t deviceExtensionCount = 0;
-        if (physicalDevice.enumerateExtensionProperties(nullptr, &deviceExtensionCount, nullptr) != VK_SUCCESS) {
-            return false;
+    uint32_t VulkanPhysicalDeviceExtensionsRequirements::getCountOfRequiredDeviceExtensionsIfSupported(const Span<VkExtensionProperties>& supportedDeviceExtensions) const {
+        uint32_t count = 0;
+        for (const auto& requiredDeviceExtensionName : requiredDeviceExtensionNamesIfSupported) {
+            if (isDeviceExtensionSupported(supportedDeviceExtensions, requiredDeviceExtensionName)) {
+                ++count;
+            }
         }
-        auto supportedDeviceExtensionProperties = Span<VkExtensionProperties>::stackAlloc(deviceExtensionCount);
-        if (physicalDevice.enumerateExtensionProperties(nullptr, &deviceExtensionCount, supportedDeviceExtensionProperties.getHeadPtr()) != VK_SUCCESS) {
-            return false;
-        }
-        supportedDeviceExtensionProperties.markFilled();
+        return count;
+    }
 
+    bool VulkanPhysicalDeviceExtensionsRequirements::isSatisfiedBy(const VulkanPhysicalDevice &physicalDevice) const {
+        const auto supportedDeviceExtensionProperties = physicalDevice.enumerateExtensionProperties(nullptr);
         // サポートが必要なデバイス拡張機能すべてが、物理デバイスがサポートするデバイス拡張機能の中に存在するかを確認する
         for (const auto& requiredDeviceExtensionName : requiredDeviceExtensionNames) {
-            if (!isRequiredDeviceExtensionSupported(supportedDeviceExtensionProperties, requiredDeviceExtensionName)) {
+            if (!isDeviceExtensionSupported(supportedDeviceExtensionProperties, requiredDeviceExtensionName)) {
                 return false;
             }
         }
         return true;
     }
 
-    Span<VkExtensionProperties> VulkanPhysicalDeviceExtensionsRequirements::getDeviceExtensionProperties(const VulkanPhysicalDevice &physicalDevice) const {
-        uint32_t deviceExtensionCount = 0;
-        physicalDevice.enumerateExtensionProperties(nullptr, &deviceExtensionCount, nullptr);
-        auto supportedDeviceExtensionProperties = Span<VkExtensionProperties>::stackAlloc(deviceExtensionCount);
-        physicalDevice.enumerateExtensionProperties(nullptr, &deviceExtensionCount, supportedDeviceExtensionProperties.getHeadPtr());
-        supportedDeviceExtensionProperties.markFilled();
-        return supportedDeviceExtensionProperties;
-    }
+    Span<char const *> VulkanPhysicalDeviceExtensionsRequirements::asVkDeviceExtensionNames(const VulkanPhysicalDevice &physicalDevice) const {
+        const auto supportedDeviceExtensionProperties = physicalDevice.enumerateExtensionProperties(nullptr);
 
-    bool VulkanPhysicalDeviceExtensionsRequirements::hasVK_KHR_PORTABILITY_SUBSET_EXTENSION_NAME(const VulkanPhysicalDevice &physicalDevice) const {
-        const auto deviceExtensionProperties = getDeviceExtensionProperties(physicalDevice);
-        for (auto deviceExtensionProperty : deviceExtensionProperties) {
-            if (strcmp(deviceExtensionProperty.extensionName, "VK_KHR_portability_subset") == 0) {
-                return true;
-            }
-        }
-        return false;
-    }
+        // 物理デバイスが必ず有効化する必要のある拡張機能の中で、物理デバイスがサポートするものがあるなら、その分も加える
+        const auto totalRequiredDeviceExtensionsCount = std::size(requiredDeviceExtensionNames) + getCountOfRequiredDeviceExtensionsIfSupported(supportedDeviceExtensionProperties);
 
-    Span<char const *> VulkanPhysicalDeviceExtensionsRequirements::AsVkDeviceExtensionNames(const VulkanPhysicalDevice &physicalDevice) const {
-        uint32_t requiredExtensionCount = std::size(requiredDeviceExtensionNames);
-        auto isSupportedVK_KHR_portability_subset = hasVK_KHR_PORTABILITY_SUBSET_EXTENSION_NAME(physicalDevice);
-        if (isSupportedVK_KHR_portability_subset) {
-            ++requiredExtensionCount; // VK_KHR_portability_subsetの分を加える
-        }
-        auto result = Span<char const *>::stackAlloc(requiredExtensionCount);
+        // 常に必須の拡張機能を追加
+        auto result = Span<char const *>::stackAlloc(totalRequiredDeviceExtensionsCount);
         for (auto requiredDeviceExtensionName : requiredDeviceExtensionNames) {
             result.Add(requiredDeviceExtensionName);
         }
-        if (isSupportedVK_KHR_portability_subset) {
-            result.Add("VK_KHR_portability_subset");
+
+        // 物理デバイスによっては必ず有効化する必要のある拡張機能の中で、物理デバイスがサポートするものがあるなら、その分も加える
+        for (const auto& requiredDeviceExtensionName : requiredDeviceExtensionNamesIfSupported) {
+            if (isDeviceExtensionSupported(supportedDeviceExtensionProperties, requiredDeviceExtensionName)) {
+                result.Add(requiredDeviceExtensionName);
+            }
         }
         return result;
     }

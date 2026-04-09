@@ -31,6 +31,12 @@ struct Span {
     [[nodiscard]] uint32_t getMaxElementCount() const { return _maxElementCount; }
 
     /**
+    * この範囲に現在格納されている要素数を取得する
+    * @return この範囲に現在格納されている要素数
+    */
+    [[nodiscard]]uint32_t getElementCount() const { return emptyIndex; }
+
+    /**
      * 指定されたインデックスが指す実体への参照を返す
      * @param index インデックス
      * @return 指定されたインデックスが指す実体への参照
