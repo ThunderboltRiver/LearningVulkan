@@ -2,14 +2,14 @@
 // Created by 沖田大河 on 2026/04/12.
 //
 
-#include "SwapChainImageCountSelectStrategy.h"
+#include "SwapChainImageCountPreference.h"
 
 #include <algorithm>
 
 namespace Tutorial::Graphics {
-    SwapChainImageCountSelectStrategy::SwapChainImageCountSelectStrategy() = default;
+    SwapChainImageCountPreference::SwapChainImageCountPreference() = default;
 
-    uint32_t SwapChainImageCountSelectStrategy::chooseImageCount(const VkSurfaceCapabilitiesKHR &surfaceCapabilities) const {
+    uint32_t SwapChainImageCountPreference::chooseImageCount(const VkSurfaceCapabilitiesKHR &surfaceCapabilities) const {
         const auto maxImageCount = surfaceCapabilities.maxImageCount;
         const auto minImageCount = surfaceCapabilities.minImageCount;
         if (maxImageCount == 0) {

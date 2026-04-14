@@ -45,7 +45,7 @@ namespace Tutorial::Graphics {
     }
 
     VulkanSwapChainCreateStrategy::VulkanSwapChainCreateStrategy(FrameBufferSize frameBufferSize):
-        _surfaceExtentRequirements(frameBufferSize) {
+        _surfaceExtentPreference(frameBufferSize) {
     }
 
      VulkanSwapChain VulkanSwapChainCreateStrategy::createSwapChain(
@@ -56,10 +56,10 @@ namespace Tutorial::Graphics {
         const auto surfaceFormats = getSurfaceFormats(physicalDevice, vulkanSurface);
         const auto presentModes = getPresentModes(physicalDevice, vulkanSurface);
 
-        const auto surfaceFormat = _surfaceFormatRequirements.chooseSatisfiedOne(surfaceFormats);
-        const auto surfaceExtent = _surfaceExtentRequirements.chooseSatisfiedOne(surfaceCapabilities);
-        const auto presentMode = _presentModeRequirements.chooseSatisfiedOne(presentModes);
-        const auto imageCount = _imageCountSelectStrategy.chooseImageCount(surfaceCapabilities);
+        const auto surfaceFormat = _surfaceFormatPreference.chooseSatisfiedOne(surfaceFormats);
+        const auto surfaceExtent = _surfaceExtentPreference.chooseSatisfiedOne(surfaceCapabilities);
+        const auto presentMode = _presentModePreference.chooseSatisfiedOne(presentModes);
+        const auto imageCount = _imageCountPreference.chooseImageCount(surfaceCapabilities);
         const auto swapChainCreateInfo = VkSwapchainCreateInfoKHR {
             .sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR,
             .pNext = nullptr,

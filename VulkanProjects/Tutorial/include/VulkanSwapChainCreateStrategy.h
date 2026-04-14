@@ -6,10 +6,10 @@
 #define TUTORIAL_VULKAN_SWAP_CHAIN_CREATE_STRATEGY_H
 
 #include "FrameBufferSize.h"
-#include "SwapChainPresentModeRequirements.h"
-#include "SwapChainVulkanSurfaceExtentRequirements.h"
-#include "SwapChainVulkanSurfaceFormatRequirements.h"
-#include "SwapChainImageCountSelectStrategy.h"
+#include "SwapChainPresentModePreference.h"
+#include "SwapChainVulkanSurfaceExtentPreference.h"
+#include "SwapChainVulkanSurfaceFormatPreference.h"
+#include "SwapChainImageCountPreference.h"
 #include "VulkanPhysicalDevice.h"
 #include "VulkanSwapChain.h"
 
@@ -19,10 +19,10 @@ namespace Tutorial::Graphics {
      * SwapChainの作成戦略を表すクラス
      */
     class VulkanSwapChainCreateStrategy {
-        const SwapChainPresentModeRequirements _presentModeRequirements;
-        const SwapChainVulkanSurfaceFormatRequirements _surfaceFormatRequirements;
-        const SwapChainVulkanSurfaceExtentRequirements _surfaceExtentRequirements;
-        const SwapChainImageCountSelectStrategy _imageCountSelectStrategy;
+        const SwapChainPresentModePreference _presentModePreference;
+        const SwapChainVulkanSurfaceFormatPreference _surfaceFormatPreference;
+        const SwapChainVulkanSurfaceExtentPreference _surfaceExtentPreference;
+        const SwapChainImageCountPreference _imageCountPreference;
 
         [[nodiscard]] VkSurfaceCapabilitiesKHR getSurfaceCapabilities(const VulkanPhysicalDevice &physicalDevice,
                                                                       const VulkanSurface &vulkanSurface) const;

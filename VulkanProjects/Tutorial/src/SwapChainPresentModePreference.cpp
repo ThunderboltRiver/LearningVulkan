@@ -2,13 +2,13 @@
 // Created by 沖田大河 on 2026/04/11.
 //
 
-#include "SwapChainPresentModeRequirements.h"
+#include "SwapChainPresentModePreference.h"
 
 namespace Tutorial::Graphics {
 
-    SwapChainPresentModeRequirements::SwapChainPresentModeRequirements() = default;
+    SwapChainPresentModePreference::SwapChainPresentModePreference() = default;
 
-    VkPresentModeKHR SwapChainPresentModeRequirements::chooseSatisfiedOne(const Span<VkPresentModeKHR> &supportedPresentModes) const {
+    VkPresentModeKHR SwapChainPresentModePreference::chooseSatisfiedOne(const Span<VkPresentModeKHR> &supportedPresentModes) const {
         auto isExistsFifoPresentMode = false;
         for (const auto& supportedPresentMode : supportedPresentModes) {
             if (supportedPresentMode == VK_PRESENT_MODE_MAILBOX_KHR) {
