@@ -13,6 +13,7 @@
 #include "Application.h"
 
 #include "VulkanLogicalDeviceCreationStrategy.h"
+#include "VulkanSwapChainCreateStrategy.h"
 
 namespace Tutorial
 {
@@ -56,10 +57,13 @@ namespace Tutorial
             deviceFeatureRequirements,
             deviceExtensionRequirements
         );
+        const Graphics::VulkanSwapChainCreateStrategy swapChainCreateStrategy(applicationWindow.getBufferSize());
+
         const auto vulkanPhysicalDevice = physicalDeviceSelectionStrategy.selectPhysicalDevice();
         const auto vulkanLogicalDevice = logicalDeviceCreationStrategy.createLogicalDevice(vulkanPhysicalDevice);
         const auto queueFamilyIndices = vulkanLogicalDevice.getQueueFamilyIndices();
         const auto vulkanDeviceQueue = vulkanLogicalDevice.getQueue(queueFamilyIndices[0], 0);
+        const auto vulkanSwapChain = swapChainCreateStrategy.createSwapChain(vulkanPhysicalDevice, vulkanSurface, vulkanLogicalDevice);
 
     }
 
