@@ -2,10 +2,13 @@
 // Created by 沖田大河 on 2026/03/15.
 //
 
+#include <vulkan/vulkan.h>
 #include "VulkanPhysicalDeviceExtensionsRequirements.h"
 
 #include <cstring>
 #include <iterator>
+
+#include "Logger.h"
 
 namespace Tutorial::Graphics {
 
