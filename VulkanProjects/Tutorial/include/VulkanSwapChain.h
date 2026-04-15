@@ -23,6 +23,12 @@ namespace Tutorial::Graphics {
 
         [[nodiscard]] VkSwapchainKHR getHandle() const;
 
+        /**
+         * vkGetSwapchainImagesKHR のラッパー。スワップチェーンが所有する画像の配列を返す
+         * @return スワップチェーンが所有する画像の配列
+         */
+        [[nodiscard]] Span<VkImage> getImages() const;
+
         // コピー禁止。スワップチェーンの所有権を持つのは一つのインスタンスのみにするため
         VulkanSwapChain(const VulkanSwapChain&) = delete;
         VulkanSwapChain& operator=(const VulkanSwapChain&) = delete;

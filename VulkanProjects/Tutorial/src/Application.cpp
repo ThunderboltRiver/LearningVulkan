@@ -64,6 +64,7 @@ namespace Tutorial
         const auto queueFamilyIndices = vulkanLogicalDevice.getQueueFamilyIndices();
         const auto vulkanDeviceQueue = vulkanLogicalDevice.getQueue(queueFamilyIndices[0], 0);
         const auto vulkanSwapChain = swapChainCreateStrategy.createSwapChain(vulkanPhysicalDevice, vulkanSurface, vulkanLogicalDevice);
+        const auto swapChainImages = vulkanSwapChain.getImages();
 
     }
 

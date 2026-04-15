@@ -26,6 +26,19 @@ namespace Tutorial::Graphics {
         return _handle;
     }
 
+    Span<VkImage> VulkanSwapChain::getImages() const {
+        uint32_t imageCount = 0;
+        if (vkGetSwapchainImagesKHR(_vkDevice, _handle, &imageCount, nullptr) != VK_SUCCESS) {
+            throw std::runtime_error("Failed to get swap chain images count");
+        }
+        auto images = Span<VkImage>::stackAlloc(imageCount);
+        if (vkGetSwapchainImagesKHR(_vkDevice, _handle, &imageCount, images.getHeadPtr()) != VK_SUCCESS) {
+            throw std::runtime_error("Failed to get swap chain images");
+        }
+        images.markFilled(imageCount);
+        return images;
+    }
+
     VulkanSwapChain::VulkanSwapChain(VulkanSwapChain &&other) noexcept {
         _handle = other._handle;
         _vkDevice = other._vkDevice;
