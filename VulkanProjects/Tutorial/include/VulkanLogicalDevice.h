@@ -11,7 +11,6 @@
 #include "VulkanPhysicalDevice.h"
 
 namespace Tutorial::Graphics {
-    class VulkanPhysicalDevice;
 
     /**
      * Vulkanの論理デバイスを表すクラス

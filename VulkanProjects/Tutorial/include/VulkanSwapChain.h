@@ -14,12 +14,12 @@ namespace Tutorial::Graphics {
      */
     class VulkanSwapChain {
         VkSwapchainKHR _handle;
-        VkDevice _logicalDeviceHandle;
+        VkDevice _vkDevice;
 
-        [[nodiscard]] VkSwapchainKHR acquisitionSwapChainResource(const VkSwapchainCreateInfoKHR &createInfo, const VulkanLogicalDevice &logicalDevice) const;
+        [[nodiscard]] VkSwapchainKHR acquisitionSwapChainResource(VkDevice vkDevice, const VkSwapchainCreateInfoKHR &createInfo) const;
 
     public:
-        explicit VulkanSwapChain(const VkSwapchainCreateInfoKHR& createInfo, const VulkanLogicalDevice& physicalDevice);
+        explicit VulkanSwapChain(VkDevice vkDevice, const VkSwapchainCreateInfoKHR& createInfo);
 
         [[nodiscard]] VkSwapchainKHR getHandle() const;
 

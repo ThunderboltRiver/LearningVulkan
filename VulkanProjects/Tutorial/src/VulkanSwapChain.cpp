@@ -9,17 +9,17 @@
 #include "VulkanLogicalDevice.h"
 
 namespace Tutorial::Graphics {
-    VkSwapchainKHR VulkanSwapChain::acquisitionSwapChainResource(const VkSwapchainCreateInfoKHR &createInfo, const VulkanLogicalDevice& logicalDevice) const {
+    VkSwapchainKHR VulkanSwapChain::acquisitionSwapChainResource(VkDevice vkDevice, const VkSwapchainCreateInfoKHR &createInfo) const {
         VkSwapchainKHR swapChain;
-        if (const auto result = vkCreateSwapchainKHR(logicalDevice.getHandle(), &createInfo, nullptr, &swapChain); result != VK_SUCCESS) {
+        if (const auto result = vkCreateSwapchainKHR(vkDevice, &createInfo, nullptr, &swapChain); result != VK_SUCCESS) {
             throw std::runtime_error("Failed to create swap chain: " + std::to_string(result));
         }
         return swapChain;
     }
 
-    VulkanSwapChain::VulkanSwapChain(const VkSwapchainCreateInfoKHR &createInfo, const VulkanLogicalDevice& logicalDevice):
-        _handle(acquisitionSwapChainResource(createInfo, logicalDevice)),
-        _logicalDeviceHandle(logicalDevice.getHandle()) {
+    VulkanSwapChain::VulkanSwapChain(VkDevice vkDevice, const VkSwapchainCreateInfoKHR &createInfo):
+        _handle(acquisitionSwapChainResource(vkDevice, createInfo)),
+        _vkDevice(vkDevice) {
     }
 
     VkSwapchainKHR VulkanSwapChain::getHandle() const {
@@ -28,17 +28,17 @@ namespace Tutorial::Graphics {
 
     VulkanSwapChain::VulkanSwapChain(VulkanSwapChain &&other) noexcept {
         _handle = other._handle;
-        _logicalDeviceHandle = other._logicalDeviceHandle;
+        _vkDevice = other._vkDevice;
         other._handle = VK_NULL_HANDLE;
     }
 
     VulkanSwapChain & VulkanSwapChain::operator=(VulkanSwapChain &&other) noexcept {
         if (this != &other) {
             if (_handle != VK_NULL_HANDLE) {
-                vkDestroySwapchainKHR(_logicalDeviceHandle, _handle, nullptr);
+                vkDestroySwapchainKHR(_vkDevice, _handle, nullptr);
             }
             _handle = other._handle;
-            _logicalDeviceHandle = other._logicalDeviceHandle;
+            _vkDevice = other._vkDevice;
             other._handle = VK_NULL_HANDLE;
         }
         return *this;
@@ -46,7 +46,7 @@ namespace Tutorial::Graphics {
 
     VulkanSwapChain::~VulkanSwapChain() {
         if (_handle != VK_NULL_HANDLE) {
-            vkDestroySwapchainKHR(_logicalDeviceHandle, _handle, nullptr);
+            vkDestroySwapchainKHR(_vkDevice, _handle, nullptr);
         }
     }
 } // Graphics

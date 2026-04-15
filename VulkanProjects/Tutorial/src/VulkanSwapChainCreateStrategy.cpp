@@ -80,6 +80,6 @@ namespace Tutorial::Graphics {
             .oldSwapchain = VK_NULL_HANDLE,
         };
 
-        return VulkanSwapChain(swapChainCreateInfo, logicalDevice);
+        return VulkanSwapChain(logicalDevice.getHandle(), swapChainCreateInfo);
      }
 }
