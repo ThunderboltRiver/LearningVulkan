@@ -15,8 +15,12 @@ namespace Tutorial::Graphics {
     class VulkanSwapChain {
         VkSwapchainKHR _handle;
         VkDevice _vkDevice;
+        VkSurfaceFormatKHR _surfaceFormat;
+        VkExtent2D _extent;
 
         [[nodiscard]] VkSwapchainKHR acquisitionSwapChainResource(VkDevice vkDevice, const VkSwapchainCreateInfoKHR &createInfo) const;
+
+        void cacheProperties(const VkSwapchainCreateInfoKHR &createInfo);
 
     public:
         explicit VulkanSwapChain(VkDevice vkDevice, const VkSwapchainCreateInfoKHR& createInfo);

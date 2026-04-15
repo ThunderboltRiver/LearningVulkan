@@ -17,9 +17,18 @@ namespace Tutorial::Graphics {
         return swapChain;
     }
 
+    void VulkanSwapChain::cacheProperties(const VkSwapchainCreateInfoKHR &createInfo) {
+        _surfaceFormat = VkSurfaceFormatKHR{
+            .format = createInfo.imageFormat,
+            .colorSpace = createInfo.imageColorSpace,
+        };
+        _extent = createInfo.imageExtent;
+    }
+
     VulkanSwapChain::VulkanSwapChain(VkDevice vkDevice, const VkSwapchainCreateInfoKHR &createInfo):
         _handle(acquisitionSwapChainResource(vkDevice, createInfo)),
         _vkDevice(vkDevice) {
+        cacheProperties(createInfo);
     }
 
     VkSwapchainKHR VulkanSwapChain::getHandle() const {
@@ -42,6 +51,9 @@ namespace Tutorial::Graphics {
     VulkanSwapChain::VulkanSwapChain(VulkanSwapChain &&other) noexcept {
         _handle = other._handle;
         _vkDevice = other._vkDevice;
+        _surfaceFormat = other._surfaceFormat;
+        _extent = other._extent;
+
         other._handle = VK_NULL_HANDLE;
     }
 
@@ -52,6 +64,9 @@ namespace Tutorial::Graphics {
             }
             _handle = other._handle;
             _vkDevice = other._vkDevice;
+            _surfaceFormat = other._surfaceFormat;
+            _extent = other._extent;
+
             other._handle = VK_NULL_HANDLE;
         }
         return *this;
