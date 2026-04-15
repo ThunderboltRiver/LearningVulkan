@@ -2,18 +2,18 @@
 // Created by 沖田大河 on 2026/01/31.
 //
 
-#include "ApplicationWindow.h"
+#include "WindowHelper/ApplicationWindow.h"
 #include <iostream>
 
 #include "PlacementStackAllocator.h"
 #include "SpanAllocator.h"
-#include "VulkanInstance.h"
-#include "WindowRequiredVulkanExtensionsProvider.h"
-#include "VulkanPhysicalDeviceSelectionStrategy.h"
+#include "Graphics/VulkanInstance.h"
+#include "WindowHelper/WindowRequiredVulkanExtensionsProvider.h"
+#include "Graphics/VulkanPhysicalDeviceSelectionStrategy.h"
 #include "Application.h"
 
-#include "VulkanLogicalDeviceCreationStrategy.h"
-#include "VulkanSwapChainCreateStrategy.h"
+#include "Graphics/VulkanLogicalDeviceCreationStrategy.h"
+#include "Graphics/VulkanSwapChainCreateStrategy.h"
 
 namespace Tutorial
 {
