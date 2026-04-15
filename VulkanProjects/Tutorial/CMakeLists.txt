@@ -52,32 +52,33 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Tutorialターゲットの作成
-add_executable(Tutorial src/main.cpp
+add_executable(Tutorial
+        src/main.cpp
         src/Application.cpp
-        src/ApplicationWindow.cpp
-        src/VulkanInstance.cpp
         src/PlacementStackAllocator.cpp
         src/Span.cpp
         src/SpanAllocator.cpp
-        src/WindowRequiredVulkanExtensionsProvider.cpp
-        src/VulkanPhysicalDeviceSelectionStrategy.cpp
-        src/VulkanPhysicalDevice.cpp
-        src/VulkanPhysicalDeviceQueueFamilyRequirements.cpp
-        src/VulkanPhysicalDeviceFeatureRequirements.cpp
-        src/VulkanPhysicalDeviceExtensionsRequirements.cpp
-        src/VulkanPhysicalDeviceAPIVersionRequirements.cpp
-        src/VulkanLogicalDevice.cpp
-        src/VulkanLogicalDeviceCreationStrategy.cpp
-        src/VulkanDeviceQueue.cpp
-        src/VulkanSurface.cpp
-        src/SwapChainVulkanSurfaceFormatPreference.cpp
-        src/SwapChainPresentModePreference.cpp
-        src/SwapChainVulkanSurfaceExtentPreference.cpp
-        src/FrameBufferSize.cpp
-        src/Pixel.cpp
-        src/VulkanSwapChain.cpp
-        src/VulkanSwapChainCreateStrategy.cpp
-        src/SwapChainImageCountPreference.cpp
+        src/Graphics/FrameBufferSize.cpp
+        src/Graphics/Pixel.cpp
+        src/Graphics/SwapChainImageCountPreference.cpp
+        src/Graphics/SwapChainPresentModePreference.cpp
+        src/Graphics/SwapChainVulkanSurfaceExtentPreference.cpp
+        src/Graphics/SwapChainVulkanSurfaceFormatPreference.cpp
+        src/Graphics/VulkanDeviceQueue.cpp
+        src/Graphics/VulkanInstance.cpp
+        src/Graphics/VulkanLogicalDevice.cpp
+        src/Graphics/VulkanLogicalDeviceCreationStrategy.cpp
+        src/Graphics/VulkanPhysicalDevice.cpp
+        src/Graphics/VulkanPhysicalDeviceAPIVersionRequirements.cpp
+        src/Graphics/VulkanPhysicalDeviceExtensionsRequirements.cpp
+        src/Graphics/VulkanPhysicalDeviceFeatureRequirements.cpp
+        src/Graphics/VulkanPhysicalDeviceQueueFamilyRequirements.cpp
+        src/Graphics/VulkanPhysicalDeviceSelectionStrategy.cpp
+        src/Graphics/VulkanSurface.cpp
+        src/Graphics/VulkanSwapChain.cpp
+        src/Graphics/VulkanSwapChainCreateStrategy.cpp
+        src/WindowHelper/ApplicationWindow.cpp
+        src/WindowHelper/WindowRequiredVulkanExtensionsProvider.cpp
 )
 
 # Tutorialターゲットのヘッダをインポートする
