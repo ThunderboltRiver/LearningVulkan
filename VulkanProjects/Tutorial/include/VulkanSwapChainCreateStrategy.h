@@ -11,6 +11,7 @@
 #include "SwapChainVulkanSurfaceFormatPreference.h"
 #include "SwapChainImageCountPreference.h"
 #include "VulkanPhysicalDevice.h"
+#include "VulkanSurface.h"
 #include "VulkanSwapChain.h"
 
 namespace Tutorial::Graphics {

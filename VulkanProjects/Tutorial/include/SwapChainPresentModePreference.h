@@ -5,8 +5,8 @@
 #ifndef TUTORIAL_SWAP_CHAIN_PRESENT_MODE_PREFERENCE_H
 #define TUTORIAL_SWAP_CHAIN_PRESENT_MODE_PREFERENCE_H
 
-#include "SwapChainVulkanSurfaceFormatPreference.h"
-#include "VulkanPhysicalDevice.h"
+#include <Span.h>
+#include <vulkan/vulkan.h>
 
 namespace Tutorial::Graphics {
 

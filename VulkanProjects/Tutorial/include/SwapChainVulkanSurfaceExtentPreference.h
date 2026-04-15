@@ -5,8 +5,8 @@
 #ifndef TUTORIAL_SWAP_CHAIN_VULKAN_SURFACE_EXTENT_PREFERENCE_H
 #define TUTORIAL_SWAP_CHAIN_VULKAN_SURFACE_EXTENT_PREFERENCE_H
 
+#include <vulkan/vulkan.h>
 #include "FrameBufferSize.h"
-#include "SwapChainVulkanSurfaceFormatPreference.h"
 
 namespace Tutorial::Graphics {
 

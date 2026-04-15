@@ -5,7 +5,7 @@
 #ifndef TUTORIAL_SWAP_CHAIN_VULKAN_SURFACE_FORMAT_PREFERENCE_H
 #define TUTORIAL_SWAP_CHAIN_VULKAN_SURFACE_FORMAT_PREFERENCE_H
 #include "Span.h"
-#include "VulkanSurface.h"
+#include "vulkan/vulkan.h"
 
 namespace Tutorial::Graphics {
 

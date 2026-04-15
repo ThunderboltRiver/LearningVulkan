@@ -8,8 +8,6 @@
 #include <cstring>
 #include <iterator>
 
-#include "Logger.h"
-
 namespace Tutorial::Graphics {
 
     /**
