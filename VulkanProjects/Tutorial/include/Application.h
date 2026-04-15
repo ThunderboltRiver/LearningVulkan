@@ -7,7 +7,7 @@
 
 #include <GLFW/glfw3.h>
 #include <vulkan/vulkan.h>
-#include "ApplicationWindow.h"
+#include "WindowHelper/ApplicationWindow.h"
 
 namespace Tutorial
 {
