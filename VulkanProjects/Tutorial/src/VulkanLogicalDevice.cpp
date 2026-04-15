@@ -24,7 +24,11 @@ namespace Tutorial::Graphics {
         _deviceQueueCreateInfos(getQueueCreateInfosFromDeviceInfo(deviceCreateInfo)) {
     }
 
-    VulkanLogicalDevice::VulkanLogicalDevice(VulkanLogicalDevice &&other):
+    VkDevice VulkanLogicalDevice::getHandle() const {
+        return _device;
+    }
+
+    VulkanLogicalDevice::VulkanLogicalDevice(VulkanLogicalDevice &&other) noexcept:
         _device(other._device),
         _physicalDevice(other._physicalDevice),
         _deviceQueueCreateInfos(std::move(other._deviceQueueCreateInfos )) {

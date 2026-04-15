@@ -9,6 +9,8 @@
 #include "VulkanSurface.h"
 #include <GLFW/glfw3.h>
 
+#include "FrameBufferSize.h"
+
 namespace Tutorial::WindowHelper {
     class ApplicationWindow {
     public:
@@ -43,6 +45,11 @@ namespace Tutorial::WindowHelper {
          * @return このウィンドウのVulkanSurface
          */
         [[nodiscard]] Graphics::VulkanSurface createVulkanSurface(const Graphics::VulkanInstance &vulkanInstance) const;
+
+        /**
+         * このウィンドウのフレームバッファの幅と高さを取得する
+         */
+        [[nodiscard]] Graphics::FrameBufferSize getBufferSize() const;
 
         virtual ~ApplicationWindow();
     private:

@@ -70,6 +70,14 @@ add_executable(Tutorial src/main.cpp
         src/VulkanLogicalDeviceCreationStrategy.cpp
         src/VulkanDeviceQueue.cpp
         src/VulkanSurface.cpp
+        src/SwapChainVulkanSurfaceFormatPreference.cpp
+        src/SwapChainPresentModePreference.cpp
+        src/SwapChainVulkanSurfaceExtentPreference.cpp
+        src/FrameBufferSize.cpp
+        src/Pixel.cpp
+        src/VulkanSwapChain.cpp
+        src/VulkanSwapChainCreateStrategy.cpp
+        src/SwapChainImageCountPreference.cpp
 )
 
 # Tutorialターゲットのヘッダをインポートする

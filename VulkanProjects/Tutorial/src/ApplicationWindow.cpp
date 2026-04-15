@@ -39,6 +39,12 @@ namespace Tutorial::WindowHelper {
         return Graphics::VulkanSurface(surface, vulkanInstance.getInstance());
     }
 
+    Graphics::FrameBufferSize ApplicationWindow::getBufferSize() const {
+        int32_t width, height;
+        glfwGetFramebufferSize(_windowPtr, &width, &height);
+        return Graphics::FrameBufferSize(Graphics::Pixel(width), Graphics::Pixel(height));
+    }
+
     ApplicationWindow::~ApplicationWindow() {
         glfwDestroyWindow(_windowPtr);
         glfwTerminate();

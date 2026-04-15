@@ -33,7 +33,7 @@ namespace Tutorial::Graphics {
             .pNext = &_deviceFeatureRequirements.asDeviceFeature(),
             .queueCreateInfoCount = 1,
             .pQueueCreateInfos = &queueCreateInfo,
-            .enabledExtensionCount = deviceExtensions.getMaxElementCount(),
+            .enabledExtensionCount = deviceExtensions.getElementCount(),
             .ppEnabledExtensionNames = deviceExtensions.getHeadPtr(),
         };
 

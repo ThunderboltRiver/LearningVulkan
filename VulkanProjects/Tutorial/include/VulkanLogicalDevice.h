@@ -11,7 +11,6 @@
 #include "VulkanPhysicalDevice.h"
 
 namespace Tutorial::Graphics {
-    class VulkanPhysicalDevice;
 
     /**
      * Vulkanの論理デバイスを表すクラス
@@ -26,15 +25,16 @@ namespace Tutorial::Graphics {
         [[nodiscard]] Span<VkDeviceQueueCreateInfo const> getQueueCreateInfosFromDeviceInfo(const VkDeviceCreateInfo &deviceCreateInfo) const;
 
     public:
+        explicit VulkanLogicalDevice(const VulkanPhysicalDevice& physicalDevice, const VkDeviceCreateInfo& deviceCreateInfo);
 
-        VulkanLogicalDevice(const VulkanPhysicalDevice& physicalDevice, const VkDeviceCreateInfo& deviceCreateInfo);
+        [[nodiscard]] VkDevice getHandle() const;
 
         // コピー禁止。論理デバイスの所有権を持つのは一つのインスタンスのみにするため
         VulkanLogicalDevice(const VulkanLogicalDevice&) = delete;
         VulkanLogicalDevice& operator=(const VulkanLogicalDevice&) = delete;
 
         // ムーブコンストラクタ
-        VulkanLogicalDevice(VulkanLogicalDevice&& other);
+        VulkanLogicalDevice(VulkanLogicalDevice&& other) noexcept;
 
         [[nodiscard]] VulkanDeviceQueue getQueue(uint32_t queueFamilyIndex, uint32_t queueIndex) const;
 

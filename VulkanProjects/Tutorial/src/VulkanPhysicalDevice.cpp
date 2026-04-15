@@ -8,6 +8,10 @@
 #include <string>
 
 namespace Tutorial::Graphics {
+    VkPhysicalDevice VulkanPhysicalDevice::getHandle() const {
+        return _physicalDevice;
+    }
+
     void VulkanPhysicalDevice::getProperties2(VkPhysicalDeviceProperties2& properties) const {
         vkGetPhysicalDeviceProperties2(_physicalDevice, &properties);
     }
@@ -31,6 +35,35 @@ namespace Tutorial::Graphics {
     VkResult VulkanPhysicalDevice::getSurfaceSupportKHR(uint32_t queueFamilyIndex, VkSurfaceKHR surface, VkBool32 *pSupported) const {
         return vkGetPhysicalDeviceSurfaceSupportKHR(_physicalDevice, queueFamilyIndex, surface, pSupported);
     }
+
+    VkResult VulkanPhysicalDevice::getSurfaceCapabilitiesKHR(VkSurfaceKHR surface,
+        VkSurfaceCapabilitiesKHR *pSurfaceCapabilities) const {
+        return vkGetPhysicalDeviceSurfaceCapabilitiesKHR(_physicalDevice, surface, pSurfaceCapabilities);
+    }
+
+    VkResult VulkanPhysicalDevice::getSurfaceCapabilities2KHR(const VkPhysicalDeviceSurfaceInfo2KHR* pSurfaceInfo, VkSurfaceCapabilities2KHR* pSurfaceCapabilities) const {
+        return vkGetPhysicalDeviceSurfaceCapabilities2KHR(_physicalDevice, pSurfaceInfo, pSurfaceCapabilities);
+    }
+
+    VkResult VulkanPhysicalDevice::getSurfaceFormatsKHR(VkSurfaceKHR surface,  uint32_t *pSurfaceFormatCount, VkSurfaceFormatKHR *pSurfaceFormat) const {
+        return vkGetPhysicalDeviceSurfaceFormatsKHR(_physicalDevice, surface, pSurfaceFormatCount, pSurfaceFormat);
+    }
+
+    VkResult VulkanPhysicalDevice::getPhysicalDeviceSurfaceFormats2KHR(const VkPhysicalDeviceSurfaceInfo2KHR* pSurfaceInfo, uint32_t* pSurfaceFormatCount, VkSurfaceFormat2KHR* pSurfaceFormats) const {
+        return vkGetPhysicalDeviceSurfaceFormats2KHR(_physicalDevice, pSurfaceInfo, pSurfaceFormatCount, pSurfaceFormats);
+    }
+
+    VkResult VulkanPhysicalDevice::getPhysicalDeviceSurfacePresentModeKHR(VkSurfaceKHR surface, uint32_t* pPresentModeCount, VkPresentModeKHR* pPresentModes) const {
+        return vkGetPhysicalDeviceSurfacePresentModesKHR(_physicalDevice, surface, pPresentModeCount, pPresentModes);
+    }
+
+#ifdef VK_USE_PLATFORM_WIN32_KHR
+    VkResult VulkanPhysicalDevice::getPhysicalDeviceSurfacePresentModes2Ext(const VkPhysicalDeviceSurfaceInfo2KHR* pSurfaceInfo, uint32_t* pPresentModeCount, VkPresentModeKHR* pPresentModes) const {
+        return vkGetPhysicalDeviceSurfacePresentModes2EXT(_physicalDevice, pSurfaceInfo, pPresentModeCount, pPresentModes);
+    }
+#endif
+
+
 
     Span<VkExtensionProperties> VulkanPhysicalDevice::enumerateExtensionProperties(char const* pLayerName) const {
         uint32_t extensionCount = 0;
