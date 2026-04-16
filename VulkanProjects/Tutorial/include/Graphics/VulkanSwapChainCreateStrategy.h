@@ -5,6 +5,7 @@
 #ifndef TUTORIAL_VULKAN_SWAP_CHAIN_CREATE_STRATEGY_H
 #define TUTORIAL_VULKAN_SWAP_CHAIN_CREATE_STRATEGY_H
 
+#include "VulkanLogicalDevice.h"
 #include "Graphics/FrameBufferSize.h"
 #include "Graphics/SwapChainPresentModePreference.h"
 #include "Graphics/SwapChainVulkanSurfaceExtentPreference.h"

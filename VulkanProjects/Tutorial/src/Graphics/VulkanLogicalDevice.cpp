@@ -5,39 +5,38 @@
 #include "Graphics/VulkanLogicalDevice.h"
 
 #include <stdexcept>
-#include <new>
 
 #include "Span.h"
 
 namespace Tutorial::Graphics {
-    VkDevice VulkanLogicalDevice::initialize(const VulkanPhysicalDevice &physicalDevice, const VkDeviceCreateInfo &deviceCreateInfo) const {
+    OwnerShip<VkDevice> VulkanLogicalDevice::resourceAcquisition(const VulkanPhysicalDevice &physicalDevice, const VkDeviceCreateInfo &deviceCreateInfo) const {
         VkDevice logicalDevice;
         if (physicalDevice.createDevice(deviceCreateInfo, nullptr, &logicalDevice) != VK_SUCCESS) {
             throw std::runtime_error("Failed to create logical device");
         }
-        return logicalDevice;
+        return OwnerShip(logicalDevice);
     }
 
     VulkanLogicalDevice::VulkanLogicalDevice(const VulkanPhysicalDevice &physicalDevice, const VkDeviceCreateInfo &deviceCreateInfo):
-        _device(initialize(physicalDevice, deviceCreateInfo)),
+        _device(resourceAcquisition(physicalDevice, deviceCreateInfo)),
         _physicalDevice(physicalDevice),
         _deviceQueueCreateInfos(getQueueCreateInfosFromDeviceInfo(deviceCreateInfo)) {
     }
 
-    VkDevice VulkanLogicalDevice::getHandle() const {
-        return _device;
+    Borrowed<VkDevice> VulkanLogicalDevice::getHandle() const {
+        return _device.borrow();
     }
 
     VulkanLogicalDevice::VulkanLogicalDevice(VulkanLogicalDevice &&other) noexcept:
-        _device(other._device),
+        _device(other._device.move()),
         _physicalDevice(other._physicalDevice),
         _deviceQueueCreateInfos(std::move(other._deviceQueueCreateInfos )) {
-        other._device = VK_NULL_HANDLE;
+        other._device = OwnerShip<VkDevice>::MOVED();
     }
 
     VulkanDeviceQueue VulkanLogicalDevice::getQueue(uint32_t queueFamilyIndex, uint32_t queueIndex) const {
         VkQueue queue;
-        vkGetDeviceQueue(_device, queueFamilyIndex, queueIndex, &queue);
+        vkGetDeviceQueue(_device.getRawHandle(), queueFamilyIndex, queueIndex, &queue);
         return VulkanDeviceQueue(queue);
     }
 
@@ -59,8 +58,7 @@ namespace Tutorial::Graphics {
     }
 
     VulkanLogicalDevice::~VulkanLogicalDevice() {
-        if (_device != VK_NULL_HANDLE) {
-            vkDestroyDevice(_device, nullptr);
+        if (_device.isNotMoved())
+            vkDestroyDevice(_device.getRawHandle(), nullptr);
         }
-    }
-} // Tutorial
+}
