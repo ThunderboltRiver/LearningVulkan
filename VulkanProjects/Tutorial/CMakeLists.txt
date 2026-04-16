@@ -79,6 +79,9 @@ add_executable(Tutorial
         src/Graphics/VulkanSwapChainCreateStrategy.cpp
         src/WindowHelper/ApplicationWindow.cpp
         src/WindowHelper/WindowRequiredVulkanExtensionsProvider.cpp
+        src/ResourceManagement/Borrowed.cpp
+        src/ResourceManagement/OwnerShip.cpp
+        src/ResourceManagement/ResourcePtrConcept.cpp
 )
 
 # Tutorialターゲットのヘッダをインポートする
