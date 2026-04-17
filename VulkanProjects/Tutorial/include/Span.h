@@ -18,6 +18,8 @@ struct Span {
 
     using StorageType = std::remove_const_t<T>;
 
+    static Span createEmpty() { return Span(nullptr, 0); }
+
     /**
      * 先頭のメモリアドレスへのポインタを取得する
      * @return 先頭のメモリアドレスへのポインタ
@@ -225,6 +227,12 @@ private:
         _headPtr(allocResult.headPtr),
         _maxElementCount(allocResult.count),
         _allocatedBytes(allocResult.allocatedBytes) {
+    }
+
+    explicit Span(StorageType* headPtr, const uint32_t maxElementCount):
+        _headPtr(headPtr),
+        _maxElementCount(maxElementCount),
+        _allocatedBytes(sizeof(StorageType) * static_cast<size_t>(maxElementCount)) {
     }
 };
 
