@@ -114,7 +114,7 @@ namespace Tutorial::Graphics {
         return false;
     }
 
-    const VkInstance& VulkanInstance::getInstance() const { return _instance; }
+    Borrowed<VkInstance> VulkanInstance::getHandler() const { return Borrowed(_instance); }
 
     uint32_t VulkanInstance::getPhysicalDevicesCount() const {
         uint32_t physicalDeviceCount = 0;

@@ -10,7 +10,7 @@ namespace Tutorial::Graphics {
     VkSurfaceCapabilitiesKHR VulkanSwapChainCreateStrategy::getSurfaceCapabilities(
         const VulkanPhysicalDevice &physicalDevice, const VulkanSurface &vulkanSurface) const {
         VkSurfaceCapabilitiesKHR surfaceCapabilities;
-        if (physicalDevice.getSurfaceCapabilitiesKHR(vulkanSurface.getSurface(), &surfaceCapabilities) != VK_SUCCESS) {
+        if (physicalDevice.getSurfaceCapabilitiesKHR(vulkanSurface.getHandler(), &surfaceCapabilities) != VK_SUCCESS) {
             throw std::runtime_error("Failed to get surface capabilities");
         }
         return surfaceCapabilities;
@@ -19,11 +19,11 @@ namespace Tutorial::Graphics {
     Span<VkSurfaceFormatKHR> VulkanSwapChainCreateStrategy::getSurfaceFormats(
         const VulkanPhysicalDevice &physicalDevice, const VulkanSurface &vulkanSurface) const {
         uint32_t surfaceFormatCount = 0;
-        if (const auto result = physicalDevice.getSurfaceFormatsKHR(vulkanSurface.getSurface(), &surfaceFormatCount, nullptr); result != VK_SUCCESS) {
+        if (const auto result = physicalDevice.getSurfaceFormatsKHR(vulkanSurface.getHandler(), &surfaceFormatCount, nullptr); result != VK_SUCCESS) {
             throw std::runtime_error("Failed to get surface formats count: " + std::to_string(result));
         }
         auto surfaceFormats = Span<VkSurfaceFormatKHR>::stackAlloc(surfaceFormatCount);
-        if (const auto result = physicalDevice.getSurfaceFormatsKHR(vulkanSurface.getSurface(), &surfaceFormatCount, surfaceFormats.getHeadPtr()); result != VK_SUCCESS) {
+        if (const auto result = physicalDevice.getSurfaceFormatsKHR(vulkanSurface.getHandler(), &surfaceFormatCount, surfaceFormats.getHeadPtr()); result != VK_SUCCESS) {
             throw std::runtime_error("Failed to get surface formats: " + std::to_string(result));
         }
         surfaceFormats.markFilled(surfaceFormatCount);
@@ -33,11 +33,11 @@ namespace Tutorial::Graphics {
     Span<VkPresentModeKHR> VulkanSwapChainCreateStrategy::getPresentModes(const VulkanPhysicalDevice &physicalDevice,
         const VulkanSurface &vulkanSurface) const {
         uint32_t presentModeCount = 0;
-        if (physicalDevice.getPhysicalDeviceSurfacePresentModeKHR(vulkanSurface.getSurface(), &presentModeCount, nullptr) != VK_SUCCESS) {
+        if (physicalDevice.getPhysicalDeviceSurfacePresentModeKHR(vulkanSurface.getHandler(), &presentModeCount, nullptr) != VK_SUCCESS) {
             throw std::runtime_error("Failed to get present modes count");
         }
         auto presentModes = Span<VkPresentModeKHR>::stackAlloc(presentModeCount);
-        if (physicalDevice.getPhysicalDeviceSurfacePresentModeKHR(vulkanSurface.getSurface(), &presentModeCount, presentModes.getHeadPtr()) != VK_SUCCESS) {
+        if (physicalDevice.getPhysicalDeviceSurfacePresentModeKHR(vulkanSurface.getHandler(), &presentModeCount, presentModes.getHeadPtr()) != VK_SUCCESS) {
             throw std::runtime_error("Failed to get present modes");
         }
         presentModes.markFilled(presentModeCount);
@@ -63,7 +63,7 @@ namespace Tutorial::Graphics {
         const auto swapChainCreateInfo = VkSwapchainCreateInfoKHR {
             .sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR,
             .pNext = nullptr,
-            .surface = vulkanSurface.getSurface(),
+            .surface = vulkanSurface.getHandler().getRawHandle(),
             .minImageCount = imageCount,
             .imageFormat = surfaceFormat.format,
             .imageColorSpace = surfaceFormat.colorSpace,

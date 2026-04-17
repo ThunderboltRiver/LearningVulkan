@@ -18,6 +18,8 @@ namespace Tutorial::ResourceManagement
         TResourcePtr _pTargetResource;
 
     public:
+        static Borrowed Null() { return Borrowed(nullptr); }
+
         explicit Borrowed(TResourcePtr pTargetResource): _pTargetResource(pTargetResource) {
         }
 

@@ -25,6 +25,12 @@ namespace Tutorial::WindowHelper {
         {};
 
         /**
+         * GLFWwindowへの借用を返す
+         * @return GLFWwindowへの借用
+         */
+        [[nodiscard]] Borrowed<GLFWwindow*> getHandler() const;
+
+        /**
          * 閉じるべきか
          * @return 閉じるべきならtrue、そうでないならfalse
          */
@@ -38,13 +44,6 @@ namespace Tutorial::WindowHelper {
         // コピー禁止。ウィンドウの所有権を持つのは一つのインスタンスのみにするため
         ApplicationWindow(const ApplicationWindow&) = delete;
         ApplicationWindow& operator=(const ApplicationWindow&) = delete;
-
-        /**
-         *　このウィンドウのVulkanSurfaceを作成する
-         * @param vulkanInstance
-         * @return このウィンドウのVulkanSurface
-         */
-        [[nodiscard]] Graphics::VulkanSurface createVulkanSurface(const Graphics::VulkanInstance &vulkanInstance) const;
 
         /**
          * このウィンドウのフレームバッファの幅と高さを取得する

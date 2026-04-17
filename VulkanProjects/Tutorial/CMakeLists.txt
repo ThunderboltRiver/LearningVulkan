@@ -82,6 +82,9 @@ add_executable(Tutorial
         src/ResourceManagement/Borrowed.cpp
         src/ResourceManagement/OwnerShip.cpp
         src/ResourceManagement/ResourcePtrConcept.cpp
+        src/Graphics/IVkSurfaceKHRResourceAcquisition.cpp
+        src/WindowHelper/GlfwWindowSurfaceResourceAcquisition.cpp
+        src/WindowHelper/GlfwWindowSurfaceResourceAcquisition.cpp
 )
 
 # Tutorialターゲットのヘッダをインポートする

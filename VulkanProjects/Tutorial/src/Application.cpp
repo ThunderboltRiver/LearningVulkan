@@ -14,6 +14,7 @@
 
 #include "Graphics/VulkanLogicalDeviceCreationStrategy.h"
 #include "Graphics/VulkanSwapChainCreateStrategy.h"
+#include "WindowHelper/GlfwWindowSurfaceResourceAcquisition.h"
 
 namespace Tutorial
 {
@@ -40,7 +41,8 @@ namespace Tutorial
         // ウィンドウが要求するVulkan拡張機能のプロバイダを作成してVulkanInstanceを作成する
         const WindowHelper::WindowRequiredVulkanExtensionsProvider extensionsProvider;
         const Graphics::VulkanInstance vulkanInstance(appInfo, extensionsProvider);
-        const auto vulkanSurface = applicationWindow.createVulkanSurface(vulkanInstance);
+        const WindowHelper::GlfwWindowSurfaceResourceAcquisition surfaceResourceAcquisition(applicationWindow.getHandler());
+        const Graphics::VulkanSurface vulkanSurface(surfaceResourceAcquisition, vulkanInstance.getHandler());
         const Graphics::VulkanPhysicalDeviceAPIVersionRequirements apiVersionRequirements;
         const Graphics::VulkanPhysicalDeviceQueueFamilyRequirements queueFamilyRequirements(vulkanSurface);
         const Graphics::VulkanPhysicalDeviceFeatureRequirements deviceFeatureRequirements;

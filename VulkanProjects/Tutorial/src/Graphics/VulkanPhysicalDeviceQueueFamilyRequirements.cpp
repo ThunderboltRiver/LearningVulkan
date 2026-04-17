@@ -19,7 +19,7 @@ namespace Tutorial::Graphics {
             // グラフィックスコマンドとサーフェスへのプレゼンテーションをサポートしているキューファミリーが存在するなら
             // この物理デバイスは必要なキューファミリーのプロパティをサポートしているとみなす
             const auto isGraphicsSupported = (queueFamily.queueFamilyProperties.queueFlags & VK_QUEUE_GRAPHICS_BIT) != 0;
-            const auto isPresentationSupported = physicalDevice.isPresentationSupported(index, _vulkanSurface.getSurface());
+            const auto isPresentationSupported = physicalDevice.isPresentationSupported(index, _vulkanSurface.getHandler());
             if (isGraphicsSupported && isPresentationSupported) {
                 *queueFamilyIndex = index;
                 return true;

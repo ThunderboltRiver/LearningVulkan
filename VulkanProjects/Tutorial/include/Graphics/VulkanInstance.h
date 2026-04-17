@@ -9,11 +9,15 @@
 
 #include "Graphics/IRequiredVulkanExtensionsProvider.h"
 #include "Span.h"
+#include "ResourceManagement/Borrowed.h"
 #if defined(__INTELLISENSE__) || !defined(USE_CPP20_MODULES)
 # include <vulkan/vulkan.h>
 #else
 import vulkan_hpp;
 #endif
+
+
+using Tutorial::ResourceManagement::Borrowed;
 
 namespace Tutorial::Graphics {
     class VulkanInstance {
@@ -47,7 +51,7 @@ namespace Tutorial::Graphics {
         _requiredVulkanExtensionsProvider(requiredVulkanExtensionsProvider),
         _instance(instantiateVulkan()) {}
 
-        const VkInstance& getInstance() const;
+        [[nodiscard]] Borrowed<VkInstance> getHandler() const;
 
         // vkInstanceの所有権を持つのは一つのインスタンスのみにするためコピー禁止
         VulkanInstance(const VulkanInstance&) = delete;

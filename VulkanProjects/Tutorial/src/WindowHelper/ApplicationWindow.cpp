@@ -22,6 +22,10 @@ namespace Tutorial::WindowHelper {
         return windowHandler;
     }
 
+    Borrowed<GLFWwindow *> ApplicationWindow::getHandler() const {
+        return Borrowed(_windowPtr);
+    }
+
     bool ApplicationWindow::shouldClose() const {
         return glfwWindowShouldClose(_windowPtr);
     }
@@ -29,16 +33,7 @@ namespace Tutorial::WindowHelper {
     void ApplicationWindow::pollEvents() const {
         glfwPollEvents();
     }
-
-    Graphics::VulkanSurface ApplicationWindow::createVulkanSurface(
-        const Graphics::VulkanInstance &vulkanInstance) const {
-        VkSurfaceKHR surface;
-        if (const auto result = glfwCreateWindowSurface(vulkanInstance.getInstance(), _windowPtr, nullptr, &surface); result != VK_SUCCESS) {
-            throw std::runtime_error("Failed to create Vulkan surface: " + std::to_string(result));
-        }
-        return Graphics::VulkanSurface(surface, vulkanInstance.getInstance());
-    }
-
+    
     Graphics::FrameBufferSize ApplicationWindow::getBufferSize() const {
         int32_t width, height;
         glfwGetFramebufferSize(_windowPtr, &width, &height);

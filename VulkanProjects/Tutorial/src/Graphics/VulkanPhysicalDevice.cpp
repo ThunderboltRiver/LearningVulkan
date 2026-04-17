@@ -36,25 +36,25 @@ namespace Tutorial::Graphics {
         return vkGetPhysicalDeviceSurfaceSupportKHR(_physicalDevice, queueFamilyIndex, surface, pSupported);
     }
 
-    VkResult VulkanPhysicalDevice::getSurfaceCapabilitiesKHR(VkSurfaceKHR surface,
+    VkResult VulkanPhysicalDevice::getSurfaceCapabilitiesKHR(Borrowed<VkSurfaceKHR> surface,
         VkSurfaceCapabilitiesKHR *pSurfaceCapabilities) const {
-        return vkGetPhysicalDeviceSurfaceCapabilitiesKHR(_physicalDevice, surface, pSurfaceCapabilities);
+        return vkGetPhysicalDeviceSurfaceCapabilitiesKHR(_physicalDevice, surface.getRawHandle(), pSurfaceCapabilities);
     }
 
     VkResult VulkanPhysicalDevice::getSurfaceCapabilities2KHR(const VkPhysicalDeviceSurfaceInfo2KHR* pSurfaceInfo, VkSurfaceCapabilities2KHR* pSurfaceCapabilities) const {
         return vkGetPhysicalDeviceSurfaceCapabilities2KHR(_physicalDevice, pSurfaceInfo, pSurfaceCapabilities);
     }
 
-    VkResult VulkanPhysicalDevice::getSurfaceFormatsKHR(VkSurfaceKHR surface,  uint32_t *pSurfaceFormatCount, VkSurfaceFormatKHR *pSurfaceFormat) const {
-        return vkGetPhysicalDeviceSurfaceFormatsKHR(_physicalDevice, surface, pSurfaceFormatCount, pSurfaceFormat);
+    VkResult VulkanPhysicalDevice::getSurfaceFormatsKHR(Borrowed<VkSurfaceKHR> surface,  uint32_t *pSurfaceFormatCount, VkSurfaceFormatKHR *pSurfaceFormat) const {
+        return vkGetPhysicalDeviceSurfaceFormatsKHR(_physicalDevice, surface.getRawHandle(), pSurfaceFormatCount, pSurfaceFormat);
     }
 
     VkResult VulkanPhysicalDevice::getPhysicalDeviceSurfaceFormats2KHR(const VkPhysicalDeviceSurfaceInfo2KHR* pSurfaceInfo, uint32_t* pSurfaceFormatCount, VkSurfaceFormat2KHR* pSurfaceFormats) const {
         return vkGetPhysicalDeviceSurfaceFormats2KHR(_physicalDevice, pSurfaceInfo, pSurfaceFormatCount, pSurfaceFormats);
     }
 
-    VkResult VulkanPhysicalDevice::getPhysicalDeviceSurfacePresentModeKHR(VkSurfaceKHR surface, uint32_t* pPresentModeCount, VkPresentModeKHR* pPresentModes) const {
-        return vkGetPhysicalDeviceSurfacePresentModesKHR(_physicalDevice, surface, pPresentModeCount, pPresentModes);
+    VkResult VulkanPhysicalDevice::getPhysicalDeviceSurfacePresentModeKHR(Borrowed<VkSurfaceKHR> surface, uint32_t* pPresentModeCount, VkPresentModeKHR* pPresentModes) const {
+        return vkGetPhysicalDeviceSurfacePresentModesKHR(_physicalDevice, surface.getRawHandle(), pPresentModeCount, pPresentModes);
     }
 
 #ifdef VK_USE_PLATFORM_WIN32_KHR
@@ -78,9 +78,9 @@ namespace Tutorial::Graphics {
         return extensions;
     }
 
-    bool VulkanPhysicalDevice::isPresentationSupported(uint32_t queueFamilyIndex, VkSurfaceKHR surface) const {
+    bool VulkanPhysicalDevice::isPresentationSupported(uint32_t queueFamilyIndex, Borrowed<VkSurfaceKHR> surface) const {
         VkBool32 isSupported;
-        if (const auto result = getSurfaceSupportKHR(queueFamilyIndex, surface, &isSupported); result != VK_SUCCESS) {
+        if (const auto result = getSurfaceSupportKHR(queueFamilyIndex, surface.getRawHandle(), &isSupported); result != VK_SUCCESS) {
             throw std::runtime_error("Failed to get surface support for queue family index " + std::to_string(queueFamilyIndex) + ": " + std::to_string(result));
         }
         return isSupported == VK_TRUE;
