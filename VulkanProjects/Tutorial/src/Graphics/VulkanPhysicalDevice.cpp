@@ -8,53 +8,53 @@
 #include <string>
 
 namespace Tutorial::Graphics {
-    VkPhysicalDevice VulkanPhysicalDevice::getHandle() const {
+    Borrowed<VkPhysicalDevice> VulkanPhysicalDevice::getHandle() const {
         return _physicalDevice;
     }
 
     void VulkanPhysicalDevice::getProperties2(VkPhysicalDeviceProperties2& properties) const {
-        vkGetPhysicalDeviceProperties2(_physicalDevice, &properties);
+        vkGetPhysicalDeviceProperties2(_physicalDevice.getRawHandle(), &properties);
     }
 
     void VulkanPhysicalDevice::getQueueFamilyProperties2(uint32_t* pQueueFamilyPropertyCount, VkQueueFamilyProperties2* pQueueFamilyProperties) const {
-        vkGetPhysicalDeviceQueueFamilyProperties2(_physicalDevice, pQueueFamilyPropertyCount, pQueueFamilyProperties);
+        vkGetPhysicalDeviceQueueFamilyProperties2(_physicalDevice.getRawHandle(), pQueueFamilyPropertyCount, pQueueFamilyProperties);
     }
 
     VkResult VulkanPhysicalDevice::enumerateExtensionProperties(const char* pLayerName, uint32_t* pPropertyCount, VkExtensionProperties* pProperties) const {
-        return vkEnumerateDeviceExtensionProperties(_physicalDevice, pLayerName, pPropertyCount, pProperties);
+        return vkEnumerateDeviceExtensionProperties(_physicalDevice.getRawHandle(), pLayerName, pPropertyCount, pProperties);
     }
 
     void VulkanPhysicalDevice::getFeatures2(VkPhysicalDeviceFeatures2& features) const {
-        vkGetPhysicalDeviceFeatures2(_physicalDevice, &features);
+        vkGetPhysicalDeviceFeatures2(_physicalDevice.getRawHandle(), &features);
     }
 
     VkResult VulkanPhysicalDevice::createDevice(const VkDeviceCreateInfo &deviceCreateInfo, const VkAllocationCallbacks *pAllocator, VkDevice *pLogicalDevice) const {
-        return vkCreateDevice(_physicalDevice, &deviceCreateInfo, pAllocator, pLogicalDevice);
+        return vkCreateDevice(_physicalDevice.getRawHandle(), &deviceCreateInfo, pAllocator, pLogicalDevice);
     }
 
     VkResult VulkanPhysicalDevice::getSurfaceSupportKHR(uint32_t queueFamilyIndex, VkSurfaceKHR surface, VkBool32 *pSupported) const {
-        return vkGetPhysicalDeviceSurfaceSupportKHR(_physicalDevice, queueFamilyIndex, surface, pSupported);
+        return vkGetPhysicalDeviceSurfaceSupportKHR(_physicalDevice.getRawHandle(), queueFamilyIndex, surface, pSupported);
     }
 
     VkResult VulkanPhysicalDevice::getSurfaceCapabilitiesKHR(Borrowed<VkSurfaceKHR> surface,
         VkSurfaceCapabilitiesKHR *pSurfaceCapabilities) const {
-        return vkGetPhysicalDeviceSurfaceCapabilitiesKHR(_physicalDevice, surface.getRawHandle(), pSurfaceCapabilities);
+        return vkGetPhysicalDeviceSurfaceCapabilitiesKHR(_physicalDevice.getRawHandle(), surface.getRawHandle(), pSurfaceCapabilities);
     }
 
     VkResult VulkanPhysicalDevice::getSurfaceCapabilities2KHR(const VkPhysicalDeviceSurfaceInfo2KHR* pSurfaceInfo, VkSurfaceCapabilities2KHR* pSurfaceCapabilities) const {
-        return vkGetPhysicalDeviceSurfaceCapabilities2KHR(_physicalDevice, pSurfaceInfo, pSurfaceCapabilities);
+        return vkGetPhysicalDeviceSurfaceCapabilities2KHR(_physicalDevice.getRawHandle(), pSurfaceInfo, pSurfaceCapabilities);
     }
 
     VkResult VulkanPhysicalDevice::getSurfaceFormatsKHR(Borrowed<VkSurfaceKHR> surface,  uint32_t *pSurfaceFormatCount, VkSurfaceFormatKHR *pSurfaceFormat) const {
-        return vkGetPhysicalDeviceSurfaceFormatsKHR(_physicalDevice, surface.getRawHandle(), pSurfaceFormatCount, pSurfaceFormat);
+        return vkGetPhysicalDeviceSurfaceFormatsKHR(_physicalDevice.getRawHandle(), surface.getRawHandle(), pSurfaceFormatCount, pSurfaceFormat);
     }
 
     VkResult VulkanPhysicalDevice::getPhysicalDeviceSurfaceFormats2KHR(const VkPhysicalDeviceSurfaceInfo2KHR* pSurfaceInfo, uint32_t* pSurfaceFormatCount, VkSurfaceFormat2KHR* pSurfaceFormats) const {
-        return vkGetPhysicalDeviceSurfaceFormats2KHR(_physicalDevice, pSurfaceInfo, pSurfaceFormatCount, pSurfaceFormats);
+        return vkGetPhysicalDeviceSurfaceFormats2KHR(_physicalDevice.getRawHandle(), pSurfaceInfo, pSurfaceFormatCount, pSurfaceFormats);
     }
 
     VkResult VulkanPhysicalDevice::getPhysicalDeviceSurfacePresentModeKHR(Borrowed<VkSurfaceKHR> surface, uint32_t* pPresentModeCount, VkPresentModeKHR* pPresentModes) const {
-        return vkGetPhysicalDeviceSurfacePresentModesKHR(_physicalDevice, surface.getRawHandle(), pPresentModeCount, pPresentModes);
+        return vkGetPhysicalDeviceSurfacePresentModesKHR(_physicalDevice.getRawHandle(), surface.getRawHandle(), pPresentModeCount, pPresentModes);
     }
 
 #ifdef VK_USE_PLATFORM_WIN32_KHR
@@ -67,11 +67,11 @@ namespace Tutorial::Graphics {
 
     Span<VkExtensionProperties> VulkanPhysicalDevice::enumerateExtensionProperties(char const* pLayerName) const {
         uint32_t extensionCount = 0;
-        if (vkEnumerateDeviceExtensionProperties(_physicalDevice, pLayerName, &extensionCount, nullptr) != VK_SUCCESS) {
+        if (vkEnumerateDeviceExtensionProperties(_physicalDevice.getRawHandle(), pLayerName, &extensionCount, nullptr) != VK_SUCCESS) {
             throw std::runtime_error("Failed to enumerate device extension properties");
         }
         auto extensions = Span<VkExtensionProperties>::stackAlloc(extensionCount);
-        if (vkEnumerateDeviceExtensionProperties(_physicalDevice, pLayerName, &extensionCount, extensions.getHeadPtr()) != VK_SUCCESS) {
+        if (vkEnumerateDeviceExtensionProperties(_physicalDevice.getRawHandle(), pLayerName, &extensionCount, extensions.getHeadPtr()) != VK_SUCCESS) {
             throw std::runtime_error("Failed to enumerate device extension properties");
         }
         extensions.markFilled();

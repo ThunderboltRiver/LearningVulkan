@@ -20,12 +20,13 @@ namespace Tutorial::Graphics {
     class VulkanPhysicalDevice {
 
         // 物理デバイスのハンドル
-        VkPhysicalDevice _physicalDevice;
+        // 物理デバイスに関しては、VulkanInstanceから取得したハンドルを使用するだけで、特にリソースの解放なども必要ないため、借用で保持する
+        Borrowed<VkPhysicalDevice> _physicalDevice;
 
     public:
-        explicit VulkanPhysicalDevice(VkPhysicalDevice physicalDevice) : _physicalDevice(physicalDevice) {}
+        explicit VulkanPhysicalDevice(Borrowed<VkPhysicalDevice> physicalDevice) : _physicalDevice(physicalDevice) {}
 
-        [[nodiscard]] VkPhysicalDevice getHandle() const;
+        [[nodiscard]] Borrowed<VkPhysicalDevice> getHandle() const;
 
         void getProperties2(VkPhysicalDeviceProperties2& properties) const;
 

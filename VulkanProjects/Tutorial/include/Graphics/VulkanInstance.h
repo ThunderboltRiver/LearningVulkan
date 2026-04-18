@@ -6,6 +6,8 @@
 #define TUTORIAL_VULKAN_INSTANCE_H
 
 #include <vulkan/vulkan.h>
+
+#include "VulkanInstanceReadModel.h"
 #include "ResourceManagement/Borrowed.h"
 #include "ResourceManagement/OwnerShip.h"
 

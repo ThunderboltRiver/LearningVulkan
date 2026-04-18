@@ -8,16 +8,9 @@
 
 namespace Tutorial::Graphics {
 
-    VulkanPhysicalDevice VulkanPhysicalDeviceSelectionStrategy::selectPhysicalDevice() const {
-        const auto physicalDeviceCount = _vulkanInstance.getPhysicalDevicesCount();
-        if (physicalDeviceCount == 0) {
-            throw std::runtime_error("Failed to find GPUs with Vulkan support");
-        }
-        auto physicalDevices = Span<VkPhysicalDevice>::stackAlloc(physicalDeviceCount);
-        _vulkanInstance.enumeratePhysicalDevices(physicalDevices);
-
-        for (const auto& physicalDevice : physicalDevices) {
-            VulkanPhysicalDevice vulkanPhysicalDevice(physicalDevice);
+    VulkanPhysicalDevice VulkanPhysicalDeviceSelectionStrategy::selectPhysicalDevice(VulkanInstanceReadModel vulkanInstanceReadModel) const {
+        const auto vulkanPhysicalDevices = vulkanInstanceReadModel.enumeratePhysicalDevices();
+        for (const auto& vulkanPhysicalDevice: vulkanPhysicalDevices) {
             uint32_t queueFamilyIndex;
             if (_apiVersionRequirements.isSatisfiedBy(vulkanPhysicalDevice)
                 && _queueFamilyRequirements.findSatisfiedQueueFamilyIndex(vulkanPhysicalDevice, &queueFamilyIndex)

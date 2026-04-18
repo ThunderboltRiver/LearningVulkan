@@ -38,6 +38,8 @@ struct Span {
     */
     [[nodiscard]]uint32_t getElementCount() const { return emptyIndex; }
 
+    [[nodiscard]]std::size_t getAllocatedBytes() const { return _allocatedBytes; }
+
     /**
      * 指定されたインデックスが指す実体への参照を返す
      * @param index インデックス

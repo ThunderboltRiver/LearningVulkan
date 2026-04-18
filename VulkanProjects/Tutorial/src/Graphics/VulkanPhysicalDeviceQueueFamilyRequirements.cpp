@@ -15,7 +15,8 @@ namespace Tutorial::Graphics {
 
         // 物理デバイスが必要なキューファミリーのプロパティをサポートしているかを確認する
         uint32_t index = 0;
-        for (auto& queueFamily : queueFamilies) {
+
+        for (auto& queueFamily: queueFamilies) {
             // グラフィックスコマンドとサーフェスへのプレゼンテーションをサポートしているキューファミリーが存在するなら
             // この物理デバイスは必要なキューファミリーのプロパティをサポートしているとみなす
             const auto isGraphicsSupported = (queueFamily.queueFamilyProperties.queueFlags & VK_QUEUE_GRAPHICS_BIT) != 0;

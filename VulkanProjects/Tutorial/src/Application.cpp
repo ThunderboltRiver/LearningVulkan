@@ -12,6 +12,7 @@
 #include "Graphics/VulkanPhysicalDeviceSelectionStrategy.h"
 #include "Application.h"
 
+#include "Debug/Logger.h"
 #include "Graphics/VulkanInstanceCreationStrategy.h"
 #include "Graphics/VulkanLogicalDeviceCreationStrategy.h"
 #include "Graphics/VulkanSwapChainCreateStrategy.h"
@@ -46,6 +47,7 @@ namespace Tutorial
         // VulkanInstanceの作成
         const Graphics::VulkanInstanceCreationStrategy vulkanInstanceCreationStrategy(extensionsProvider, requiredVulkanInstanceLayerProvider);
         const auto vulkanInstance = vulkanInstanceCreationStrategy.createVulkanInstance(appInfo);
+        const auto vulkanInstanceReadModel = Graphics::VulkanInstanceReadModel(vulkanInstance.getHandler());
 
         // ウィンドウのサーフェスを作成する
         const WindowHelper::GlfwWindowSurfaceResourceAcquisition surfaceResourceAcquisition(applicationWindow.getHandler());
@@ -57,13 +59,12 @@ namespace Tutorial
         const Graphics::VulkanPhysicalDeviceFeatureRequirements deviceFeatureRequirements;
         const Graphics::VulkanPhysicalDeviceExtensionsRequirements deviceExtensionRequirements;
         const Graphics::VulkanPhysicalDeviceSelectionStrategy physicalDeviceSelectionStrategy(
-            vulkanInstance,
             apiVersionRequirements,
             queueFamilyRequirements,
             deviceFeatureRequirements,
             deviceExtensionRequirements
             );
-        const auto vulkanPhysicalDevice = physicalDeviceSelectionStrategy.selectPhysicalDevice();
+        const auto vulkanPhysicalDevice = physicalDeviceSelectionStrategy.selectPhysicalDevice(vulkanInstanceReadModel);
 
         // 論理デバイスの作成
         const Graphics::VulkanLogicalDeviceCreationStrategy logicalDeviceCreationStrategy(

@@ -18,8 +18,6 @@ namespace Tutorial::Graphics {
      * 物理デバイス選択戦略を表すクラス
      */
     class VulkanPhysicalDeviceSelectionStrategy {
-
-        const VulkanInstance &_vulkanInstance;
         const VulkanPhysicalDeviceAPIVersionRequirements& _apiVersionRequirements;
         const VulkanPhysicalDeviceQueueFamilyRequirements& _queueFamilyRequirements;
         const VulkanPhysicalDeviceFeatureRequirements& _deviceFeatureRequirements;
@@ -27,12 +25,10 @@ namespace Tutorial::Graphics {
 
     public:
         explicit VulkanPhysicalDeviceSelectionStrategy(
-            const VulkanInstance &vulkanInstance,
             const VulkanPhysicalDeviceAPIVersionRequirements& apiVersionRequirements,
             const VulkanPhysicalDeviceQueueFamilyRequirements& queueFamilyRequirements,
             const VulkanPhysicalDeviceFeatureRequirements& deviceFeatureRequirements,
             const VulkanPhysicalDeviceExtensionsRequirements& deviceExtensionRequirements):
-            _vulkanInstance(vulkanInstance),
             _apiVersionRequirements(apiVersionRequirements),
             _queueFamilyRequirements(queueFamilyRequirements),
             _deviceFeatureRequirements(deviceFeatureRequirements),
@@ -41,9 +37,10 @@ namespace Tutorial::Graphics {
 
         /**
          * VulkanInstanceから物理デバイスを選択する
-         * @return 選択された物理デバイスのハンドル
+         * @param vulkanInstanceReadModel VulkanInstanceのReadModel
+         * @return VulkanInstanceから選択された物理デバイス
          */
-        [[nodiscard]] VulkanPhysicalDevice selectPhysicalDevice() const;
+        [[nodiscard]] VulkanPhysicalDevice selectPhysicalDevice(VulkanInstanceReadModel vulkanInstanceReadModel) const;
     };
 }
 #endif //TUTORIAL_VULKAN_PHYSICAL_DEVICE_SELECTION_STRATEGY_H
