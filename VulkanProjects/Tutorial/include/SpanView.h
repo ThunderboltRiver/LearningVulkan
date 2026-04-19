@@ -34,11 +34,11 @@ public:
 
     const T* end() const { return _headPtr + _elementCount; }
 
-    const T* operator [](const uint32_t index) const {
+    const T& operator [](const uint32_t index) const {
         if (index >= _elementCount) {
             throw std::runtime_error("SpanView: index out of bounds");
         }
-        return _headPtr + index;
+        return _headPtr[index];
     }
 
     SpanView(const SpanView& other) = default;
