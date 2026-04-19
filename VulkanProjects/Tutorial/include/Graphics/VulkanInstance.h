@@ -10,10 +10,9 @@
 #include "VulkanInstanceReadModel.h"
 #include "ResourceManagement/Borrowed.h"
 #include "ResourceManagement/OwnerShip.h"
+#include "ResourceManagement/Alias.h"
 
 namespace Tutorial::Graphics {
-    namespace rsm = Tutorial::ResourceManagement;
-
     /**
      * Vulkanのインスタンスを表すクラス
      */

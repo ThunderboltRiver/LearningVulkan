@@ -7,10 +7,9 @@
 #include <string>
 
 #include "Graphics/VulkanLogicalDevice.h"
+#include "ResourceManagement/Alias.h"
 
 namespace Tutorial::Graphics {
-    namespace rsm = Tutorial::ResourceManagement;
-
     rsm::OwnerShip<VkSwapchainKHR> VulkanSwapChain::resourceAcquisition(rsm::Borrowed<VkDevice> vkDevice, const VkSwapchainCreateInfoKHR &createInfo) const {
         VkSwapchainKHR swapChain;
         if (const auto result = vkCreateSwapchainKHR(vkDevice.getRawHandle(), &createInfo, nullptr, &swapChain); result != VK_SUCCESS) {

@@ -8,10 +8,9 @@
 #include <vulkan/vulkan.h>
 #include "IVkSurfaceKHRResourceAcquisition.h"
 #include "ResourceManagement/OwnerShip.h"
+#include "ResourceManagement/Alias.h"
 
 namespace Tutorial::Graphics {
-    namespace rsm = Tutorial::ResourceManagement;
-
     /**
      * VulkanのVkSurfaceKHRを薄くラップするクラス
      */

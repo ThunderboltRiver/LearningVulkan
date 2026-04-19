@@ -3,10 +3,9 @@
 //
 
 #include "Graphics/VulkanDeviceQueue.h"
+#include "ResourceManagement/Alias.h"
 
 namespace Tutorial::Graphics {
-    namespace rsm = Tutorial::ResourceManagement;
-
     VulkanDeviceQueue::VulkanDeviceQueue(rsm::Borrowed<VkQueue> queue, uint32_t queueIndex, uint32_t queueFamilyIndex):
         _queue(queue),
         queueIndex(queueIndex),

@@ -7,10 +7,9 @@
 
 #include "Graphics/IVkSurfaceKHRResourceAcquisition.h"
 #include <GLFW/glfw3.h>
+#include "ResourceManagement/Alias.h"
 
 namespace Tutorial::WindowHelper {
-    namespace rsm = Tutorial::ResourceManagement;
-
     class GlfwWindowSurfaceResourceAcquisition : public Graphics::IVkSurfaceKHRResourceAcquisition {
         rsm::Borrowed<GLFWwindow*> _windowHandler;
         public:

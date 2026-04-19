@@ -8,10 +8,9 @@
 
 #include "Span.h"
 #include "SpanView.h"
+#include "ResourceManagement/Alias.h"
 
 namespace Tutorial::Graphics {
-    namespace rsm = Tutorial::ResourceManagement;
-
     rsm::OwnerShip<VkDevice> VulkanLogicalDevice::resourceAcquisition(const VulkanPhysicalDevice &physicalDevice, const VkDeviceCreateInfo &deviceCreateInfo) const {
         VkDevice logicalDevice;
         if (physicalDevice.createDevice(deviceCreateInfo, nullptr, &logicalDevice) != VK_SUCCESS) {

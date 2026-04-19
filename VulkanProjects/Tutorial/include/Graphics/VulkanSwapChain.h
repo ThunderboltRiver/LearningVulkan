@@ -10,10 +10,9 @@
 #include "Span.h"
 #include "ResourceManagement/Borrowed.h"
 #include "ResourceManagement/OwnerShip.h"
+#include "ResourceManagement/Alias.h"
 
 namespace Tutorial::Graphics {
-    namespace rsm = Tutorial::ResourceManagement;
-
     /**
      * Vulkanのスワップチェーンを表すクラス
      */

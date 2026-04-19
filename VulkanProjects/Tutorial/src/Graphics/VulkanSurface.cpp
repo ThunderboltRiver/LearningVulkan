@@ -3,10 +3,9 @@
 //
 
 #include "Graphics/VulkanSurface.h"
+#include "ResourceManagement/Alias.h"
 
 namespace Tutorial::Graphics {
-    namespace rsm = Tutorial::ResourceManagement;
-
     rsm::Borrowed<VkSurfaceKHR> VulkanSurface::getHandler() const { return _surface.borrow(); }
 
     VulkanSurface::VulkanSurface(const IVkSurfaceKHRResourceAcquisition &resourceAcquisition, rsm::Borrowed<VkInstance> instance):

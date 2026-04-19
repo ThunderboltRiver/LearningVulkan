@@ -11,10 +11,9 @@
 #include "Span.h"
 #include "Graphics/VulkanDeviceQueue.h"
 #include "Graphics/VulkanPhysicalDevice.h"
+#include "ResourceManagement/Alias.h"
 
 namespace Tutorial::Graphics {
-    namespace rsm = Tutorial::ResourceManagement;
-
     /**
      * Vulkanの論理デバイスを表すクラス
      */

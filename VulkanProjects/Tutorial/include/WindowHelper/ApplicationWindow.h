@@ -10,10 +10,9 @@
 #include <GLFW/glfw3.h>
 
 #include "Graphics/FrameBufferSize.h"
+#include "ResourceManagement/Alias.h"
 
 namespace Tutorial::WindowHelper {
-    namespace rsm = Tutorial::ResourceManagement;
-
     class ApplicationWindow {
     public:
         ApplicationWindow(

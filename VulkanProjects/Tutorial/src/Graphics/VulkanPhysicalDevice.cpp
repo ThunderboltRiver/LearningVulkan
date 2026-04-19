@@ -6,10 +6,9 @@
 
 #include <stdexcept>
 #include <string>
+#include "ResourceManagement/Alias.h"
 
 namespace Tutorial::Graphics {
-    namespace rsm = Tutorial::ResourceManagement;
-
     rsm::Borrowed<VkPhysicalDevice> VulkanPhysicalDevice::getHandle() const {
         return _physicalDevice;
     }

@@ -5,10 +5,9 @@
 #include "Graphics/VulkanInstanceReadModel.h"
 
 #include "Graphics/VulkanPhysicalDevice.h"
+#include "ResourceManagement/Alias.h"
 
 namespace Tutorial::Graphics {
-    namespace rsm = Tutorial::ResourceManagement;
-
     VulkanInstanceReadModel::VulkanInstanceReadModel(rsm::Borrowed<VkInstance> vkInstance):
         _vkInstance(vkInstance) {
     }

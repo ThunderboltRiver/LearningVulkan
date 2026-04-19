@@ -8,10 +8,9 @@
 #include <vulkan/vulkan.h>
 #include "ResourceManagement/OwnerShip.h"
 #include "ResourceManagement/Borrowed.h"
+#include "ResourceManagement/Alias.h"
 
 namespace Tutorial::Graphics {
-    namespace rsm = Tutorial::ResourceManagement;
-
     /**
      * VkSurfaceKHRのリソースを獲得するためのインターフェース
      */

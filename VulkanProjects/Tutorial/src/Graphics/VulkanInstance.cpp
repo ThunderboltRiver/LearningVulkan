@@ -6,10 +6,9 @@
 #include "Debug/Logger.h"
 #include <iostream>
 #include <string>
+#include "ResourceManagement/Alias.h"
 
 namespace Tutorial::Graphics {
-    namespace rsm = Tutorial::ResourceManagement;
-
     rsm::OwnerShip<VkInstance> VulkanInstance::resourceAcquisition(const VkInstanceCreateInfo &instanceCreateInfo) const {
         VkInstance instance;
         if (const auto result = vkCreateInstance(&instanceCreateInfo, nullptr, &instance); result != VK_SUCCESS) {

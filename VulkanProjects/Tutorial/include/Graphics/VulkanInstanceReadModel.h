@@ -9,10 +9,9 @@
 #include "Span.h"
 #include "VulkanPhysicalDevice.h"
 #include "ResourceManagement/Borrowed.h"
+#include "ResourceManagement/Alias.h"
 
 namespace Tutorial::Graphics {
-    namespace rsm = Tutorial::ResourceManagement;
-
     /**
      * VulkanInstanceのReadModelを表すクラス
      */

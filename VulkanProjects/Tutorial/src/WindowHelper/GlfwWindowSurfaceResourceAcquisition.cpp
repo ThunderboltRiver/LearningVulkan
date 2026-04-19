@@ -5,10 +5,9 @@
 #include "WindowHelper/GlfwWindowSurfaceResourceAcquisition.h"
 #include <stdexcept>
 #include <string>
+#include "ResourceManagement/Alias.h"
 
 namespace Tutorial::WindowHelper {
-    namespace rsm = Tutorial::ResourceManagement;
-
     GlfwWindowSurfaceResourceAcquisition::GlfwWindowSurfaceResourceAcquisition(rsm::Borrowed<GLFWwindow*> windowHandler):
         _windowHandler(windowHandler) {
     }
