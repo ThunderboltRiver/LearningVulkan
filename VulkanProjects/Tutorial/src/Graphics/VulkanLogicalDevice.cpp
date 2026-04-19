@@ -8,15 +8,15 @@
 
 #include "Span.h"
 #include "SpanView.h"
-#include "ResourceManagement/Alias.h"
+#include "ResourceManagement.h"
 
 namespace Tutorial::Graphics {
-    rsm::OwnerShip<VkDevice> VulkanLogicalDevice::resourceAcquisition(const VulkanPhysicalDevice &physicalDevice, const VkDeviceCreateInfo &deviceCreateInfo) const {
+    OwnerShip<VkDevice> VulkanLogicalDevice::resourceAcquisition(const VulkanPhysicalDevice &physicalDevice, const VkDeviceCreateInfo &deviceCreateInfo) const {
         VkDevice logicalDevice;
         if (physicalDevice.createDevice(deviceCreateInfo, nullptr, &logicalDevice) != VK_SUCCESS) {
             throw std::runtime_error("Failed to create logical device");
         }
-        return rsm::OwnerShip(logicalDevice);
+        return OwnerShip(logicalDevice);
     }
 
     Span<VulkanDeviceQueue const> VulkanLogicalDevice::createVulkanDeviceQueues(const VkDeviceCreateInfo &deviceCreateInfo) const {
@@ -27,7 +27,7 @@ namespace Tutorial::Graphics {
                  // キューファミリーインデックスとキューインデックスを組み合わせて、キューのハンドルを取得する
                  VkQueue queue;
                  vkGetDeviceQueue(_device.getRawHandle(), queueCreateInfo.queueFamilyIndex, queueIndex, &queue);
-                 result.Add(VulkanDeviceQueue(rsm::Borrowed(queue), queueIndex, queueCreateInfo.queueFamilyIndex));
+                 result.Add(VulkanDeviceQueue(Borrowed(queue), queueIndex, queueCreateInfo.queueFamilyIndex));
              }
         }
         return result;
@@ -47,7 +47,7 @@ namespace Tutorial::Graphics {
         _queues(createVulkanDeviceQueues(deviceCreateInfo)) {
     }
 
-    rsm::Borrowed<VkDevice> VulkanLogicalDevice::getHandle() const {
+    Borrowed<VkDevice> VulkanLogicalDevice::getHandle() const {
         return _device.borrow();
     }
 
@@ -57,7 +57,7 @@ namespace Tutorial::Graphics {
         _device(other._device.move()),
         _queues(std::move(other._queues))
     {
-        other._device = rsm::OwnerShip<VkDevice>::MOVED();
+        other._device = OwnerShip<VkDevice>::MOVED();
     }
 
     VulkanDeviceQueue VulkanLogicalDevice::getQueue(uint32_t queueFamilyIndex, uint32_t queueIndex) const {

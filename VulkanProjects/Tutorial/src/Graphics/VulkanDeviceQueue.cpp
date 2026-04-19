@@ -3,16 +3,16 @@
 //
 
 #include "Graphics/VulkanDeviceQueue.h"
-#include "ResourceManagement/Alias.h"
+#include "ResourceManagement.h"
 
 namespace Tutorial::Graphics {
-    VulkanDeviceQueue::VulkanDeviceQueue(rsm::Borrowed<VkQueue> queue, uint32_t queueIndex, uint32_t queueFamilyIndex):
+    VulkanDeviceQueue::VulkanDeviceQueue(Borrowed<VkQueue> queue, uint32_t queueIndex, uint32_t queueFamilyIndex):
         _queue(queue),
         queueIndex(queueIndex),
         queueFamilyIndex(queueFamilyIndex) {
     }
     
-    rsm::Borrowed<VkQueue> VulkanDeviceQueue::getHandle() const {
+    Borrowed<VkQueue> VulkanDeviceQueue::getHandle() const {
         return _queue;
     }
 

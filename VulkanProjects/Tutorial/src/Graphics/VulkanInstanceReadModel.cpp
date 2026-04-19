@@ -5,10 +5,10 @@
 #include "Graphics/VulkanInstanceReadModel.h"
 
 #include "Graphics/VulkanPhysicalDevice.h"
-#include "ResourceManagement/Alias.h"
+#include "ResourceManagement.h"
 
 namespace Tutorial::Graphics {
-    VulkanInstanceReadModel::VulkanInstanceReadModel(rsm::Borrowed<VkInstance> vkInstance):
+    VulkanInstanceReadModel::VulkanInstanceReadModel(Borrowed<VkInstance> vkInstance):
         _vkInstance(vkInstance) {
     }
 
@@ -26,7 +26,7 @@ namespace Tutorial::Graphics {
         }
         physicalDevices.markFilled(physicalDeviceCount);
         for (auto physicalDevice: physicalDevices) {
-            results.Add(VulkanPhysicalDevice(rsm::Borrowed(physicalDevice)));
+            results.Add(VulkanPhysicalDevice(Borrowed(physicalDevice)));
         }
         return results;
     }

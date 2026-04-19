@@ -8,28 +8,26 @@
 #include <vulkan/vulkan.h>
 
 #include "Span.h"
-#include "ResourceManagement/Borrowed.h"
-#include "ResourceManagement/OwnerShip.h"
-#include "ResourceManagement/Alias.h"
+#include "ResourceManagement.h"
 
 namespace Tutorial::Graphics {
     /**
      * Vulkanのスワップチェーンを表すクラス
      */
     class VulkanSwapChain {
-        rsm::OwnerShip<VkSwapchainKHR> _pSwapChain;
-        rsm::Borrowed<VkDevice> _vkDevice;
+        OwnerShip<VkSwapchainKHR> _pSwapChain;
+        Borrowed<VkDevice> _vkDevice;
         VkSurfaceFormatKHR _surfaceFormat;
         VkExtent2D _extent;
 
-        [[nodiscard]] rsm::OwnerShip<VkSwapchainKHR> resourceAcquisition(rsm::Borrowed<VkDevice> vkDevice, const VkSwapchainCreateInfoKHR &createInfo) const;
+        [[nodiscard]] OwnerShip<VkSwapchainKHR> resourceAcquisition(Borrowed<VkDevice> vkDevice, const VkSwapchainCreateInfoKHR &createInfo) const;
 
         void cacheProperties(const VkSwapchainCreateInfoKHR &createInfo);
 
     public:
-        explicit VulkanSwapChain(rsm::Borrowed<VkDevice> vkDevice, const VkSwapchainCreateInfoKHR& createInfo);
+        explicit VulkanSwapChain(Borrowed<VkDevice> vkDevice, const VkSwapchainCreateInfoKHR& createInfo);
 
-        [[nodiscard]] rsm::Borrowed<VkSwapchainKHR> getHandle() const;
+        [[nodiscard]] Borrowed<VkSwapchainKHR> getHandle() const;
 
         /**
          * vkGetSwapchainImagesKHR のラッパー。スワップチェーンが所有する画像の配列を返す

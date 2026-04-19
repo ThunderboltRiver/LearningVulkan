@@ -7,15 +7,15 @@
 #include <string>
 
 #include "Graphics/VulkanLogicalDevice.h"
-#include "ResourceManagement/Alias.h"
+#include "ResourceManagement.h"
 
 namespace Tutorial::Graphics {
-    rsm::OwnerShip<VkSwapchainKHR> VulkanSwapChain::resourceAcquisition(rsm::Borrowed<VkDevice> vkDevice, const VkSwapchainCreateInfoKHR &createInfo) const {
+    OwnerShip<VkSwapchainKHR> VulkanSwapChain::resourceAcquisition(Borrowed<VkDevice> vkDevice, const VkSwapchainCreateInfoKHR &createInfo) const {
         VkSwapchainKHR swapChain;
         if (const auto result = vkCreateSwapchainKHR(vkDevice.getRawHandle(), &createInfo, nullptr, &swapChain); result != VK_SUCCESS) {
             throw std::runtime_error("Failed to create swap chain: " + std::to_string(result));
         }
-        return rsm::OwnerShip(swapChain);
+        return OwnerShip(swapChain);
     }
 
     void VulkanSwapChain::cacheProperties(const VkSwapchainCreateInfoKHR &createInfo) {
@@ -26,13 +26,13 @@ namespace Tutorial::Graphics {
         _extent = createInfo.imageExtent;
     }
 
-    VulkanSwapChain::VulkanSwapChain(rsm::Borrowed<VkDevice> vkDevice, const VkSwapchainCreateInfoKHR &createInfo):
+    VulkanSwapChain::VulkanSwapChain(Borrowed<VkDevice> vkDevice, const VkSwapchainCreateInfoKHR &createInfo):
         _pSwapChain(resourceAcquisition(vkDevice, createInfo)),
         _vkDevice(vkDevice) {
         cacheProperties(createInfo);
     }
 
-    rsm::Borrowed<VkSwapchainKHR> VulkanSwapChain::getHandle() const {
+    Borrowed<VkSwapchainKHR> VulkanSwapChain::getHandle() const {
         return _pSwapChain.borrow();
     }
 
@@ -54,12 +54,12 @@ namespace Tutorial::Graphics {
         _vkDevice(other._vkDevice),
         _surfaceFormat(other._surfaceFormat),
         _extent(other._extent) {
-        other._pSwapChain = rsm::OwnerShip<VkSwapchainKHR>::MOVED();
+        other._pSwapChain = OwnerShip<VkSwapchainKHR>::MOVED();
     }
 
     VulkanSwapChain & VulkanSwapChain::operator=(VulkanSwapChain &&other) noexcept {
         if (this != &other) {
-            if (_pSwapChain != rsm::OwnerShip<VkSwapchainKHR>::MOVED()) {
+            if (_pSwapChain != OwnerShip<VkSwapchainKHR>::MOVED()) {
                 vkDestroySwapchainKHR(_vkDevice.getRawHandle(), _pSwapChain.getRawHandle(), nullptr);
             }
             _pSwapChain = other._pSwapChain.move();
@@ -67,7 +67,7 @@ namespace Tutorial::Graphics {
             _surfaceFormat = other._surfaceFormat;
             _extent = other._extent;
 
-            other._pSwapChain = rsm::OwnerShip<VkSwapchainKHR>::MOVED();
+            other._pSwapChain = OwnerShip<VkSwapchainKHR>::MOVED();
         }
         return *this;
     }

@@ -8,22 +8,20 @@
 #include <vulkan/vulkan.h>
 
 #include "VulkanInstanceReadModel.h"
-#include "ResourceManagement/Borrowed.h"
-#include "ResourceManagement/OwnerShip.h"
-#include "ResourceManagement/Alias.h"
+#include "ResourceManagement.h"
 
 namespace Tutorial::Graphics {
     /**
      * Vulkanのインスタンスを表すクラス
      */
     class VulkanInstance {
-        rsm::OwnerShip<VkInstance> _vkInstance;
+        OwnerShip<VkInstance> _vkInstance;
 
-        [[nodiscard]] rsm::OwnerShip<VkInstance> resourceAcquisition(const VkInstanceCreateInfo& instanceCreateInfo) const;
+        [[nodiscard]] OwnerShip<VkInstance> resourceAcquisition(const VkInstanceCreateInfo& instanceCreateInfo) const;
     public:
         explicit VulkanInstance(const VkInstanceCreateInfo& instanceCreateInfo);
 
-        [[nodiscard]] rsm::Borrowed<VkInstance> getHandler() const;
+        [[nodiscard]] Borrowed<VkInstance> getHandler() const;
 
         // vkInstanceの所有権を持つのは一つのインスタンスのみにするためコピー禁止
         VulkanInstance(const VulkanInstance&) = delete;

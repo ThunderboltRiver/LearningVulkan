@@ -7,15 +7,15 @@
 
 #include "Graphics/IVkSurfaceKHRResourceAcquisition.h"
 #include <GLFW/glfw3.h>
-#include "ResourceManagement/Alias.h"
+#include "ResourceManagement.h"
 
 namespace Tutorial::WindowHelper {
     class GlfwWindowSurfaceResourceAcquisition : public Graphics::IVkSurfaceKHRResourceAcquisition {
-        rsm::Borrowed<GLFWwindow*> _windowHandler;
+        Borrowed<GLFWwindow*> _windowHandler;
         public:
-        explicit GlfwWindowSurfaceResourceAcquisition(rsm::Borrowed<GLFWwindow*> windowHandler);
+        explicit GlfwWindowSurfaceResourceAcquisition(Borrowed<GLFWwindow*> windowHandler);
 
-        [[nodiscard]] rsm::OwnerShip<VkSurfaceKHR> execute(rsm::Borrowed<VkInstance> instance) const override;
+        [[nodiscard]] OwnerShip<VkSurfaceKHR> execute(Borrowed<VkInstance> instance) const override;
     };
 }
 

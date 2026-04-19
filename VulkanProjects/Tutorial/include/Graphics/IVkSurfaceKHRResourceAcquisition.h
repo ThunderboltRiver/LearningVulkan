@@ -6,9 +6,7 @@
 #define TUTORIAL_IVKSURFACE_KHR_FACTORY_H
 
 #include <vulkan/vulkan.h>
-#include "ResourceManagement/OwnerShip.h"
-#include "ResourceManagement/Borrowed.h"
-#include "ResourceManagement/Alias.h"
+#include "ResourceManagement.h"
 
 namespace Tutorial::Graphics {
     /**
@@ -24,7 +22,7 @@ namespace Tutorial::Graphics {
          * @param instance vkInstanceへの借用。VkSurfaceKHRの作成に使用される
          * @return VkSurfaceKHRの所有権
          */
-        [[nodiscard]] virtual rsm::OwnerShip<VkSurfaceKHR> execute(rsm::Borrowed<VkInstance> instance) const = 0;
+        [[nodiscard]] virtual OwnerShip<VkSurfaceKHR> execute(Borrowed<VkInstance> instance) const = 0;
     };
 }
 

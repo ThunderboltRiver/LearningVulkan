@@ -10,7 +10,7 @@
 #include <GLFW/glfw3.h>
 
 #include "Graphics/FrameBufferSize.h"
-#include "ResourceManagement/Alias.h"
+#include "ResourceManagement.h"
 
 namespace Tutorial::WindowHelper {
     class ApplicationWindow {
@@ -29,7 +29,7 @@ namespace Tutorial::WindowHelper {
          * GLFWwindowへの借用を返す
          * @return GLFWwindowへの借用
          */
-        [[nodiscard]] rsm::Borrowed<GLFWwindow*> getHandler() const;
+        [[nodiscard]] Borrowed<GLFWwindow*> getHandler() const;
 
         /**
          * 閉じるべきか

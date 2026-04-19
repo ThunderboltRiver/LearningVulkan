@@ -6,8 +6,7 @@
 #define TUTORIAL_VULKAN_DEVICE_QUEUE_H
 
 #include "vulkan/vulkan.h"
-#include "ResourceManagement/Borrowed.h"
-#include "ResourceManagement/Alias.h"
+#include "ResourceManagement.h"
 
 namespace Tutorial::Graphics {
     /**
@@ -19,7 +18,7 @@ namespace Tutorial::Graphics {
          * Vulkanのキューのハンドル
          * Vulkanのキューは、論理デバイスが実質的に所有権をもっているため、借用で保持している
          */
-        rsm::Borrowed<VkQueue> _queue;
+        Borrowed<VkQueue> _queue;
 
         /**
          * このキューのインデックス
@@ -32,9 +31,9 @@ namespace Tutorial::Graphics {
         uint32_t queueFamilyIndex;
 
     public:
-        explicit VulkanDeviceQueue(rsm::Borrowed<VkQueue> queue, uint32_t queueIndex, uint32_t queueFamilyIndex);
+        explicit VulkanDeviceQueue(Borrowed<VkQueue> queue, uint32_t queueIndex, uint32_t queueFamilyIndex);
 
-        [[nodiscard]] rsm::Borrowed<VkQueue> getHandle() const;
+        [[nodiscard]] Borrowed<VkQueue> getHandle() const;
 
          [[nodiscard]] uint32_t getQueueFamilyIndex() const;
 

@@ -6,7 +6,7 @@
 
 #include <stdexcept>
 #include <string>
-#include "ResourceManagement/Alias.h"
+#include "ResourceManagement.h"
 
 namespace Tutorial::WindowHelper {
     GLFWwindow *ApplicationWindow::initWindow(uint32_t windowWidth, uint32_t windowHeight, const char* windowTitle) {
@@ -22,8 +22,8 @@ namespace Tutorial::WindowHelper {
         return windowHandler;
     }
 
-    rsm::Borrowed<GLFWwindow *> ApplicationWindow::getHandler() const {
-        return rsm::Borrowed(_windowPtr);
+    Borrowed<GLFWwindow *> ApplicationWindow::getHandler() const {
+        return Borrowed(_windowPtr);
     }
 
     bool ApplicationWindow::shouldClose() const {
