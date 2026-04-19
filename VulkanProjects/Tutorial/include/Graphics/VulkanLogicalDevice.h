@@ -22,17 +22,19 @@ namespace Tutorial::Graphics {
      */
     class VulkanLogicalDevice {
         OwnerShip<VkDevice> _device;
-        const VulkanPhysicalDevice _physicalDevice;
-        Span<VkDeviceQueueCreateInfo const> _deviceQueueCreateInfos;
+        Span<VulkanDeviceQueue const> _queues;
 
         [[nodiscard]] OwnerShip<VkDevice> resourceAcquisition(const VulkanPhysicalDevice& physicalDevice, const VkDeviceCreateInfo& deviceCreateInfo) const;
+        [[nodiscard]] Span<VulkanDeviceQueue const> createVulkanDeviceQueues(const VkDeviceCreateInfo& deviceCreateInfo) const;
 
-        [[nodiscard]] Span<VkDeviceQueueCreateInfo const> getQueueCreateInfosFromDeviceInfo(const VkDeviceCreateInfo &deviceCreateInfo) const;
+        [[nodiscard]] uint32_t getQueueCreateCount(const VkDeviceCreateInfo &deviceCreateInfo) const;
 
     public:
         explicit VulkanLogicalDevice(const VulkanPhysicalDevice& physicalDevice, const VkDeviceCreateInfo& deviceCreateInfo);
 
         [[nodiscard]] Borrowed<VkDevice> getHandle() const;
+
+        [[nodiscard]] SpanView<VulkanDeviceQueue const> getQueues() const;
 
         // コピー禁止。論理デバイスの所有権を持つのは一つのインスタンスのみにするため
         VulkanLogicalDevice(const VulkanLogicalDevice&) = delete;

@@ -7,6 +7,7 @@
 #include <stdexcept>
 
 #include "Span.h"
+#include "SpanView.h"
 
 namespace Tutorial::Graphics {
     OwnerShip<VkDevice> VulkanLogicalDevice::resourceAcquisition(const VulkanPhysicalDevice &physicalDevice, const VkDeviceCreateInfo &deviceCreateInfo) const {
@@ -17,42 +18,63 @@ namespace Tutorial::Graphics {
         return OwnerShip(logicalDevice);
     }
 
+    Span<VulkanDeviceQueue const> VulkanLogicalDevice::createVulkanDeviceQueues(const VkDeviceCreateInfo &deviceCreateInfo) const {
+        auto result = Span<VulkanDeviceQueue const>::stackAlloc(getQueueCreateCount(deviceCreateInfo));
+        for (uint32_t i = 0; i < deviceCreateInfo.queueCreateInfoCount; ++i) {
+            const auto queueCreateInfo = deviceCreateInfo.pQueueCreateInfos[i];
+             for (uint32_t queueIndex = 0; queueIndex < queueCreateInfo.queueCount; ++queueIndex) {
+                 // キューファミリーインデックスとキューインデックスを組み合わせて、キューのハンドルを取得する
+                 VkQueue queue;
+                 vkGetDeviceQueue(_device.getRawHandle(), queueCreateInfo.queueFamilyIndex, queueIndex, &queue);
+                 result.Add(VulkanDeviceQueue(Borrowed(queue), queueIndex, queueCreateInfo.queueFamilyIndex));
+             }
+        }
+        return result;
+    }
+
+    uint32_t VulkanLogicalDevice::getQueueCreateCount(const VkDeviceCreateInfo &deviceCreateInfo) const {
+        uint32_t result = 0;
+        for (uint32_t i = 0; i < deviceCreateInfo.queueCreateInfoCount; ++i) {
+            const auto queueCreateInfo = deviceCreateInfo.pQueueCreateInfos[i];
+            result += queueCreateInfo.queueCount;
+        }
+        return result;
+    }
+
     VulkanLogicalDevice::VulkanLogicalDevice(const VulkanPhysicalDevice &physicalDevice, const VkDeviceCreateInfo &deviceCreateInfo):
         _device(resourceAcquisition(physicalDevice, deviceCreateInfo)),
-        _physicalDevice(physicalDevice),
-        _deviceQueueCreateInfos(getQueueCreateInfosFromDeviceInfo(deviceCreateInfo)) {
+        _queues(createVulkanDeviceQueues(deviceCreateInfo)) {
     }
 
     Borrowed<VkDevice> VulkanLogicalDevice::getHandle() const {
         return _device.borrow();
     }
 
+    SpanView<VulkanDeviceQueue const> VulkanLogicalDevice::getQueues() const { return _queues.asView(); }
+
     VulkanLogicalDevice::VulkanLogicalDevice(VulkanLogicalDevice &&other) noexcept:
         _device(other._device.move()),
-        _physicalDevice(other._physicalDevice),
-        _deviceQueueCreateInfos(std::move(other._deviceQueueCreateInfos )) {
-        other._device = OwnerShip<VkDevice>::MOVED();
+        _queues(std::move(other._queues))
+    {
+        if (this != &other) {
+            other._device = OwnerShip<VkDevice>::MOVED();
+            other._queues = Span<VulkanDeviceQueue const>::createEmpty();
+        }
     }
 
     VulkanDeviceQueue VulkanLogicalDevice::getQueue(uint32_t queueFamilyIndex, uint32_t queueIndex) const {
-        VkQueue queue;
-        vkGetDeviceQueue(_device.getRawHandle(), queueFamilyIndex, queueIndex, &queue);
-        return VulkanDeviceQueue(queue);
-    }
-
-    Span<VkDeviceQueueCreateInfo const> VulkanLogicalDevice::getQueueCreateInfosFromDeviceInfo(const VkDeviceCreateInfo &deviceCreateInfo) const {
-        auto result = Span<VkDeviceQueueCreateInfo const>::stackAlloc(deviceCreateInfo.queueCreateInfoCount);
-        for (uint32_t i = 0; i < deviceCreateInfo.queueCreateInfoCount; ++i) {
-            result.Add(deviceCreateInfo.pQueueCreateInfos[i]);
+        for (auto& queue : _queues) {
+            if (queue.getQueueFamilyIndex() == queueFamilyIndex && queue.getQueueIndex() == queueIndex) {
+                return queue;
+            }
         }
-        return result;
+        throw std::runtime_error("Failed to find a queue with the specified family index and queue index");
     }
 
     Span<uint32_t const> VulkanLogicalDevice::getQueueFamilyIndices() const {
-        auto result = Span<uint32_t const>::stackAlloc(_deviceQueueCreateInfos.getMaxElementCount());
-        for (uint32_t i = 0; i < _deviceQueueCreateInfos.getMaxElementCount(); ++i) {
-            uint32_t queueFamilyIndex = _deviceQueueCreateInfos[i].queueFamilyIndex;
-            result.Add(queueFamilyIndex);
+        Span<uint32_t const> result = Span<uint32_t const>::stackAlloc(_queues.getElementCount());
+        for (auto& queue : _queues) {
+            result.Add(queue.getQueueFamilyIndex());
         }
         return result;
     }

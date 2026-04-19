@@ -74,11 +74,8 @@ namespace Tutorial
         );
         const auto vulkanLogicalDevice = logicalDeviceCreationStrategy.createLogicalDevice(vulkanPhysicalDevice);
 
-        // 論理デバイスからキューファミリのインデックスを取得する
-        const auto queueFamilyIndices = vulkanLogicalDevice.getQueueFamilyIndices();
-
-        // キューファミリーのインデックスを指定してキューを取得する
-        const auto vulkanDeviceQueue = vulkanLogicalDevice.getQueue(queueFamilyIndices[0], 0);
+        // 論理デバイスからキューを取得
+        const auto vulkanDeviceQueue = vulkanLogicalDevice.getQueues()[0];
 
         // スワップチェーンの作成
         const Graphics::VulkanSwapChainCreateStrategy swapChainCreateStrategy(applicationWindow.getBufferSize());

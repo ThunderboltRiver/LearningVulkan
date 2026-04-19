@@ -87,7 +87,7 @@ add_executable(Tutorial
         src/WindowHelper/GlfwWindowSurfaceResourceAcquisition.cpp
         src/Graphics/RequiredVulkanInstanceLayerProvider.cpp
         src/Graphics/VulkanInstanceReadModel.cpp
-        include/Graphics/VulkanInstanceReadModel.h
+        src/SpanView.cpp
 )
 
 # Tutorialターゲットのヘッダをインポートする

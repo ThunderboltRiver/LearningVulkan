@@ -7,6 +7,7 @@
 
 #include "PlacementStackAllocator.h"
 #include "SpanAllocator.h"
+#include "SpanView.h"
 #include "type_traits"
 
 /**
@@ -181,6 +182,10 @@ struct Span {
         _allocatedBytes = other._allocatedBytes;
         emptyIndex = other.emptyIndex;
         return *this;
+    }
+
+    SpanView<T> asView() const {
+        return SpanView<T>(getHeadPtr(), getElementCount());
     }
 
     /**
