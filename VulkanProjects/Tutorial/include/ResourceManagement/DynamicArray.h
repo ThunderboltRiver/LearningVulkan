@@ -56,6 +56,10 @@ namespace Tutorial::ResourceManagement {
          */
         static std::size_t roundUpToPageSize(std::size_t bytes) {
             const std::size_t pageSize = getPageSize();
+            // ページサイズが2のべき乗であることを検証する（ビット演算による切り上げの前提条件）
+            if (pageSize == 0 || (pageSize & (pageSize - 1)) != 0) {
+                throw std::runtime_error("DynamicArray: page size is not a power of 2");
+            }
             return (bytes + pageSize - 1) & ~(pageSize - 1);
         }
 
@@ -155,6 +159,14 @@ namespace Tutorial::ResourceManagement {
          */
         void grow() {
             const std::size_t newCapacity = (_capacity == 0) ? 1 : _capacity * 2;
+            // 容量の倍増によるオーバーフローを検出する
+            if (newCapacity < _capacity) {
+                throw std::bad_alloc();
+            }
+            // 要素数とサイズの乗算によるオーバーフローを検出する
+            if (newCapacity > SIZE_MAX / sizeof(StorageType)) {
+                throw std::bad_alloc();
+            }
             const std::size_t newBytes = roundUpToPageSize(newCapacity * sizeof(StorageType));
             const std::size_t actualNewCapacity = newBytes / sizeof(StorageType);
 
