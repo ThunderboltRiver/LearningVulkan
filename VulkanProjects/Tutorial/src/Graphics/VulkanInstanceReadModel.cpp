@@ -7,7 +7,9 @@
 #include "Graphics/VulkanPhysicalDevice.h"
 
 namespace Tutorial::Graphics {
-    VulkanInstanceReadModel::VulkanInstanceReadModel(Borrowed<VkInstance> vkInstance):
+    namespace RM = Tutorial::ResourceManagement;
+
+    VulkanInstanceReadModel::VulkanInstanceReadModel(RM::Borrowed<VkInstance> vkInstance):
         _vkInstance(vkInstance) {
     }
 
@@ -25,7 +27,7 @@ namespace Tutorial::Graphics {
         }
         physicalDevices.markFilled(physicalDeviceCount);
         for (auto physicalDevice: physicalDevices) {
-            results.Add(VulkanPhysicalDevice(Borrowed(physicalDevice)));
+            results.Add(VulkanPhysicalDevice(RM::Borrowed(physicalDevice)));
         }
         return results;
     }
