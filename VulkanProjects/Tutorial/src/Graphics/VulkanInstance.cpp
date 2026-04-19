@@ -4,139 +4,48 @@
 
 #include "Graphics/VulkanInstance.h"
 #include "Debug/Logger.h"
-
 #include <iostream>
-
-#include "Span.h"
+#include <string>
+#include "ResourceManagement.h"
 
 namespace Tutorial::Graphics {
-
-    VkInstance VulkanInstance::instantiateVulkan() const {
-        const auto requiredExtensionCount = _requiredVulkanExtensionsProvider.getRequiredInstanceExtensionCount();
-        auto requiredExtensions = Span<char const*>::stackAlloc(requiredExtensionCount);
-        _requiredVulkanExtensionsProvider.getRequiredInstanceExtensionNames(requiredExtensions);
-
-        uint32_t requiredLayerCount = 0;
-        const auto requiredLayers = getRequiredLayers(&requiredLayerCount);
-
-        validateRequiredLayer(requiredLayers, requiredLayerCount);
-        validateRequiredExtensions(requiredExtensions);
-
-        const VkInstanceCreateInfo instanceCreateInfo {
-            .sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,
-            .flags = _requiredVulkanExtensionsProvider.getRequiredVulkanInstanceCreateFlagBits(),
-            .pApplicationInfo = &_appInfo,
-            .enabledLayerCount = requiredLayerCount,
-            .ppEnabledLayerNames = requiredLayers,
-            .enabledExtensionCount = requiredExtensionCount,
-            .ppEnabledExtensionNames = requiredExtensions.getHeadPtr(),
-        };
+    OwnerShip<VkInstance> VulkanInstance::resourceAcquisition(const VkInstanceCreateInfo &instanceCreateInfo) const {
         VkInstance instance;
         if (const auto result = vkCreateInstance(&instanceCreateInfo, nullptr, &instance); result != VK_SUCCESS) {
             throw std::runtime_error("Failed to create Vulkan instance: " + std::to_string(result));
         }
-        return instance;
+        return OwnerShip(instance);
     }
 
-    char const* const* VulkanInstance::getRequiredLayers(uint32_t *pCount) const {
-       if constexpr (!enableValidationLayers) {
-            *pCount = 0;
-            return nullptr;
-        }
-        *pCount = std::size(validationLayerNames);
-        return validationLayerNames;
+    VulkanInstance::VulkanInstance(const VkInstanceCreateInfo &instanceCreateInfo):
+        _vkInstance(resourceAcquisition(instanceCreateInfo)) {
+        Debug::Logger::log("Vulkan instance created successfully");
     }
 
-    void VulkanInstance::validateRequiredLayer(char const* const* requiredLayers, uint32_t count) const {
-        if (requiredLayers == nullptr || count == 0) {
-            return;
-        }
-        uint32_t supportedLayerCount = 0;
-        // 実際にサポートされているレイヤー一覧を取得して、必須のレイヤーがサポートされているかを確認する
-        if (vkEnumerateInstanceLayerProperties(&supportedLayerCount, nullptr) != VK_SUCCESS) {
-            throw std::runtime_error("Failed to enumerate Vulkan instance layers");
-        }
-        auto supportedLayers = Span<VkLayerProperties>::stackAlloc(supportedLayerCount);
-        if (vkEnumerateInstanceLayerProperties(&supportedLayerCount, supportedLayers.getHeadPtr()) != VK_SUCCESS) {
-            throw std::runtime_error("Failed to enumerate Vulkan instance layers");
-        }
-        supportedLayers.markFilled();
-        // 必須のレイヤーがサポートされているレイヤーの中に存在しないなら例外をスローする
-        for (uint32_t i = 0; i < count; ++i) {
-            if (const auto requiredLayerName = requiredLayers[i]; !isLayerSupported(requiredLayerName, supportedLayers)) {
-                throw std::runtime_error("Required Vulkan validation layer not supported: " + std::string(requiredLayerName));
+    Borrowed<VkInstance> VulkanInstance::getHandler() const {
+        return _vkInstance.borrow();
+    }
+
+    VulkanInstance::VulkanInstance(VulkanInstance &&moveOrigin) noexcept:
+        _vkInstance(moveOrigin._vkInstance.move()) {
+        moveOrigin._vkInstance = OwnerShip<VkInstance>::MOVED();
+    }
+
+    VulkanInstance &VulkanInstance::operator=(VulkanInstance &&moveOrigin) noexcept {
+        if (this != &moveOrigin) {
+            if (_vkInstance.isNotMoved()) {
+                // 既に所有しているインスタンスがある場合は解放する
+                vkDestroyInstance(_vkInstance.getRawHandle(), nullptr);
             }
+            _vkInstance = moveOrigin._vkInstance.move();
+            moveOrigin._vkInstance = OwnerShip<VkInstance>::MOVED();
         }
-    }
-
-    bool VulkanInstance::isLayerSupported(const char* layerName, const Span<VkLayerProperties>& actualSupportedLayers) const {
-        for (uint32_t i = 0; i < actualSupportedLayers.getMaxElementCount(); ++i) {
-            if (const auto actualSupportedLayer = actualSupportedLayers[i]; strcmp(actualSupportedLayer.layerName, layerName) == 0) {
-                Debug::Logger::log("layer:" + std::string(layerName) + " is supported");
-                return true;
-            }
-        }
-        return false;
-    }
-
-    void VulkanInstance::validateRequiredExtensions(const Span<char const*>& requiredExtensions) const {
-        // 実際にサポートされている拡張機能一覧を取得して、必須の拡張機能がサポートされているかを確認する
-        uint32_t supportedExtensionCount = getSupportedExtensionCount();
-        auto supportedExtensions = Span<VkExtensionProperties>::stackAlloc(supportedExtensionCount);
-        if (const auto result = vkEnumerateInstanceExtensionProperties(nullptr, &supportedExtensionCount, supportedExtensions.getHeadPtr()); result != VK_SUCCESS) {
-            throw std::runtime_error("Failed to enumerate Vulkan instance extensions: " + std::to_string(result));
-        }
-        supportedExtensions.markFilled();
-        // 必須の拡張機能がサポートされている拡張機能の中に存在しないなら例外をスローする
-        for (uint32_t i = 0; i < requiredExtensions.getMaxElementCount(); ++i) {
-            const auto requiredExtension = requiredExtensions[i];
-            if (!isExtensionSupported(requiredExtension, supportedExtensions)) {
-                throw std::runtime_error("Required Vulkan extension not supported: " + std::string(requiredExtension));
-            }
-        }
-    }
-
-    uint32_t VulkanInstance::getSupportedExtensionCount() const {
-        uint32_t extensionCount = 0;
-        if (const auto result = vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr); result != VK_SUCCESS) {
-            throw std::runtime_error("Failed to enumerate Vulkan instance extensions: " + std::to_string(result));
-        }
-        return extensionCount;
-    }
-
-    bool VulkanInstance::isExtensionSupported(const char* extensionName, const Span<VkExtensionProperties>& actualSupportedExtensions) const {
-        for (uint32_t i = 0; i < actualSupportedExtensions.getMaxElementCount(); ++i) {
-            if (const auto actualSupportedExtension = actualSupportedExtensions[i]; strcmp(actualSupportedExtension.extensionName, extensionName) == 0) {
-                Debug::Logger::log("extension:" + std::string(extensionName) + " is supported");
-                return true;
-            }
-        }
-        return false;
-    }
-
-    const VkInstance& VulkanInstance::getInstance() const { return _instance; }
-
-    uint32_t VulkanInstance::getPhysicalDevicesCount() const {
-        uint32_t physicalDeviceCount = 0;
-        if (const auto resultOfEnumerate = vkEnumeratePhysicalDevices(_instance, &physicalDeviceCount, nullptr); resultOfEnumerate != VK_SUCCESS) {
-            throw std::runtime_error("Failed to enumerate Vulkan physical devices: " + std::to_string(resultOfEnumerate));
-        }
-        return physicalDeviceCount;
-    }
-
-    void VulkanInstance::enumeratePhysicalDevices(Span<VkPhysicalDevice> &result) const {
-        auto physicalDeviceCount = getPhysicalDevicesCount();
-        if (result.getMaxElementCount() != physicalDeviceCount) {
-            throw std::runtime_error("VulkanInstance::enumeratePhysicalDevices: result span must have a maxElementCount equal to getPhysicalDevicesCount()");
-        }
-        if (const auto resultOfEnumerate = vkEnumeratePhysicalDevices(_instance, &physicalDeviceCount, result.getHeadPtr()); resultOfEnumerate != VK_SUCCESS) {
-            throw std::runtime_error("Failed to enumerate Vulkan physical devices: " + std::to_string(resultOfEnumerate));
-        }
-        result.markFilled();
+        return *this;
     }
 
     VulkanInstance::~VulkanInstance() {
-        vkDestroyInstance(_instance, nullptr);
+        if (_vkInstance.isNotMoved()) {
+            vkDestroyInstance(_vkInstance.getRawHandle(), nullptr);
+        }
     }
 }
-

@@ -4,18 +4,40 @@
 
 #ifndef TUTORIAL_VULKAN_DEVICE_QUEUE_H
 #define TUTORIAL_VULKAN_DEVICE_QUEUE_H
+
 #include "vulkan/vulkan.h"
+#include "ResourceManagement.h"
 
 namespace Tutorial::Graphics {
-
     /**
      * Vulkanのキューを表すクラス
      */
     class VulkanDeviceQueue {
-        VkQueue _queue;
-    public:
 
-        explicit VulkanDeviceQueue(VkQueue queue);
+        /**
+         * Vulkanのキューのハンドル
+         * Vulkanのキューは、論理デバイスが実質的に所有権をもっているため、借用で保持している
+         */
+        Borrowed<VkQueue> _queue;
+
+        /**
+         * このキューのインデックス
+         */
+        uint32_t queueIndex;
+
+        /**
+         * このキューが属するキューファミリのインデックス
+         */
+        uint32_t queueFamilyIndex;
+
+    public:
+        explicit VulkanDeviceQueue(Borrowed<VkQueue> queue, uint32_t queueIndex, uint32_t queueFamilyIndex);
+
+        [[nodiscard]] Borrowed<VkQueue> getHandle() const;
+
+         [[nodiscard]] uint32_t getQueueFamilyIndex() const;
+
+         [[nodiscard]] uint32_t getQueueIndex() const;
     };
 }
 

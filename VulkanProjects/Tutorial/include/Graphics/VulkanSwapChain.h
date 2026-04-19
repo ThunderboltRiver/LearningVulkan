@@ -5,27 +5,29 @@
 #ifndef TUTORIAL_VULKAN_SWAP_CHAIN_H
 #define TUTORIAL_VULKAN_SWAP_CHAIN_H
 
-#include "Graphics/VulkanLogicalDevice.h"
+#include <vulkan/vulkan.h>
+
+#include "Span.h"
+#include "ResourceManagement.h"
 
 namespace Tutorial::Graphics {
-
     /**
      * Vulkanのスワップチェーンを表すクラス
      */
     class VulkanSwapChain {
-        VkSwapchainKHR _handle;
-        VkDevice _vkDevice;
+        OwnerShip<VkSwapchainKHR> _pSwapChain;
+        Borrowed<VkDevice> _vkDevice;
         VkSurfaceFormatKHR _surfaceFormat;
         VkExtent2D _extent;
 
-        [[nodiscard]] VkSwapchainKHR acquisitionSwapChainResource(VkDevice vkDevice, const VkSwapchainCreateInfoKHR &createInfo) const;
+        [[nodiscard]] OwnerShip<VkSwapchainKHR> resourceAcquisition(Borrowed<VkDevice> vkDevice, const VkSwapchainCreateInfoKHR &createInfo) const;
 
         void cacheProperties(const VkSwapchainCreateInfoKHR &createInfo);
 
     public:
-        explicit VulkanSwapChain(VkDevice vkDevice, const VkSwapchainCreateInfoKHR& createInfo);
+        explicit VulkanSwapChain(Borrowed<VkDevice> vkDevice, const VkSwapchainCreateInfoKHR& createInfo);
 
-        [[nodiscard]] VkSwapchainKHR getHandle() const;
+        [[nodiscard]] Borrowed<VkSwapchainKHR> getHandle() const;
 
         /**
          * vkGetSwapchainImagesKHR のラッパー。スワップチェーンが所有する画像の配列を返す

@@ -11,6 +11,11 @@
 
 constexpr std::size_t STACK_ALLOCATOR_12_MB_CAPACITY = 12 * 1024 * 1024;
 
+/**
+ * TODO: 今の自作スタックアロケータに限界を感じるので後ほど修正する
+ * REMARK: 内部で複数回stackAllocして最後にstackAllocした配列を返す関数があるとすると、
+ * 最後の方はスコープを抜けてもRVOなりムーブなりで生き残るけど、それ以前に確保した配列はスコープから抜けるとたちまち解放されてしまうので確保した順番と逆順に解放処理が呼ばれなくなってしまう。
+ */
 class PlacementStackAllocator {
     const std::size_t _capacity;
     char* const _stackBottomElementPtr;

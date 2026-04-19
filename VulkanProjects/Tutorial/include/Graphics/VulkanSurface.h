@@ -4,27 +4,32 @@
 
 #ifndef TUTORIAL_VULKAN_SURFACE_H
 #define TUTORIAL_VULKAN_SURFACE_H
-#include <vulkan/vulkan_core.h>
+
+#include <vulkan/vulkan.h>
+#include "IVkSurfaceKHRResourceAcquisition.h"
+#include "ResourceManagement.h"
 
 namespace Tutorial::Graphics {
-
     /**
      * VulkanのVkSurfaceKHRを薄くラップするクラス
      */
     class VulkanSurface {
-        VkSurfaceKHR _surface;
-        VkInstance _instance;
+        OwnerShip<VkSurfaceKHR> _surface;
+        Borrowed<VkInstance> _instance;
 
     public:
-
-        [[nodiscard]] VkSurfaceKHR getSurface() const;
+        /**
+         * このVulkanSurfaceが所有するVkSurfaceKHRへの借用を返す
+         * @return このVulkanSurfaceが所有するVkSurfaceKHRへの借用
+         */
+        [[nodiscard]] Borrowed<VkSurfaceKHR> getHandler() const;
 
         /**
          * コンストラクタ。VkSurfaceKHRを受け取ってVulkanSurfaceを作成する。
-         * @param pureSurface VulkanSurfaceが所有するVkSurfaceKHR
+         * @param resourceAcquisition VkSurfaceKHRのリソース獲得を実行するためのオブジェクト。VkSurfaceKHRの作成に使用される
          * @param instance surfaceの作成に使用されたVkInstance。解放の際に必要
          */
-        explicit VulkanSurface(VkSurfaceKHR pureSurface, VkInstance instance);
+        explicit VulkanSurface(const IVkSurfaceKHRResourceAcquisition& resourceAcquisition, Borrowed<VkInstance> instance);
 
         // コピー禁止。VulkanSurfaceの所有権を持つのは一つのインスタンスのみにするため
         VulkanSurface(const VulkanSurface&) = delete;

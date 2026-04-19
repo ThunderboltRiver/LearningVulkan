@@ -11,9 +11,10 @@
 #include "WindowHelper/WindowRequiredVulkanExtensionsProvider.h"
 #include "Graphics/VulkanPhysicalDeviceSelectionStrategy.h"
 #include "Application.h"
-
+#include "Graphics/VulkanInstanceCreationStrategy.h"
 #include "Graphics/VulkanLogicalDeviceCreationStrategy.h"
 #include "Graphics/VulkanSwapChainCreateStrategy.h"
+#include "WindowHelper/GlfwWindowSurfaceResourceAcquisition.h"
 
 namespace Tutorial
 {
@@ -37,33 +38,46 @@ namespace Tutorial
     }
 
     void Application::initializeVulkan(WindowHelper::ApplicationWindow& applicationWindow) {
-        // ウィンドウが要求するVulkan拡張機能のプロバイダを作成してVulkanInstanceを作成する
+
+        // VulkanInstanceの作成
         const WindowHelper::WindowRequiredVulkanExtensionsProvider extensionsProvider;
-        const Graphics::VulkanInstance vulkanInstance(appInfo, extensionsProvider);
-        const auto vulkanSurface = applicationWindow.createVulkanSurface(vulkanInstance);
+        const Graphics::RequiredVulkanInstanceLayerProvider requiredVulkanInstanceLayerProvider;
+        const Graphics::VulkanInstanceCreationStrategy vulkanInstanceCreationStrategy(extensionsProvider, requiredVulkanInstanceLayerProvider);
+        const auto vulkanInstance = vulkanInstanceCreationStrategy.createVulkanInstance(appInfo);
+        const auto vulkanInstanceReadModel = Graphics::VulkanInstanceReadModel(vulkanInstance.getHandler());
+
+        // ウィンドウのサーフェスを作成する
+        const WindowHelper::GlfwWindowSurfaceResourceAcquisition surfaceResourceAcquisition(applicationWindow.getHandler());
+        const Graphics::VulkanSurface vulkanSurface(surfaceResourceAcquisition, vulkanInstance.getHandler());
+
+        // 物理デバイスを選択
         const Graphics::VulkanPhysicalDeviceAPIVersionRequirements apiVersionRequirements;
         const Graphics::VulkanPhysicalDeviceQueueFamilyRequirements queueFamilyRequirements(vulkanSurface);
         const Graphics::VulkanPhysicalDeviceFeatureRequirements deviceFeatureRequirements;
         const Graphics::VulkanPhysicalDeviceExtensionsRequirements deviceExtensionRequirements;
         const Graphics::VulkanPhysicalDeviceSelectionStrategy physicalDeviceSelectionStrategy(
-            vulkanInstance,
             apiVersionRequirements,
             queueFamilyRequirements,
             deviceFeatureRequirements,
             deviceExtensionRequirements
             );
+        const auto vulkanPhysicalDevice = physicalDeviceSelectionStrategy.selectPhysicalDevice(vulkanInstanceReadModel);
+
+        // 論理デバイスの作成
         const Graphics::VulkanLogicalDeviceCreationStrategy logicalDeviceCreationStrategy(
             queueFamilyRequirements,
             deviceFeatureRequirements,
             deviceExtensionRequirements
         );
-        const Graphics::VulkanSwapChainCreateStrategy swapChainCreateStrategy(applicationWindow.getBufferSize());
-
-        const auto vulkanPhysicalDevice = physicalDeviceSelectionStrategy.selectPhysicalDevice();
         const auto vulkanLogicalDevice = logicalDeviceCreationStrategy.createLogicalDevice(vulkanPhysicalDevice);
-        const auto queueFamilyIndices = vulkanLogicalDevice.getQueueFamilyIndices();
-        const auto vulkanDeviceQueue = vulkanLogicalDevice.getQueue(queueFamilyIndices[0], 0);
+
+        // 論理デバイスからキューを取得
+        const auto vulkanDeviceQueue = vulkanLogicalDevice.getQueues()[0];
+
+        // スワップチェーンの作成
+        const Graphics::VulkanSwapChainCreateStrategy swapChainCreateStrategy(applicationWindow.getBufferSize());
         const auto vulkanSwapChain = swapChainCreateStrategy.createSwapChain(vulkanPhysicalDevice, vulkanSurface, vulkanLogicalDevice);
+
         const auto swapChainImages = vulkanSwapChain.getImages();
 
     }

@@ -7,16 +7,20 @@
 
 #include "PlacementStackAllocator.h"
 #include "SpanAllocator.h"
+#include "SpanView.h"
 #include "type_traits"
 
 /**
  * 特定の型に限定された連続したメモリ領域を表す構造体
+ * TODO: スタックアロケータのみを使用することに限界を感じてきたので将来的にはリファクタする
  * @tparam T アドレスの実体の型
  */
 template<typename T>
 struct Span {
 
     using StorageType = std::remove_const_t<T>;
+
+    static Span createEmpty() { return Span(nullptr, 0); }
 
     /**
      * 先頭のメモリアドレスへのポインタを取得する
@@ -35,6 +39,8 @@ struct Span {
     * @return この範囲に現在格納されている要素数
     */
     [[nodiscard]]uint32_t getElementCount() const { return emptyIndex; }
+
+    [[nodiscard]]std::size_t getAllocatedBytes() const { return _allocatedBytes; }
 
     /**
      * 指定されたインデックスが指す実体への参照を返す
@@ -178,6 +184,10 @@ struct Span {
         return *this;
     }
 
+    SpanView<T> asView() const {
+        return SpanView<T>(getHeadPtr(), getElementCount());
+    }
+
     /**
      * ムーブコンストラクタ。所有権をムーブ元からムーブ先に移動する。
      * ムーブ元は空の状態になり、デストラクタでは何もしない。
@@ -225,6 +235,12 @@ private:
         _headPtr(allocResult.headPtr),
         _maxElementCount(allocResult.count),
         _allocatedBytes(allocResult.allocatedBytes) {
+    }
+
+    explicit Span(StorageType* headPtr, const uint32_t maxElementCount):
+        _headPtr(headPtr),
+        _maxElementCount(maxElementCount),
+        _allocatedBytes(sizeof(StorageType) * static_cast<size_t>(maxElementCount)) {
     }
 };
 

@@ -4,30 +4,34 @@
 
 #ifndef TUTORIAL_VULKAN_LOGICAL_DEVICE_H
 #define TUTORIAL_VULKAN_LOGICAL_DEVICE_H
-#include <stdexcept>
 
+#include <vulkan/vulkan.h>
+#include <ResourceManagement/Borrowed.h>
+#include <ResourceManagement/OwnerShip.h>
 #include "Span.h"
 #include "Graphics/VulkanDeviceQueue.h"
 #include "Graphics/VulkanPhysicalDevice.h"
+#include "ResourceManagement.h"
 
 namespace Tutorial::Graphics {
-
     /**
      * Vulkanの論理デバイスを表すクラス
      */
     class VulkanLogicalDevice {
-        VkDevice _device = VK_NULL_HANDLE;
-        const VulkanPhysicalDevice _physicalDevice;
-        Span<VkDeviceQueueCreateInfo const> _deviceQueueCreateInfos;
+        OwnerShip<VkDevice> _device;
+        Span<VulkanDeviceQueue const> _queues;
 
-        [[nodiscard]] VkDevice initialize(const VulkanPhysicalDevice& physicalDevice, const VkDeviceCreateInfo& deviceCreateInfo) const;
+        [[nodiscard]] OwnerShip<VkDevice> resourceAcquisition(const VulkanPhysicalDevice& physicalDevice, const VkDeviceCreateInfo& deviceCreateInfo) const;
+        [[nodiscard]] Span<VulkanDeviceQueue const> createVulkanDeviceQueues(const VkDeviceCreateInfo& deviceCreateInfo) const;
 
-        [[nodiscard]] Span<VkDeviceQueueCreateInfo const> getQueueCreateInfosFromDeviceInfo(const VkDeviceCreateInfo &deviceCreateInfo) const;
+        [[nodiscard]] uint32_t getQueueCreateCount(const VkDeviceCreateInfo &deviceCreateInfo) const;
 
     public:
         explicit VulkanLogicalDevice(const VulkanPhysicalDevice& physicalDevice, const VkDeviceCreateInfo& deviceCreateInfo);
 
-        [[nodiscard]] VkDevice getHandle() const;
+        [[nodiscard]] Borrowed<VkDevice> getHandle() const;
+
+        [[nodiscard]] SpanView<VulkanDeviceQueue const> getQueues() const;
 
         // コピー禁止。論理デバイスの所有権を持つのは一つのインスタンスのみにするため
         VulkanLogicalDevice(const VulkanLogicalDevice&) = delete;

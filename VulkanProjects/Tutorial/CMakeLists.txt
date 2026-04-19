@@ -60,6 +60,7 @@ add_executable(Tutorial
         src/SpanAllocator.cpp
         src/Graphics/FrameBufferSize.cpp
         src/Graphics/Pixel.cpp
+        src/Graphics/VulkanInstanceCreationStrategy.cpp
         src/Graphics/SwapChainImageCountPreference.cpp
         src/Graphics/SwapChainPresentModePreference.cpp
         src/Graphics/SwapChainVulkanSurfaceExtentPreference.cpp
@@ -79,6 +80,13 @@ add_executable(Tutorial
         src/Graphics/VulkanSwapChainCreateStrategy.cpp
         src/WindowHelper/ApplicationWindow.cpp
         src/WindowHelper/WindowRequiredVulkanExtensionsProvider.cpp
+        src/ResourceManagement/Borrowed.cpp
+        src/ResourceManagement/OwnerShip.cpp
+        src/ResourceManagement/ResourcePtrConcept.cpp
+        src/WindowHelper/GlfwWindowSurfaceResourceAcquisition.cpp
+        src/Graphics/RequiredVulkanInstanceLayerProvider.cpp
+        src/Graphics/VulkanInstanceReadModel.cpp
+        src/SpanView.cpp
 )
 
 # Tutorialターゲットのヘッダをインポートする

@@ -6,23 +6,23 @@
 #define TUTORIAL_VULKAN_PHYSICAL_DEVICE_H
 
 #include <vulkan/vulkan.h>
-
 #include "Span.h"
+#include "ResourceManagement.h"
 
 namespace Tutorial::Graphics {
-
     /**
      * Vulkanの物理デバイスを表すクラス
      */
     class VulkanPhysicalDevice {
 
         // 物理デバイスのハンドル
-        VkPhysicalDevice _physicalDevice;
+        // 物理デバイスに関しては、VulkanInstanceから取得したハンドルを使用するだけで、特にリソースの解放なども必要ないため、借用で保持する
+        Borrowed<VkPhysicalDevice> _physicalDevice;
 
     public:
-        explicit VulkanPhysicalDevice(VkPhysicalDevice physicalDevice) : _physicalDevice(physicalDevice) {}
+        explicit VulkanPhysicalDevice(Borrowed<VkPhysicalDevice> physicalDevice) : _physicalDevice(physicalDevice) {}
 
-        [[nodiscard]] VkPhysicalDevice getHandle() const;
+        [[nodiscard]] Borrowed<VkPhysicalDevice> getHandle() const;
 
         void getProperties2(VkPhysicalDeviceProperties2& properties) const;
 
@@ -44,7 +44,7 @@ namespace Tutorial::Graphics {
          * vkGetPhysicalDeviceSurfaceCapabilitiesKHR のラッパー
          * VK_KHR_surface 拡張機能が有効化されている物理デバイスでのみ使用可能
          */
-        VkResult getSurfaceCapabilitiesKHR(VkSurfaceKHR surface, VkSurfaceCapabilitiesKHR* pSurfaceCapabilities) const;
+        VkResult getSurfaceCapabilitiesKHR(Borrowed<VkSurfaceKHR> surface, VkSurfaceCapabilitiesKHR *pSurfaceCapabilities) const;
 
         /**
          * vkGetPhysicalDeviceSurfaceCapabilities2KHR のラッパー
@@ -56,7 +56,7 @@ namespace Tutorial::Graphics {
          * vkGetPhysicalDeviceSurfaceFormatsKHR のラッパー
          * VK_KHR_surface 拡張機能が有効化されている物理デバイスでのみ使用可能
          */
-        VkResult getSurfaceFormatsKHR(VkSurfaceKHR surface, uint32_t *pSurfaceFormatCount, VkSurfaceFormatKHR *pSurfaceFormat) const;
+        VkResult getSurfaceFormatsKHR(Borrowed<VkSurfaceKHR> surface, uint32_t *pSurfaceFormatCount, VkSurfaceFormatKHR *pSurfaceFormat) const;
 
         /**
          * vkGetPhysicalDeviceSurfaceFormats2KHR のラッパー
@@ -67,7 +67,7 @@ namespace Tutorial::Graphics {
         /**
          * vkGetPhysicalDeviceSurfacePresentModesKHR のラッパー
          */
-        VkResult getPhysicalDeviceSurfacePresentModeKHR(VkSurfaceKHR surface, uint32_t *pPresentModeCount, VkPresentModeKHR *pPresentModes) const;
+        VkResult getPhysicalDeviceSurfacePresentModeKHR(Borrowed<VkSurfaceKHR> surface, uint32_t *pPresentModeCount, VkPresentModeKHR *pPresentModes) const;
 
 #ifdef VK_USE_PLATFORM_WIN32_KHR
         /**
@@ -90,7 +90,7 @@ namespace Tutorial::Graphics {
          * @param surface サーフェス
          * @return 指定されたキューファミリーが、指定されたサーフェスに対してプレゼンテーションをサポートしているならtrue、そうでないならfalse
          */
-        bool isPresentationSupported(uint32_t queueFamilyIndex, VkSurfaceKHR surface) const;
+        bool isPresentationSupported(uint32_t queueFamilyIndex, Borrowed<VkSurfaceKHR> surface) const;
     };
 } // Graphics
 

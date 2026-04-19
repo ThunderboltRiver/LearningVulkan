@@ -3,41 +3,40 @@
 //
 
 #include "Graphics/VulkanSurface.h"
+#include "ResourceManagement.h"
 
 namespace Tutorial::Graphics {
-    VkSurfaceKHR VulkanSurface::getSurface() const {
-        return _surface;
-    }
+    Borrowed<VkSurfaceKHR> VulkanSurface::getHandler() const { return _surface.borrow(); }
 
-    VulkanSurface::VulkanSurface(VkSurfaceKHR pureSurface, VkInstance instance):
-        _surface(pureSurface),
+    VulkanSurface::VulkanSurface(const IVkSurfaceKHRResourceAcquisition &resourceAcquisition, Borrowed<VkInstance> instance):
+        _surface(resourceAcquisition.execute(instance)),
         _instance(instance) {
     }
 
     VulkanSurface::VulkanSurface(VulkanSurface &&moveOrigin) noexcept:
-        _surface(moveOrigin._surface),
+        _surface(moveOrigin._surface.move()),
         _instance(moveOrigin._instance) {
-        moveOrigin._surface = VK_NULL_HANDLE;
-        moveOrigin._instance = VK_NULL_HANDLE;
+        moveOrigin._surface = OwnerShip<VkSurfaceKHR>::MOVED();
+        moveOrigin._instance = Borrowed<VkInstance>::Null();
     }
 
     VulkanSurface &VulkanSurface::operator=(VulkanSurface &&moveOrigin) noexcept {
         if (this != &moveOrigin) {
-            if (_surface != VK_NULL_HANDLE) {
+            if (_surface.isNotMoved()) {
                 // 既に所有しているsurfaceがある場合は解放する
-                vkDestroySurfaceKHR(_instance, _surface, /*allocator*/nullptr);
+                vkDestroySurfaceKHR(_instance.getRawHandle(), _surface.getRawHandle(), /*allocator*/nullptr);
             }
-            _surface = moveOrigin._surface;
+            _surface = moveOrigin._surface.move();
             _instance = moveOrigin._instance;
-            moveOrigin._surface = VK_NULL_HANDLE;
-            moveOrigin._instance = VK_NULL_HANDLE;
+            moveOrigin._surface = OwnerShip<VkSurfaceKHR>::MOVED();
+            moveOrigin._instance = Borrowed<VkInstance>::Null();
         }
         return *this;
     }
 
     VulkanSurface::~VulkanSurface() {
-        if (_surface != VK_NULL_HANDLE) {
-            vkDestroySurfaceKHR(_instance, _surface, nullptr);
+        if (_surface.isNotMoved()) {
+            vkDestroySurfaceKHR(_instance.getRawHandle(), _surface.getRawHandle(), nullptr);
         }
     }
 }
