@@ -84,7 +84,6 @@ add_executable(Tutorial
         src/ResourceManagement/OwnerShip.cpp
         src/ResourceManagement/ResourcePtrConcept.cpp
         src/WindowHelper/GlfwWindowSurfaceResourceAcquisition.cpp
-        src/WindowHelper/GlfwWindowSurfaceResourceAcquisition.cpp
         src/Graphics/RequiredVulkanInstanceLayerProvider.cpp
         src/Graphics/VulkanInstanceReadModel.cpp
         src/SpanView.cpp

@@ -56,10 +56,7 @@ namespace Tutorial::Graphics {
         _device(other._device.move()),
         _queues(std::move(other._queues))
     {
-        if (this != &other) {
-            other._device = OwnerShip<VkDevice>::MOVED();
-            other._queues = Span<VulkanDeviceQueue const>::createEmpty();
-        }
+        other._device = OwnerShip<VkDevice>::MOVED();
     }
 
     VulkanDeviceQueue VulkanLogicalDevice::getQueue(uint32_t queueFamilyIndex, uint32_t queueIndex) const {

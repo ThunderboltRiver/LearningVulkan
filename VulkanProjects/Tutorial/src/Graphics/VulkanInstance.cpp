@@ -4,10 +4,8 @@
 
 #include "Graphics/VulkanInstance.h"
 #include "Debug/Logger.h"
-
 #include <iostream>
-
-#include "Span.h"
+#include <string>
 
 namespace Tutorial::Graphics {
 

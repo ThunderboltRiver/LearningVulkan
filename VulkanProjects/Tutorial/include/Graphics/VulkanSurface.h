@@ -5,8 +5,7 @@
 #ifndef TUTORIAL_VULKAN_SURFACE_H
 #define TUTORIAL_VULKAN_SURFACE_H
 
-#include <vulkan/vulkan_core.h>
-
+#include <vulkan/vulkan.h>
 #include "IVkSurfaceKHRResourceAcquisition.h"
 #include "ResourceManagement/OwnerShip.h"
 

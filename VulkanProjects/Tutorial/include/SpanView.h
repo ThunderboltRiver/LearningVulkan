@@ -5,7 +5,9 @@
 #ifndef TUTORIAL_SPANVIEW_H
 #define TUTORIAL_SPANVIEW_H
 
+#include <cstdint>
 #include <stdexcept>
+
 
 /**
  *　特定の型に限定された連続したメモリ領域を表す構造体

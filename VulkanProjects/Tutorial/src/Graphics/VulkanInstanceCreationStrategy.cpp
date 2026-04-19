@@ -3,10 +3,9 @@
 //
 
 #include "Graphics/VulkanInstanceCreationStrategy.h"
-
-#include <string>
-
 #include "Debug/Logger.h"
+#include <cstring>
+#include <string>
 
 namespace Tutorial::Graphics {
     VulkanInstanceCreationStrategy::VulkanInstanceCreationStrategy(
