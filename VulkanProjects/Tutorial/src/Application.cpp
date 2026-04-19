@@ -11,8 +11,6 @@
 #include "WindowHelper/WindowRequiredVulkanExtensionsProvider.h"
 #include "Graphics/VulkanPhysicalDeviceSelectionStrategy.h"
 #include "Application.h"
-
-#include "Debug/Logger.h"
 #include "Graphics/VulkanInstanceCreationStrategy.h"
 #include "Graphics/VulkanLogicalDeviceCreationStrategy.h"
 #include "Graphics/VulkanSwapChainCreateStrategy.h"
@@ -40,11 +38,10 @@ namespace Tutorial
     }
 
     void Application::initializeVulkan(WindowHelper::ApplicationWindow& applicationWindow) {
-        // ウィンドウが要求するVulkan拡張機能のプロバイダを作成してVulkanInstanceを作成する
-        const WindowHelper::WindowRequiredVulkanExtensionsProvider extensionsProvider;
-        const Graphics::RequiredVulkanInstanceLayerProvider requiredVulkanInstanceLayerProvider;
 
         // VulkanInstanceの作成
+        const WindowHelper::WindowRequiredVulkanExtensionsProvider extensionsProvider;
+        const Graphics::RequiredVulkanInstanceLayerProvider requiredVulkanInstanceLayerProvider;
         const Graphics::VulkanInstanceCreationStrategy vulkanInstanceCreationStrategy(extensionsProvider, requiredVulkanInstanceLayerProvider);
         const auto vulkanInstance = vulkanInstanceCreationStrategy.createVulkanInstance(appInfo);
         const auto vulkanInstanceReadModel = Graphics::VulkanInstanceReadModel(vulkanInstance.getHandler());
