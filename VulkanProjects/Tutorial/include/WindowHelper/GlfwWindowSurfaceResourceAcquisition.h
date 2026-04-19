@@ -9,12 +9,14 @@
 #include <GLFW/glfw3.h>
 
 namespace Tutorial::WindowHelper {
-    class GlfwWindowSurfaceResourceAcquisition : public Graphics::IVkSurfaceKHRResourceAcquisition {
-        Borrowed<GLFWwindow*> _windowHandler;
-        public:
-        explicit GlfwWindowSurfaceResourceAcquisition(Borrowed<GLFWwindow*> windowHandler);
+    namespace RM = Tutorial::ResourceManagement;
 
-        [[nodiscard]] OwnerShip<VkSurfaceKHR> execute(Borrowed<VkInstance> instance) const override;
+    class GlfwWindowSurfaceResourceAcquisition : public Graphics::IVkSurfaceKHRResourceAcquisition {
+        RM::Borrowed<GLFWwindow*> _windowHandler;
+        public:
+        explicit GlfwWindowSurfaceResourceAcquisition(RM::Borrowed<GLFWwindow*> windowHandler);
+
+        [[nodiscard]] RM::OwnerShip<VkSurfaceKHR> execute(RM::Borrowed<VkInstance> instance) const override;
     };
 }
 

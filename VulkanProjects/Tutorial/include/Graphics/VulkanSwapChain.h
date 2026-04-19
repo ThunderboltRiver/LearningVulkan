@@ -11,29 +11,26 @@
 #include "ResourceManagement/Borrowed.h"
 #include "ResourceManagement/OwnerShip.h"
 
-using Tutorial::ResourceManagement::OwnerShip;
-using Tutorial::ResourceManagement::Borrowed;
-
-
 namespace Tutorial::Graphics {
+    namespace RM = Tutorial::ResourceManagement;
 
     /**
      * Vulkanのスワップチェーンを表すクラス
      */
     class VulkanSwapChain {
-        OwnerShip<VkSwapchainKHR> _pSwapChain;
-        Borrowed<VkDevice> _vkDevice;
+        RM::OwnerShip<VkSwapchainKHR> _pSwapChain;
+        RM::Borrowed<VkDevice> _vkDevice;
         VkSurfaceFormatKHR _surfaceFormat;
         VkExtent2D _extent;
 
-        [[nodiscard]] OwnerShip<VkSwapchainKHR> resourceAcquisition(Borrowed<VkDevice> vkDevice, const VkSwapchainCreateInfoKHR &createInfo) const;
+        [[nodiscard]] RM::OwnerShip<VkSwapchainKHR> resourceAcquisition(RM::Borrowed<VkDevice> vkDevice, const VkSwapchainCreateInfoKHR &createInfo) const;
 
         void cacheProperties(const VkSwapchainCreateInfoKHR &createInfo);
 
     public:
-        explicit VulkanSwapChain(Borrowed<VkDevice> vkDevice, const VkSwapchainCreateInfoKHR& createInfo);
+        explicit VulkanSwapChain(RM::Borrowed<VkDevice> vkDevice, const VkSwapchainCreateInfoKHR& createInfo);
 
-        [[nodiscard]] Borrowed<VkSwapchainKHR> getHandle() const;
+        [[nodiscard]] RM::Borrowed<VkSwapchainKHR> getHandle() const;
 
         /**
          * vkGetSwapchainImagesKHR のラッパー。スワップチェーンが所有する画像の配列を返す

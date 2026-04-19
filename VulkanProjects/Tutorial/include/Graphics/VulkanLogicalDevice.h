@@ -12,19 +12,17 @@
 #include "Graphics/VulkanDeviceQueue.h"
 #include "Graphics/VulkanPhysicalDevice.h"
 
-using Tutorial::ResourceManagement::OwnerShip;
-using Tutorial::ResourceManagement::Borrowed;
-
 namespace Tutorial::Graphics {
+    namespace RM = Tutorial::ResourceManagement;
 
     /**
      * Vulkanの論理デバイスを表すクラス
      */
     class VulkanLogicalDevice {
-        OwnerShip<VkDevice> _device;
+        RM::OwnerShip<VkDevice> _device;
         Span<VulkanDeviceQueue const> _queues;
 
-        [[nodiscard]] OwnerShip<VkDevice> resourceAcquisition(const VulkanPhysicalDevice& physicalDevice, const VkDeviceCreateInfo& deviceCreateInfo) const;
+        [[nodiscard]] RM::OwnerShip<VkDevice> resourceAcquisition(const VulkanPhysicalDevice& physicalDevice, const VkDeviceCreateInfo& deviceCreateInfo) const;
         [[nodiscard]] Span<VulkanDeviceQueue const> createVulkanDeviceQueues(const VkDeviceCreateInfo& deviceCreateInfo) const;
 
         [[nodiscard]] uint32_t getQueueCreateCount(const VkDeviceCreateInfo &deviceCreateInfo) const;
@@ -32,7 +30,7 @@ namespace Tutorial::Graphics {
     public:
         explicit VulkanLogicalDevice(const VulkanPhysicalDevice& physicalDevice, const VkDeviceCreateInfo& deviceCreateInfo);
 
-        [[nodiscard]] Borrowed<VkDevice> getHandle() const;
+        [[nodiscard]] RM::Borrowed<VkDevice> getHandle() const;
 
         [[nodiscard]] SpanView<VulkanDeviceQueue const> getQueues() const;
 

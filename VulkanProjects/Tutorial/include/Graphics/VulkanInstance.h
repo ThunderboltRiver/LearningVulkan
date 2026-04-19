@@ -11,22 +11,20 @@
 #include "ResourceManagement/Borrowed.h"
 #include "ResourceManagement/OwnerShip.h"
 
-using Tutorial::ResourceManagement::Borrowed;
-using Tutorial::ResourceManagement::OwnerShip;
-
 namespace Tutorial::Graphics {
+    namespace RM = Tutorial::ResourceManagement;
 
     /**
      * Vulkanのインスタンスを表すクラス
      */
     class VulkanInstance {
-        OwnerShip<VkInstance> _vkInstance;
+        RM::OwnerShip<VkInstance> _vkInstance;
 
-        [[nodiscard]] OwnerShip<VkInstance> resourceAcquisition(const VkInstanceCreateInfo& instanceCreateInfo) const;
+        [[nodiscard]] RM::OwnerShip<VkInstance> resourceAcquisition(const VkInstanceCreateInfo& instanceCreateInfo) const;
     public:
         explicit VulkanInstance(const VkInstanceCreateInfo& instanceCreateInfo);
 
-        [[nodiscard]] Borrowed<VkInstance> getHandler() const;
+        [[nodiscard]] RM::Borrowed<VkInstance> getHandler() const;
 
         // vkInstanceの所有権を持つのは一つのインスタンスのみにするためコピー禁止
         VulkanInstance(const VulkanInstance&) = delete;

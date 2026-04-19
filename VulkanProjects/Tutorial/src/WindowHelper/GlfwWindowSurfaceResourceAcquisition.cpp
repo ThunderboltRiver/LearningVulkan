@@ -7,15 +7,17 @@
 #include <string>
 
 namespace Tutorial::WindowHelper {
-    GlfwWindowSurfaceResourceAcquisition::GlfwWindowSurfaceResourceAcquisition(Borrowed<GLFWwindow*> windowHandler):
+    namespace RM = Tutorial::ResourceManagement;
+
+    GlfwWindowSurfaceResourceAcquisition::GlfwWindowSurfaceResourceAcquisition(RM::Borrowed<GLFWwindow*> windowHandler):
         _windowHandler(windowHandler) {
     }
 
-    OwnerShip<VkSurfaceKHR> GlfwWindowSurfaceResourceAcquisition::execute(Borrowed<VkInstance> instance) const {
+    RM::OwnerShip<VkSurfaceKHR> GlfwWindowSurfaceResourceAcquisition::execute(RM::Borrowed<VkInstance> instance) const {
         VkSurfaceKHR surface;
         if (const auto result = glfwCreateWindowSurface(instance.getRawHandle(), _windowHandler.getRawHandle(), nullptr, &surface); result != VK_SUCCESS) {
             throw std::runtime_error("Failed to create Vulkan surface: " + std::to_string(result));
         }
-        return OwnerShip(surface);
+        return RM::OwnerShip(surface);
     }
 }

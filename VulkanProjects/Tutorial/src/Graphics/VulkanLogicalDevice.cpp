@@ -10,12 +10,14 @@
 #include "SpanView.h"
 
 namespace Tutorial::Graphics {
-    OwnerShip<VkDevice> VulkanLogicalDevice::resourceAcquisition(const VulkanPhysicalDevice &physicalDevice, const VkDeviceCreateInfo &deviceCreateInfo) const {
+    namespace RM = Tutorial::ResourceManagement;
+
+    RM::OwnerShip<VkDevice> VulkanLogicalDevice::resourceAcquisition(const VulkanPhysicalDevice &physicalDevice, const VkDeviceCreateInfo &deviceCreateInfo) const {
         VkDevice logicalDevice;
         if (physicalDevice.createDevice(deviceCreateInfo, nullptr, &logicalDevice) != VK_SUCCESS) {
             throw std::runtime_error("Failed to create logical device");
         }
-        return OwnerShip(logicalDevice);
+        return RM::OwnerShip(logicalDevice);
     }
 
     Span<VulkanDeviceQueue const> VulkanLogicalDevice::createVulkanDeviceQueues(const VkDeviceCreateInfo &deviceCreateInfo) const {
@@ -26,7 +28,7 @@ namespace Tutorial::Graphics {
                  // キューファミリーインデックスとキューインデックスを組み合わせて、キューのハンドルを取得する
                  VkQueue queue;
                  vkGetDeviceQueue(_device.getRawHandle(), queueCreateInfo.queueFamilyIndex, queueIndex, &queue);
-                 result.Add(VulkanDeviceQueue(Borrowed(queue), queueIndex, queueCreateInfo.queueFamilyIndex));
+                 result.Add(VulkanDeviceQueue(RM::Borrowed(queue), queueIndex, queueCreateInfo.queueFamilyIndex));
              }
         }
         return result;
@@ -46,7 +48,7 @@ namespace Tutorial::Graphics {
         _queues(createVulkanDeviceQueues(deviceCreateInfo)) {
     }
 
-    Borrowed<VkDevice> VulkanLogicalDevice::getHandle() const {
+    RM::Borrowed<VkDevice> VulkanLogicalDevice::getHandle() const {
         return _device.borrow();
     }
 
@@ -57,7 +59,7 @@ namespace Tutorial::Graphics {
         _queues(std::move(other._queues))
     {
         if (this != &other) {
-            other._device = OwnerShip<VkDevice>::MOVED();
+            other._device = RM::OwnerShip<VkDevice>::MOVED();
             other._queues = Span<VulkanDeviceQueue const>::createEmpty();
         }
     }

@@ -9,10 +9,8 @@
 #include "ResourceManagement/OwnerShip.h"
 #include "ResourceManagement/Borrowed.h"
 
-using Tutorial::ResourceManagement::OwnerShip;
-using Tutorial::ResourceManagement::Borrowed;
-
 namespace Tutorial::Graphics {
+    namespace RM = Tutorial::ResourceManagement;
 
     /**
      * VkSurfaceKHRのリソースを獲得するためのインターフェース
@@ -27,7 +25,7 @@ namespace Tutorial::Graphics {
          * @param instance vkInstanceへの借用。VkSurfaceKHRの作成に使用される
          * @return VkSurfaceKHRの所有権
          */
-        [[nodiscard]] virtual OwnerShip<VkSurfaceKHR> execute(Borrowed<VkInstance> instance) const = 0;
+        [[nodiscard]] virtual RM::OwnerShip<VkSurfaceKHR> execute(RM::Borrowed<VkInstance> instance) const = 0;
     };
 }
 

@@ -5,9 +5,11 @@
 #include "Graphics/VulkanSurface.h"
 
 namespace Tutorial::Graphics {
-    Borrowed<VkSurfaceKHR> VulkanSurface::getHandler() const { return _surface.borrow(); }
+    namespace RM = Tutorial::ResourceManagement;
 
-    VulkanSurface::VulkanSurface(const IVkSurfaceKHRResourceAcquisition &resourceAcquisition, Borrowed<VkInstance> instance):
+    RM::Borrowed<VkSurfaceKHR> VulkanSurface::getHandler() const { return _surface.borrow(); }
+
+    VulkanSurface::VulkanSurface(const IVkSurfaceKHRResourceAcquisition &resourceAcquisition, RM::Borrowed<VkInstance> instance):
         _surface(resourceAcquisition.execute(instance)),
         _instance(instance) {
     }
@@ -15,8 +17,8 @@ namespace Tutorial::Graphics {
     VulkanSurface::VulkanSurface(VulkanSurface &&moveOrigin) noexcept:
         _surface(moveOrigin._surface.move()),
         _instance(moveOrigin._instance) {
-        moveOrigin._surface = OwnerShip<VkSurfaceKHR>::MOVED();
-        moveOrigin._instance = Borrowed<VkInstance>::Null();
+        moveOrigin._surface = RM::OwnerShip<VkSurfaceKHR>::MOVED();
+        moveOrigin._instance = RM::Borrowed<VkInstance>::Null();
     }
 
     VulkanSurface &VulkanSurface::operator=(VulkanSurface &&moveOrigin) noexcept {
@@ -27,8 +29,8 @@ namespace Tutorial::Graphics {
             }
             _surface = moveOrigin._surface.move();
             _instance = moveOrigin._instance;
-            moveOrigin._surface = OwnerShip<VkSurfaceKHR>::MOVED();
-            moveOrigin._instance = Borrowed<VkInstance>::Null();
+            moveOrigin._surface = RM::OwnerShip<VkSurfaceKHR>::MOVED();
+            moveOrigin._instance = RM::Borrowed<VkInstance>::Null();
         }
         return *this;
     }

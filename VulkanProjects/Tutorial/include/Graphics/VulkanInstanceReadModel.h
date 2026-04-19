@@ -10,15 +10,14 @@
 #include "VulkanPhysicalDevice.h"
 #include "ResourceManagement/Borrowed.h"
 
-using Tutorial::ResourceManagement::Borrowed;
-
 namespace Tutorial::Graphics {
+    namespace RM = Tutorial::ResourceManagement;
 
     /**
      * VulkanInstanceのReadModelを表すクラス
      */
     class VulkanInstanceReadModel {
-        Borrowed<VkInstance> _vkInstance;
+        RM::Borrowed<VkInstance> _vkInstance;
 
     public:
 
@@ -26,7 +25,7 @@ namespace Tutorial::Graphics {
          * コンストラクタ。VulkanInstanceから作成する。
          * @param vkInstance VulkanInstanceから借用したVkInstance
          */
-        explicit VulkanInstanceReadModel(Borrowed<VkInstance> vkInstance);
+        explicit VulkanInstanceReadModel(RM::Borrowed<VkInstance> vkInstance);
 
         /**
          * VulkanInstanceから物理デバイスのハンドルの配列を取得する。

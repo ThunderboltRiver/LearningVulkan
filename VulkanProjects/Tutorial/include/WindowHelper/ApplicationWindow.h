@@ -12,6 +12,8 @@
 #include "Graphics/FrameBufferSize.h"
 
 namespace Tutorial::WindowHelper {
+    namespace RM = Tutorial::ResourceManagement;
+
     class ApplicationWindow {
     public:
         ApplicationWindow(
@@ -28,7 +30,7 @@ namespace Tutorial::WindowHelper {
          * GLFWwindowへの借用を返す
          * @return GLFWwindowへの借用
          */
-        [[nodiscard]] Borrowed<GLFWwindow*> getHandler() const;
+        [[nodiscard]] RM::Borrowed<GLFWwindow*> getHandler() const;
 
         /**
          * 閉じるべきか
