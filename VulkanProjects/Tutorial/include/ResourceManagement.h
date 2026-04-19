@@ -6,10 +6,12 @@
 #define TUTORIAL_RESOURCEMANAGEMENT_H
 
 #include "ResourceManagement/Borrowed.h"
+#include "ResourceManagement/DynamicArray.h"
 #include "ResourceManagement/OwnerShip.h"
 
 namespace Tutorial {
     using ResourceManagement::Borrowed;
+    using ResourceManagement::DynamicArray;
     using ResourceManagement::OwnerShip;
 }
 

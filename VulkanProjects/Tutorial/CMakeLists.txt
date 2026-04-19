@@ -81,6 +81,7 @@ add_executable(Tutorial
         src/WindowHelper/ApplicationWindow.cpp
         src/WindowHelper/WindowRequiredVulkanExtensionsProvider.cpp
         src/ResourceManagement/Borrowed.cpp
+        src/ResourceManagement/DynamicArray.cpp
         src/ResourceManagement/OwnerShip.cpp
         src/ResourceManagement/ResourcePtrConcept.cpp
         src/WindowHelper/GlfwWindowSurfaceResourceAcquisition.cpp
