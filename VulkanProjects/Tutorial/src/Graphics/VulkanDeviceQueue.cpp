@@ -5,15 +5,15 @@
 #include "Graphics/VulkanDeviceQueue.h"
 
 namespace Tutorial::Graphics {
-    namespace RM = Tutorial::ResourceManagement;
+    namespace rsm = Tutorial::ResourceManagement;
 
-    VulkanDeviceQueue::VulkanDeviceQueue(RM::Borrowed<VkQueue> queue, uint32_t queueIndex, uint32_t queueFamilyIndex):
+    VulkanDeviceQueue::VulkanDeviceQueue(rsm::Borrowed<VkQueue> queue, uint32_t queueIndex, uint32_t queueFamilyIndex):
         _queue(queue),
         queueIndex(queueIndex),
         queueFamilyIndex(queueFamilyIndex) {
     }
     
-    RM::Borrowed<VkQueue> VulkanDeviceQueue::getHandle() const {
+    rsm::Borrowed<VkQueue> VulkanDeviceQueue::getHandle() const {
         return _queue;
     }
 

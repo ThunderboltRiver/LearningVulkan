@@ -8,7 +8,7 @@
 #include <string>
 
 namespace Tutorial::WindowHelper {
-    namespace RM = Tutorial::ResourceManagement;
+    namespace rsm = Tutorial::ResourceManagement;
 
     GLFWwindow *ApplicationWindow::initWindow(uint32_t windowWidth, uint32_t windowHeight, const char* windowTitle) {
         if (auto resultOfInitGLFW = glfwInit(); resultOfInitGLFW != GLFW_TRUE) {
@@ -23,8 +23,8 @@ namespace Tutorial::WindowHelper {
         return windowHandler;
     }
 
-    RM::Borrowed<GLFWwindow *> ApplicationWindow::getHandler() const {
-        return RM::Borrowed(_windowPtr);
+    rsm::Borrowed<GLFWwindow *> ApplicationWindow::getHandler() const {
+        return rsm::Borrowed(_windowPtr);
     }
 
     bool ApplicationWindow::shouldClose() const {

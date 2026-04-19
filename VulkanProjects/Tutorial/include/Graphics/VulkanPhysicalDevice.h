@@ -10,7 +10,7 @@
 #include "ResourceManagement/OwnerShip.h"
 
 namespace Tutorial::Graphics {
-    namespace RM = Tutorial::ResourceManagement;
+    namespace rsm = Tutorial::ResourceManagement;
 
     /**
      * Vulkanの物理デバイスを表すクラス
@@ -19,12 +19,12 @@ namespace Tutorial::Graphics {
 
         // 物理デバイスのハンドル
         // 物理デバイスに関しては、VulkanInstanceから取得したハンドルを使用するだけで、特にリソースの解放なども必要ないため、借用で保持する
-        RM::Borrowed<VkPhysicalDevice> _physicalDevice;
+        rsm::Borrowed<VkPhysicalDevice> _physicalDevice;
 
     public:
-        explicit VulkanPhysicalDevice(RM::Borrowed<VkPhysicalDevice> physicalDevice) : _physicalDevice(physicalDevice) {}
+        explicit VulkanPhysicalDevice(rsm::Borrowed<VkPhysicalDevice> physicalDevice) : _physicalDevice(physicalDevice) {}
 
-        [[nodiscard]] RM::Borrowed<VkPhysicalDevice> getHandle() const;
+        [[nodiscard]] rsm::Borrowed<VkPhysicalDevice> getHandle() const;
 
         void getProperties2(VkPhysicalDeviceProperties2& properties) const;
 
@@ -46,7 +46,7 @@ namespace Tutorial::Graphics {
          * vkGetPhysicalDeviceSurfaceCapabilitiesKHR のラッパー
          * VK_KHR_surface 拡張機能が有効化されている物理デバイスでのみ使用可能
          */
-        VkResult getSurfaceCapabilitiesKHR(RM::Borrowed<VkSurfaceKHR> surface, VkSurfaceCapabilitiesKHR *pSurfaceCapabilities) const;
+        VkResult getSurfaceCapabilitiesKHR(rsm::Borrowed<VkSurfaceKHR> surface, VkSurfaceCapabilitiesKHR *pSurfaceCapabilities) const;
 
         /**
          * vkGetPhysicalDeviceSurfaceCapabilities2KHR のラッパー
@@ -58,7 +58,7 @@ namespace Tutorial::Graphics {
          * vkGetPhysicalDeviceSurfaceFormatsKHR のラッパー
          * VK_KHR_surface 拡張機能が有効化されている物理デバイスでのみ使用可能
          */
-        VkResult getSurfaceFormatsKHR(RM::Borrowed<VkSurfaceKHR> surface, uint32_t *pSurfaceFormatCount, VkSurfaceFormatKHR *pSurfaceFormat) const;
+        VkResult getSurfaceFormatsKHR(rsm::Borrowed<VkSurfaceKHR> surface, uint32_t *pSurfaceFormatCount, VkSurfaceFormatKHR *pSurfaceFormat) const;
 
         /**
          * vkGetPhysicalDeviceSurfaceFormats2KHR のラッパー
@@ -69,7 +69,7 @@ namespace Tutorial::Graphics {
         /**
          * vkGetPhysicalDeviceSurfacePresentModesKHR のラッパー
          */
-        VkResult getPhysicalDeviceSurfacePresentModeKHR(RM::Borrowed<VkSurfaceKHR> surface, uint32_t *pPresentModeCount, VkPresentModeKHR *pPresentModes) const;
+        VkResult getPhysicalDeviceSurfacePresentModeKHR(rsm::Borrowed<VkSurfaceKHR> surface, uint32_t *pPresentModeCount, VkPresentModeKHR *pPresentModes) const;
 
 #ifdef VK_USE_PLATFORM_WIN32_KHR
         /**
@@ -92,7 +92,7 @@ namespace Tutorial::Graphics {
          * @param surface サーフェス
          * @return 指定されたキューファミリーが、指定されたサーフェスに対してプレゼンテーションをサポートしているならtrue、そうでないならfalse
          */
-        bool isPresentationSupported(uint32_t queueFamilyIndex, RM::Borrowed<VkSurfaceKHR> surface) const;
+        bool isPresentationSupported(uint32_t queueFamilyIndex, rsm::Borrowed<VkSurfaceKHR> surface) const;
     };
 } // Graphics
 

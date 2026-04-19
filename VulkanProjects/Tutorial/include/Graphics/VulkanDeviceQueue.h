@@ -9,7 +9,7 @@
 #include "ResourceManagement/Borrowed.h"
 
 namespace Tutorial::Graphics {
-    namespace RM = Tutorial::ResourceManagement;
+    namespace rsm = Tutorial::ResourceManagement;
 
     /**
      * Vulkanのキューを表すクラス
@@ -20,7 +20,7 @@ namespace Tutorial::Graphics {
          * Vulkanのキューのハンドル
          * Vulkanのキューは、論理デバイスが実質的に所有権をもっているため、借用で保持している
          */
-        RM::Borrowed<VkQueue> _queue;
+        rsm::Borrowed<VkQueue> _queue;
 
         /**
          * このキューのインデックス
@@ -33,9 +33,9 @@ namespace Tutorial::Graphics {
         uint32_t queueFamilyIndex;
 
     public:
-        explicit VulkanDeviceQueue(RM::Borrowed<VkQueue> queue, uint32_t queueIndex, uint32_t queueFamilyIndex);
+        explicit VulkanDeviceQueue(rsm::Borrowed<VkQueue> queue, uint32_t queueIndex, uint32_t queueFamilyIndex);
 
-        [[nodiscard]] RM::Borrowed<VkQueue> getHandle() const;
+        [[nodiscard]] rsm::Borrowed<VkQueue> getHandle() const;
 
          [[nodiscard]] uint32_t getQueueFamilyIndex() const;
 

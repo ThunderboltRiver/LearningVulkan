@@ -12,19 +12,19 @@
 #include "ResourceManagement/OwnerShip.h"
 
 namespace Tutorial::Graphics {
-    namespace RM = Tutorial::ResourceManagement;
+    namespace rsm = Tutorial::ResourceManagement;
 
     /**
      * Vulkanのインスタンスを表すクラス
      */
     class VulkanInstance {
-        RM::OwnerShip<VkInstance> _vkInstance;
+        rsm::OwnerShip<VkInstance> _vkInstance;
 
-        [[nodiscard]] RM::OwnerShip<VkInstance> resourceAcquisition(const VkInstanceCreateInfo& instanceCreateInfo) const;
+        [[nodiscard]] rsm::OwnerShip<VkInstance> resourceAcquisition(const VkInstanceCreateInfo& instanceCreateInfo) const;
     public:
         explicit VulkanInstance(const VkInstanceCreateInfo& instanceCreateInfo);
 
-        [[nodiscard]] RM::Borrowed<VkInstance> getHandler() const;
+        [[nodiscard]] rsm::Borrowed<VkInstance> getHandler() const;
 
         // vkInstanceの所有権を持つのは一つのインスタンスのみにするためコピー禁止
         VulkanInstance(const VulkanInstance&) = delete;
