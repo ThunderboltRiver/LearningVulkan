@@ -4,20 +4,22 @@
 
 #include "SpanAllocator.h"
 
-PlacementStackAllocator* SpanAllocator::getAllocator() {
+#include <stdexcept>
+
+Tutorial::ResourceManagement::ContinuousMemoryBlockPool* SpanAllocator::getAllocator() {
     if (allocator == nullptr) {
         throw std::runtime_error("SpanAllocator: allocator must be set before calling getAllocator");
     }
     return allocator;
 }
 
-void SpanAllocator::setAllocator(PlacementStackAllocator* pAllocator) {
+void SpanAllocator::setAllocator(Tutorial::ResourceManagement::ContinuousMemoryBlockPool* pAllocator) {
     if (pAllocator == nullptr) {
         throw std::runtime_error("SpanAllocator: allocator must not be null");
     }
     allocator = pAllocator;
 }
 
-void SpanAllocator::resetAllocator() noexcept{
+void SpanAllocator::resetAllocator() noexcept {
     allocator = nullptr;
 }

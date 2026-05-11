@@ -55,9 +55,13 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 add_executable(Tutorial
         src/main.cpp
         src/Application.cpp
-        src/PlacementStackAllocator.cpp
         src/Span.cpp
         src/SpanAllocator.cpp
+        src/ResourceManagement/Memory/BuddyAllocator.cpp
+        src/ResourceManagement/Memory/BumpAllocator.cpp
+        src/ResourceManagement/Memory/ContinuousMemoryBlockPool.cpp
+        src/ResourceManagement/Memory/LargeSizeAllocator.cpp
+        src/ResourceManagement/Memory/OsMemory.cpp
         src/Graphics/FrameBufferSize.cpp
         src/Graphics/Pixel.cpp
         src/Graphics/VulkanInstanceCreationStrategy.cpp
@@ -89,6 +93,18 @@ add_executable(Tutorial
         src/Graphics/VulkanInstanceReadModel.cpp
         src/SpanView.cpp
 )
+
+add_executable(ResourceManagementSelfTest
+        tests/ResourceManagementSelfTest.cpp
+        src/SpanAllocator.cpp
+        src/ResourceManagement/Memory/BuddyAllocator.cpp
+        src/ResourceManagement/Memory/BumpAllocator.cpp
+        src/ResourceManagement/Memory/ContinuousMemoryBlockPool.cpp
+        src/ResourceManagement/Memory/LargeSizeAllocator.cpp
+        src/ResourceManagement/Memory/OsMemory.cpp
+)
+
+target_include_directories(ResourceManagementSelfTest PRIVATE include)
 
 # Tutorialターゲットのヘッダをインポートする
 target_include_directories(Tutorial PRIVATE include)

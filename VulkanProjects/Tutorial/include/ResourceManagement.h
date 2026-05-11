@@ -7,10 +7,15 @@
 
 #include "ResourceManagement/Borrowed.h"
 #include "ResourceManagement/DynamicArray.h"
+#include "ResourceManagement/Memory/Bytes.h"
+#include "ResourceManagement/Memory/ContinuousMemoryBlockPool.h"
 #include "ResourceManagement/OwnerShip.h"
 
 namespace Tutorial {
+    using ResourceManagement::Alignment;
     using ResourceManagement::Borrowed;
+    using ResourceManagement::Bytes;
+    using ResourceManagement::ContinuousMemoryBlockPool;
     using ResourceManagement::DynamicArray;
     using ResourceManagement::OwnerShip;
 }
