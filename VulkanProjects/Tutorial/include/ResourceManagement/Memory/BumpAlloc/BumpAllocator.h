@@ -4,7 +4,7 @@
 #include "ResourceManagement/Memory/BumpAlloc/AlignedArena.h"
 #include "ResourceManagement/Memory/MemoryConstants.h"
 
-namespace Tutorial::ResourceManagement {
+namespace Tutorial::ResourceManagement::BumpAlloc {
 
     /**
      * 新しいアリーナをOSから追加取得するアロケータ。
@@ -15,7 +15,7 @@ namespace Tutorial::ResourceManagement {
         Bytes _arenaSize;
 
         /** 確保済みアリーナをまとめて解放するための侵入的リスト先頭。 */
-        BumpAlloc::AlignedArena* _arenaHead;
+        AlignedArena* _arenaHead;
 
     public:
         explicit BumpAllocator(Bytes arenaSize = DEFAULT_ARENA_SIZE);
@@ -24,7 +24,7 @@ namespace Tutorial::ResourceManagement {
         BumpAllocator& operator=(const BumpAllocator&) = delete;
 
         /** 指定アライメントを満たす新しいアリーナを確保し、内部リストへ登録する。 */
-        [[nodiscard]] BumpAlloc::AlignedArena* allocateArena(Alignment alignment);
+        [[nodiscard]] AlignedArena* allocateArena(Alignment alignment);
 
         /** このBumpAllocatorが供給するアリーナの固定サイズを返す。 */
         [[nodiscard]] Bytes getArenaSize() const;

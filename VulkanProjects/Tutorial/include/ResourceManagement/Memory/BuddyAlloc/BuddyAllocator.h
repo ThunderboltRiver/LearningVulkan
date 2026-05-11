@@ -5,19 +5,19 @@
 #include "ResourceManagement/Memory/BuddyAlloc/BuddyBlockIndex.h"
 #include "ResourceManagement/Memory/BuddyAlloc/BuddyOrder.h"
 #include "ResourceManagement/Memory/BuddyAlloc/FreeBlock.h"
-#include "ResourceManagement/Memory/BumpAllocator.h"
+#include "../BumpAlloc/BumpAllocator.h"
 
-namespace Tutorial::ResourceManagement {
+namespace Tutorial::ResourceManagement::BuddyAlloc {
 
     /**
      * アリーナを2の冪乗サイズのブロックへ分割・統合して管理するアロケータ。
      * アライメントごとに独立したアリーナ群を持ち、free list と bitmap を同期して空き状態を管理する。
      */
     class BuddyAllocator {
-        BumpAllocator _bumpAllocator;
+        BumpAlloc::BumpAllocator _bumpAllocator;
 
         /** Alignmentごとに分かれたBuddyAllocator状態の侵入的リスト先頭。 */
-        BuddyAlloc::AlignedBuddyAllocator* _alignedAllocators;
+        AlignedBuddyAllocator* _alignedAllocators;
 
         /** order 0 に対応する最小ブロックサイズ。 */
         Bytes _minBlockSize;

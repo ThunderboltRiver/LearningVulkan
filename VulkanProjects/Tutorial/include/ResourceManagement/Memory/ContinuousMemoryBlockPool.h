@@ -1,7 +1,7 @@
 #ifndef TUTORIAL_RESOURCE_MANAGEMENT_MEMORY_CONTINUOUSMEMORYBLOCKPOOL_H
 #define TUTORIAL_RESOURCE_MANAGEMENT_MEMORY_CONTINUOUSMEMORYBLOCKPOOL_H
 
-#include "ResourceManagement/Memory/BuddyAllocator.h"
+#include "BuddyAlloc/BuddyAllocator.h"
 #include "ResourceManagement/Memory/LargeSizeAllocator.h"
 
 namespace Tutorial::ResourceManagement {
@@ -12,7 +12,7 @@ namespace Tutorial::ResourceManagement {
      */
     class ContinuousMemoryBlockPool {
         /** アリーナサイズ以下の要求を処理するバディアロケータ。 */
-        BuddyAllocator _buddyAllocator;
+        BuddyAlloc::BuddyAllocator _buddyAllocator;
 
         /** アリーナサイズを超える要求を処理する直接OS確保アロケータ。 */
         LargeSizeAllocator _largeSizeAllocator;

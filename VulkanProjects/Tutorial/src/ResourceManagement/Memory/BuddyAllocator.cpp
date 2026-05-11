@@ -1,9 +1,9 @@
-#include "ResourceManagement/Memory/BuddyAllocator.h"
+#include "../../../include/ResourceManagement/Memory/BuddyAlloc/BuddyAllocator.h"
 
 #include <cstring>
 #include <stdexcept>
 
-namespace Tutorial::ResourceManagement {
+namespace Tutorial::ResourceManagement::BuddyAlloc {
     using BuddyAlloc::AlignedBuddyAllocator;
     using BuddyAlloc::ArenaState;
     using BuddyAlloc::BuddyBlockIndex;
@@ -42,7 +42,7 @@ namespace Tutorial::ResourceManagement {
         }
     }
 
-    BuddyAlloc::AlignedBuddyAllocator* BuddyAllocator::getOrCreateAlignedAllocator(const Alignment alignment) {
+    AlignedBuddyAllocator* BuddyAllocator::getOrCreateAlignedAllocator(const Alignment alignment) {
         auto* current = _alignedAllocators;
         while (current != nullptr) {
             if (current->alignment == alignment) {
@@ -55,7 +55,7 @@ namespace Tutorial::ResourceManagement {
         return created;
     }
 
-    BuddyAlloc::ArenaState* BuddyAllocator::createArena(AlignedBuddyAllocator& allocator) {
+    ArenaState* BuddyAllocator::createArena(AlignedBuddyAllocator& allocator) {
         auto* arena = _bumpAllocator.allocateArena(allocator.alignment);
         auto* state = new ArenaState{};
         state->arena = arena;
@@ -75,7 +75,7 @@ namespace Tutorial::ResourceManagement {
         return state;
     }
 
-    BuddyAlloc::BuddyOrder BuddyAllocator::orderFor(const Bytes size) const {
+    BuddyOrder BuddyAllocator::orderFor(const Bytes size) const {
         const Bytes rounded = size.max(_minBlockSize).roundUpToPowerOfTwo();
         if (rounded > getArenaSize()) {
             throw std::invalid_argument("BuddyAllocator: requested size exceeds arena size");
@@ -97,7 +97,7 @@ namespace Tutorial::ResourceManagement {
         return result;
     }
 
-    BuddyAlloc::ArenaState* BuddyAllocator::findArenaContaining(AlignedBuddyAllocator& allocator, void* ptr) const {
+    ArenaState* BuddyAllocator::findArenaContaining(AlignedBuddyAllocator& allocator, void* ptr) const {
         auto* current = allocator.arenas;
         while (current != nullptr) {
             if (pointerInRange(ptr, current->arena->block.ptr, getArenaSize())) {
@@ -123,7 +123,7 @@ namespace Tutorial::ResourceManagement {
         setBlockFree(arena, order, index, true);
     }
 
-    BuddyAlloc::FreeBlock* BuddyAllocator::removeFreeBlock(ArenaState& arena, const BuddyOrder order, const BuddyBlockIndex index) {
+    FreeBlock* BuddyAllocator::removeFreeBlock(ArenaState& arena, const BuddyOrder order, const BuddyBlockIndex index) {
         FreeBlock* previous = nullptr;
         auto* current = arena.freeLists[order.value];
         void* expected = ptrForIndex(arena, order, index);
@@ -144,7 +144,7 @@ namespace Tutorial::ResourceManagement {
         return nullptr;
     }
 
-    BuddyAlloc::BuddyBlockIndex BuddyAllocator::blockIndex(const ArenaState& arena, const void* ptr, const BuddyOrder order) const {
+    BuddyBlockIndex BuddyAllocator::blockIndex(const ArenaState& arena, const void* ptr, const BuddyOrder order) const {
         const auto address = reinterpret_cast<std::uintptr_t>(ptr);
         const auto base = reinterpret_cast<std::uintptr_t>(arena.arena->block.ptr);
         const auto offset = address - base;

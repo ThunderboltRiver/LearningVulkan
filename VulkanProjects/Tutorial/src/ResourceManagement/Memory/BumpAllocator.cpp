@@ -1,10 +1,12 @@
-#include "ResourceManagement/Memory/BumpAllocator.h"
+
+
+#include "ResourceManagement/Memory/BumpAlloc/BumpAllocator.h"
 
 #include "ResourceManagement/Memory/OsMemory.h"
 
 #include <stdexcept>
 
-namespace Tutorial::ResourceManagement {
+namespace Tutorial::ResourceManagement::BumpAlloc {
 
     BumpAllocator::BumpAllocator(const Bytes arenaSize)
         : _arenaSize(arenaSize), _arenaHead(nullptr) {
