@@ -51,6 +51,32 @@ namespace Tutorial::ResourceManagement {
             return _value == 0;
         }
 
+        /** 値が0以外の2の冪乗かどうかを返す。 */
+        [[nodiscard]] constexpr bool isPowerOfTwo() const {
+            return _value != 0 && (_value & (_value - 1)) == 0;
+        }
+
+        /** この値以上の最小の2の冪乗へ丸める。 */
+        [[nodiscard]] constexpr Bytes roundUpToPowerOfTwo() const {
+            std::size_t value = _value;
+            if (value == 0) {
+                throw std::invalid_argument("Bytes: bytes must be greater than 0");
+            }
+            --value;
+            for (std::size_t shift = 1; shift < sizeof(std::size_t) * 8; shift <<= 1) {
+                value |= value >> shift;
+            }
+            if (value == static_cast<std::size_t>(-1)) {
+                throw std::overflow_error("Bytes: power-of-two rounding overflow");
+            }
+            return Bytes(value + 1);
+        }
+
+        /** rhsと比較して大きい方のBytesを返す。 */
+        [[nodiscard]] constexpr Bytes max(const Bytes rhs) const {
+            return *this >= rhs ? *this : rhs;
+        }
+
         friend constexpr bool operator==(const Bytes lhs, const Bytes rhs) {
             return lhs._value == rhs._value;
         }

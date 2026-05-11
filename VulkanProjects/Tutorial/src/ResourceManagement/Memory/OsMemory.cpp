@@ -19,7 +19,7 @@ namespace Tutorial::ResourceManagement {
         };
 
         Alignment effectiveAlignment(const Alignment alignment) {
-            return Alignment(maxBytes(alignment.bytes(), Bytes::fromSizeT(alignof(AllocationHeader))));
+            return Alignment(alignment.bytes().max(Bytes::fromSizeT(alignof(AllocationHeader))));
         }
 
         Bytes mappedBytesFor(const Bytes size, const Alignment alignment) {
@@ -48,7 +48,7 @@ namespace Tutorial::ResourceManagement {
 #endif
 
         const auto rawAddress = reinterpret_cast<std::uintptr_t>(mappedPtr);
-        const auto alignedAddress = alignUp(rawAddress + sizeof(AllocationHeader), effective);
+        const auto alignedAddress = effective.alignUp(rawAddress + sizeof(AllocationHeader));
         auto* header = reinterpret_cast<AllocationHeader*>(alignedAddress - sizeof(AllocationHeader));
         header->mappedPtr = mappedPtr;
         header->mappedSize = mappedBytes;

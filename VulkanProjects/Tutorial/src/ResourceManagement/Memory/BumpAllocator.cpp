@@ -8,13 +8,13 @@ namespace Tutorial::ResourceManagement {
 
     BumpAllocator::BumpAllocator(const Bytes arenaSize)
         : _arenaSize(arenaSize), _arenaHead(nullptr) {
-        if (!isPowerOfTwo(arenaSize)) {
+        if (!arenaSize.isPowerOfTwo()) {
             throw std::invalid_argument("BumpAllocator: arena size must be a power of two");
         }
     }
 
-    AlignedArena* BumpAllocator::allocateArena(const Alignment alignment) {
-        auto* arena = new AlignedArena{
+    BumpAlloc::AlignedArena* BumpAllocator::allocateArena(const Alignment alignment) {
+        auto* arena = new BumpAlloc::AlignedArena{
             allocateAlignedMemoryBlock(_arenaSize, alignment),
             _arenaHead
         };

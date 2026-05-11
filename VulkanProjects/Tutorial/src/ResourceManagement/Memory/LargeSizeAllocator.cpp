@@ -10,7 +10,7 @@ namespace Tutorial::ResourceManagement {
         if (size.isZero()) {
             throw std::invalid_argument("LargeSizeAllocator: size must be greater than 0");
         }
-        return allocateAlignedMemoryBlock(roundUpToPowerOfTwo(size), alignment);
+        return allocateAlignedMemoryBlock(size.roundUpToPowerOfTwo(), alignment);
     }
 
     void LargeSizeAllocator::deallocate(const AlignedContinuousMemoryBlock block) const {
