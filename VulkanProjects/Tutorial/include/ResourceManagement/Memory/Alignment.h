@@ -10,15 +10,18 @@ namespace Tutorial::ResourceManagement {
 
     /**
      * アライメントを表す値オブジェクト。
-     * 渡されたバイト数以上の最小の2の冪乗に丸めて保持する。
+     * BuddyAllocatorのアドレス計算は2の冪乗アライメントを前提にするため、
+     * 2の冪乗でない値は丸めずに拒否する。
      */
     struct Alignment {
     private:
         Bytes _bytes;
 
     public:
-        explicit constexpr Alignment(const Bytes bytes)
-            : _bytes(bytes.roundUpToPowerOfTwo()) {
+        explicit constexpr Alignment(const Bytes bytes) : _bytes(bytes) {
+            if (!bytes.isPowerOfTwo()) {
+                throw std::invalid_argument("Alignment: bytes must be a non-zero power of two");
+            }
         }
 
         [[nodiscard]] constexpr Bytes bytes() const {

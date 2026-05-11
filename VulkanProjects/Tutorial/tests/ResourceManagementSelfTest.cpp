@@ -11,7 +11,7 @@
 #include <utility>
 
 namespace {
-    using Tutorial::ResourceManagement::BuddyAllocator;
+    using Tutorial::ResourceManagement::BuddyAlloc::BuddyAllocator;
     using Tutorial::ResourceManagement::Alignment;
     using Tutorial::ResourceManagement::Bytes;
     using Tutorial::ResourceManagement::ContinuousMemoryBlockPool;
@@ -55,7 +55,7 @@ namespace {
         require(Bytes::fromSizeT(1024).isPowerOfTwo(), "1024 must be a power of two");
         require(!Bytes::fromSizeT(3).isPowerOfTwo(), "3 must not be a power of two");
         require(Bytes::fromSizeT(17).roundUpToPowerOfTwo() == Bytes::fromSizeT(32), "power-of-two round-up failed");
-        require(Alignment(Bytes::fromSizeT(3)).bytes() == Bytes::fromSizeT(4), "Alignment did not round up to power of two");
+        requireThrows<std::invalid_argument>([] { (void)Alignment(Bytes::fromSizeT(3)); }, "non-power-of-two alignment was not rejected");
         requireThrows<std::invalid_argument>([] { (void)Alignment(Bytes::fromSizeT(0)); }, "zero alignment was not rejected");
     }
 
