@@ -1,16 +1,9 @@
-#include "../../../include/ResourceManagement/Memory/BuddyAlloc/BuddyAllocator.h"
+#include "ResourceManagement/Memory/BuddyAlloc/BuddyAllocator.h"
 
 #include <cstring>
 #include <stdexcept>
 
-namespace Tutorial::ResourceManagement::BuddyAlloc {
-    using BuddyAlloc::AlignedBuddyAllocator;
-    using BuddyAlloc::ArenaState;
-    using BuddyAlloc::BuddyBlockIndex;
-    using BuddyAlloc::BuddyFreeBitmap;
-    using BuddyAlloc::BuddyOrder;
-    using BuddyAlloc::FreeBlock;
-
+namespace Tutorial::ResourceManagement::Memory::BuddyAlloc {
     namespace {
         constexpr std::size_t BITMAP_WORD_BITS = sizeof(std::uint64_t) * 8;
 

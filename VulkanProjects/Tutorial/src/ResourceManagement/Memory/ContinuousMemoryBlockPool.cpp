@@ -2,7 +2,7 @@
 
 #include <stdexcept>
 
-namespace Tutorial::ResourceManagement {
+namespace Tutorial::ResourceManagement::Memory {
 
     ContinuousMemoryBlockPool::ContinuousMemoryBlockPool(const Bytes arenaSize)
         : _buddyAllocator(arenaSize), _largeSizeAllocator() {

@@ -1,10 +1,10 @@
 #ifndef TUTORIAL_RESOURCE_MANAGEMENT_MEMORY_CONTINUOUSMEMORYBLOCKPOOL_H
 #define TUTORIAL_RESOURCE_MANAGEMENT_MEMORY_CONTINUOUSMEMORYBLOCKPOOL_H
 
-#include "BuddyAlloc/BuddyAllocator.h"
+#include "ResourceManagement/Memory/BuddyAlloc/BuddyAllocator.h"
 #include "ResourceManagement/Memory/LargeSizeAllocator.h"
 
-namespace Tutorial::ResourceManagement {
+namespace Tutorial::ResourceManagement::Memory {
 
     /**
      * 連続メモリブロック要求の入口。

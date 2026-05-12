@@ -3,7 +3,7 @@
 
 #include <cstddef>
 
-namespace Tutorial::ResourceManagement::BuddyAlloc {
+namespace Tutorial::ResourceManagement::Memory::BuddyAlloc {
 
     /**
      * あるorder内でのブロック番号。

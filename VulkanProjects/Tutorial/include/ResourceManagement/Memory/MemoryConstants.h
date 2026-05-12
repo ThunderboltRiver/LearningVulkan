@@ -3,13 +3,13 @@
 
 #include "ResourceManagement/Memory/Bytes.h"
 
-namespace Tutorial::ResourceManagement {
+namespace Tutorial::ResourceManagement::Memory {
 
     /** free listノードを置ける最小ブロックサイズ。 */
-    constexpr Bytes MIN_MEMORY_BLOCK_SIZE = Bytes::fromSizeT(sizeof(void*) * 2);
+    extern const Bytes MIN_MEMORY_BLOCK_SIZE;
 
     /** BuddyAllocatorへ供給する既定アリーナサイズ。 */
-    constexpr Bytes DEFAULT_ARENA_SIZE = Bytes::fromMiB(32);
+    extern const Bytes DEFAULT_ARENA_SIZE;
 }
 
 #endif //TUTORIAL_RESOURCE_MANAGEMENT_MEMORY_MEMORYCONSTANTS_H

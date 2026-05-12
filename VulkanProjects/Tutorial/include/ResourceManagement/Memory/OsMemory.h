@@ -3,7 +3,7 @@
 
 #include "ResourceManagement/Memory/MemoryBlock.h"
 
-namespace Tutorial::ResourceManagement {
+namespace Tutorial::ResourceManagement::Memory {
 
     /** OSから指定サイズ・指定アライメントの連続メモリブロックを確保する。 */
     [[nodiscard]] AlignedContinuousMemoryBlock allocateAlignedMemoryBlock(Bytes size, Alignment alignment);

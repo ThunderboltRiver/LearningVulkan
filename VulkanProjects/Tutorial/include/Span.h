@@ -107,8 +107,8 @@ struct Span {
         }
 
         const auto block = SpanAllocator::getAllocator()->allocate(
-            Tutorial::ResourceManagement::Bytes::fromSizeT(sizeof(StorageType) * static_cast<std::size_t>(count)),
-            Tutorial::ResourceManagement::Alignment(Tutorial::ResourceManagement::Bytes::fromSizeT(alignof(StorageType)))
+            Tutorial::ResourceManagement::Memory::Bytes::fromSizeT(sizeof(StorageType) * static_cast<std::size_t>(count)),
+            Tutorial::ResourceManagement::Memory::Alignment(Tutorial::ResourceManagement::Memory::Bytes::fromSizeT(alignof(StorageType)))
         );
         return Span(block, count);
     }
@@ -175,9 +175,9 @@ private:
 
     uint32_t emptyIndex = 0;
 
-    Tutorial::ResourceManagement::AlignedContinuousMemoryBlock _memoryBlock;
+    Tutorial::ResourceManagement::Memory::AlignedContinuousMemoryBlock _memoryBlock;
 
-    explicit Span(Tutorial::ResourceManagement::AlignedContinuousMemoryBlock memoryBlock, const uint32_t count):
+    explicit Span(Tutorial::ResourceManagement::Memory::AlignedContinuousMemoryBlock memoryBlock, const uint32_t count):
         _headPtr(static_cast<StorageType*>(memoryBlock.ptr)),
         _maxElementCount(count),
         _memoryBlock(memoryBlock) {
@@ -189,11 +189,11 @@ private:
         _memoryBlock(emptyMemoryBlock()) {
     }
 
-    static Tutorial::ResourceManagement::AlignedContinuousMemoryBlock emptyMemoryBlock() {
-        return Tutorial::ResourceManagement::AlignedContinuousMemoryBlock{
+    static Tutorial::ResourceManagement::Memory::AlignedContinuousMemoryBlock emptyMemoryBlock() {
+        return Tutorial::ResourceManagement::Memory::AlignedContinuousMemoryBlock{
             nullptr,
-            Tutorial::ResourceManagement::Bytes::fromSizeT(0),
-            Tutorial::ResourceManagement::Alignment(Tutorial::ResourceManagement::Bytes::fromSizeT(1))
+            Tutorial::ResourceManagement::Memory::Bytes::fromSizeT(0),
+            Tutorial::ResourceManagement::Memory::Alignment(Tutorial::ResourceManagement::Memory::Bytes::fromSizeT(1))
         };
     }
 };

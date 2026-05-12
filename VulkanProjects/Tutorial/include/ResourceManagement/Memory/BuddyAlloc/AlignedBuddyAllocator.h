@@ -4,7 +4,7 @@
 #include "ResourceManagement/Memory/Alignment.h"
 #include "ResourceManagement/Memory/BuddyAlloc/ArenaState.h"
 
-namespace Tutorial::ResourceManagement::BuddyAlloc {
+namespace Tutorial::ResourceManagement::Memory::BuddyAlloc {
 
     /**
      * 同じAlignmentを要求するアリーナ群。

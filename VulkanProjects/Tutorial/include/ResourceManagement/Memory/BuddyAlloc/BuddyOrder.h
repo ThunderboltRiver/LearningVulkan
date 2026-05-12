@@ -3,7 +3,7 @@
 
 #include <cstdint>
 
-namespace Tutorial::ResourceManagement::BuddyAlloc {
+namespace Tutorial::ResourceManagement::Memory::BuddyAlloc {
 
     /**
      * minBlockSize * 2^order のブロック階層を表す値。
@@ -12,21 +12,13 @@ namespace Tutorial::ResourceManagement::BuddyAlloc {
     struct BuddyOrder {
         std::uint8_t value;
 
-        friend bool operator==(const BuddyOrder lhs, const BuddyOrder rhs) {
-            return lhs.value == rhs.value;
-        }
+        friend bool operator==(BuddyOrder lhs, BuddyOrder rhs);
 
-        friend bool operator<(const BuddyOrder lhs, const BuddyOrder rhs) {
-            return lhs.value < rhs.value;
-        }
+        friend bool operator<(BuddyOrder lhs, BuddyOrder rhs);
 
-        friend bool operator<=(const BuddyOrder lhs, const BuddyOrder rhs) {
-            return lhs.value <= rhs.value;
-        }
+        friend bool operator<=(BuddyOrder lhs, BuddyOrder rhs);
 
-        friend bool operator>(const BuddyOrder lhs, const BuddyOrder rhs) {
-            return lhs.value > rhs.value;
-        }
+        friend bool operator>(BuddyOrder lhs, BuddyOrder rhs);
     };
 }
 

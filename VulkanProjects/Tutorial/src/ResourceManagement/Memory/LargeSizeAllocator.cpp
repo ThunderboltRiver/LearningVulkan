@@ -4,7 +4,7 @@
 
 #include <stdexcept>
 
-namespace Tutorial::ResourceManagement {
+namespace Tutorial::ResourceManagement::Memory {
 
     AlignedContinuousMemoryBlock LargeSizeAllocator::allocate(const Bytes size, const Alignment alignment) const {
         if (size.isZero()) {

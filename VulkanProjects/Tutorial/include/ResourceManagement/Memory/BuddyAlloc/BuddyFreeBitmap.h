@@ -6,7 +6,7 @@
 #include <cstddef>
 #include <cstdint>
 
-namespace Tutorial::ResourceManagement::BuddyAlloc {
+namespace Tutorial::ResourceManagement::Memory::BuddyAlloc {
 
     /**
      * あるorderに属するブロック群の空き状態を表すbitmap。
@@ -16,22 +16,9 @@ namespace Tutorial::ResourceManagement::BuddyAlloc {
         std::uint64_t* words;
         std::size_t wordCount;
 
-        [[nodiscard]] bool isFree(BuddyBlockIndex index) const {
-            const auto word = index.value / (sizeof(std::uint64_t) * 8);
-            const auto bit = index.value % (sizeof(std::uint64_t) * 8);
-            return (words[word] & (std::uint64_t{1} << bit)) != 0;
-        }
+        [[nodiscard]] bool isFree(BuddyBlockIndex index) const;
 
-        void setFree(BuddyBlockIndex index, const bool value) const {
-            const auto word = index.value / (sizeof(std::uint64_t) * 8);
-            const auto bit = index.value % (sizeof(std::uint64_t) * 8);
-            const auto mask = std::uint64_t{1} << bit;
-            if (value) {
-                words[word] |= mask;
-            } else {
-                words[word] &= ~mask;
-            }
-        }
+        void setFree(BuddyBlockIndex index, bool value) const;
     };
 }
 

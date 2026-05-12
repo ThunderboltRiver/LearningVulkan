@@ -12,11 +12,11 @@
 #include "ResourceManagement/OwnerShip.h"
 
 namespace Tutorial {
-    using ResourceManagement::Alignment;
     using ResourceManagement::Borrowed;
-    using ResourceManagement::Bytes;
-    using ResourceManagement::ContinuousMemoryBlockPool;
     using ResourceManagement::DynamicArray;
+    using ResourceManagement::Memory::Alignment;
+    using ResourceManagement::Memory::Bytes;
+    using ResourceManagement::Memory::ContinuousMemoryBlockPool;
     using ResourceManagement::OwnerShip;
 }
 

@@ -6,14 +6,14 @@
 
 #include <stdexcept>
 
-Tutorial::ResourceManagement::ContinuousMemoryBlockPool* SpanAllocator::getAllocator() {
+Tutorial::ResourceManagement::Memory::ContinuousMemoryBlockPool* SpanAllocator::getAllocator() {
     if (allocator == nullptr) {
         throw std::runtime_error("SpanAllocator: allocator must be set before calling getAllocator");
     }
     return allocator;
 }
 
-void SpanAllocator::setAllocator(Tutorial::ResourceManagement::ContinuousMemoryBlockPool* pAllocator) {
+void SpanAllocator::setAllocator(Tutorial::ResourceManagement::Memory::ContinuousMemoryBlockPool* pAllocator) {
     if (pAllocator == nullptr) {
         throw std::runtime_error("SpanAllocator: allocator must not be null");
     }

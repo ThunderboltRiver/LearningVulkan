@@ -57,10 +57,16 @@ add_executable(Tutorial
         src/Application.cpp
         src/Span.cpp
         src/SpanAllocator.cpp
-        src/ResourceManagement/Memory/BuddyAllocator.cpp
-        src/ResourceManagement/Memory/BumpAllocator.cpp
+        src/ResourceManagement/Memory/AlignedContinuousMemoryBlock.cpp
+        src/ResourceManagement/Memory/Alignment.cpp
+        src/ResourceManagement/Memory/BuddyAlloc/BuddyAllocator.cpp
+        src/ResourceManagement/Memory/BuddyAlloc/BuddyFreeBitmap.cpp
+        src/ResourceManagement/Memory/BuddyAlloc/BuddyOrder.cpp
+        src/ResourceManagement/Memory/BumpAlloc/BumpAllocator.cpp
+        src/ResourceManagement/Memory/Bytes.cpp
         src/ResourceManagement/Memory/ContinuousMemoryBlockPool.cpp
         src/ResourceManagement/Memory/LargeSizeAllocator.cpp
+        src/ResourceManagement/Memory/MemoryConstants.cpp
         src/ResourceManagement/Memory/OsMemory.cpp
         src/Graphics/FrameBufferSize.cpp
         src/Graphics/Pixel.cpp
@@ -97,10 +103,16 @@ add_executable(Tutorial
 add_executable(ResourceManagementSelfTest
         tests/ResourceManagementSelfTest.cpp
         src/SpanAllocator.cpp
-        src/ResourceManagement/Memory/BuddyAllocator.cpp
-        src/ResourceManagement/Memory/BumpAllocator.cpp
+        src/ResourceManagement/Memory/AlignedContinuousMemoryBlock.cpp
+        src/ResourceManagement/Memory/Alignment.cpp
+        src/ResourceManagement/Memory/BuddyAlloc/BuddyAllocator.cpp
+        src/ResourceManagement/Memory/BuddyAlloc/BuddyFreeBitmap.cpp
+        src/ResourceManagement/Memory/BuddyAlloc/BuddyOrder.cpp
+        src/ResourceManagement/Memory/BumpAlloc/BumpAllocator.cpp
+        src/ResourceManagement/Memory/Bytes.cpp
         src/ResourceManagement/Memory/ContinuousMemoryBlockPool.cpp
         src/ResourceManagement/Memory/LargeSizeAllocator.cpp
+        src/ResourceManagement/Memory/MemoryConstants.cpp
         src/ResourceManagement/Memory/OsMemory.cpp
 )
 

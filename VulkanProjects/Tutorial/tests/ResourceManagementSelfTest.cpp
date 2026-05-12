@@ -11,11 +11,11 @@
 #include <utility>
 
 namespace {
-    using Tutorial::ResourceManagement::BuddyAlloc::BuddyAllocator;
-    using Tutorial::ResourceManagement::Alignment;
-    using Tutorial::ResourceManagement::Bytes;
-    using Tutorial::ResourceManagement::ContinuousMemoryBlockPool;
-    using Tutorial::ResourceManagement::LargeSizeAllocator;
+    using Tutorial::ResourceManagement::Memory::BuddyAlloc::BuddyAllocator;
+    using Tutorial::ResourceManagement::Memory::Alignment;
+    using Tutorial::ResourceManagement::Memory::Bytes;
+    using Tutorial::ResourceManagement::Memory::ContinuousMemoryBlockPool;
+    using Tutorial::ResourceManagement::Memory::LargeSizeAllocator;
 
     void require(const bool condition, const char* message) {
         if (!condition) {

@@ -4,7 +4,7 @@
 #include "ResourceManagement/Memory/BumpAlloc/AlignedArena.h"
 #include "ResourceManagement/Memory/MemoryConstants.h"
 
-namespace Tutorial::ResourceManagement::BumpAlloc {
+namespace Tutorial::ResourceManagement::Memory::BumpAlloc {
 
     /**
      * 新しいアリーナをOSから追加取得するアロケータ。

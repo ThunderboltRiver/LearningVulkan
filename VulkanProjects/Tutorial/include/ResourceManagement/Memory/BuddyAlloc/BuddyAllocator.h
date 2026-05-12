@@ -5,9 +5,9 @@
 #include "ResourceManagement/Memory/BuddyAlloc/BuddyBlockIndex.h"
 #include "ResourceManagement/Memory/BuddyAlloc/BuddyOrder.h"
 #include "ResourceManagement/Memory/BuddyAlloc/FreeBlock.h"
-#include "../BumpAlloc/BumpAllocator.h"
+#include "ResourceManagement/Memory/BumpAlloc/BumpAllocator.h"
 
-namespace Tutorial::ResourceManagement::BuddyAlloc {
+namespace Tutorial::ResourceManagement::Memory::BuddyAlloc {
 
     /**
      * アリーナを2の冪乗サイズのブロックへ分割・統合して管理するアロケータ。

@@ -11,7 +11,7 @@
 #include <unistd.h>
 #endif
 
-namespace Tutorial::ResourceManagement {
+namespace Tutorial::ResourceManagement::Memory {
     namespace {
         struct AllocationHeader {
             void* mappedPtr;

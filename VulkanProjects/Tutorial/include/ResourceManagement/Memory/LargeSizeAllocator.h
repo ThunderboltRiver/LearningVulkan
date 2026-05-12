@@ -3,7 +3,7 @@
 
 #include "ResourceManagement/Memory/MemoryBlock.h"
 
-namespace Tutorial::ResourceManagement {
+namespace Tutorial::ResourceManagement::Memory {
 
     /**
      * アリーナサイズを超える大きな連続メモリブロックをOSから直接確保するアロケータ。

@@ -5,7 +5,7 @@
 #include "ResourceManagement/Memory/BuddyAlloc/FreeBlock.h"
 #include "ResourceManagement/Memory/BumpAlloc/AlignedArena.h"
 
-namespace Tutorial::ResourceManagement::BuddyAlloc {
+namespace Tutorial::ResourceManagement::Memory::BuddyAlloc {
 
     /**
      * 1つのアリーナに紐づくBuddyAllocator用メタデータ。

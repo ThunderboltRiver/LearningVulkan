@@ -3,7 +3,7 @@
 
 #include "ResourceManagement/Memory/AlignedContinuousMemoryBlock.h"
 
-namespace Tutorial::ResourceManagement::BumpAlloc {
+namespace Tutorial::ResourceManagement::Memory::BumpAlloc {
 
     /**
      * BumpAllocatorがBuddyAllocatorへ供給する1つのアリーナ。

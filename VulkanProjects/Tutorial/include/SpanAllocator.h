@@ -9,11 +9,11 @@
 
 // Spanの割り当てに使用するアロケータを管理するクラス
 struct SpanAllocator {
-    inline static Tutorial::ResourceManagement::ContinuousMemoryBlockPool* allocator = nullptr;
+    inline static Tutorial::ResourceManagement::Memory::ContinuousMemoryBlockPool* allocator = nullptr;
 
-    static Tutorial::ResourceManagement::ContinuousMemoryBlockPool* getAllocator();
+    static Tutorial::ResourceManagement::Memory::ContinuousMemoryBlockPool* getAllocator();
 
-    static void setAllocator(Tutorial::ResourceManagement::ContinuousMemoryBlockPool* pAllocator);
+    static void setAllocator(Tutorial::ResourceManagement::Memory::ContinuousMemoryBlockPool* pAllocator);
 
     static void resetAllocator() noexcept;
 };

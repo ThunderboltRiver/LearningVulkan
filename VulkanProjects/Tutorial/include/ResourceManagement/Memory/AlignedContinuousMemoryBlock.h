@@ -3,7 +3,7 @@
 
 #include "ResourceManagement/Memory/Alignment.h"
 
-namespace Tutorial::ResourceManagement {
+namespace Tutorial::ResourceManagement::Memory {
 
     /**
      * 仮想アドレス空間上で連続した、指定アライメント済みのメモリブロック。
@@ -14,9 +14,7 @@ namespace Tutorial::ResourceManagement {
         Bytes size;
         Alignment alignment;
 
-        [[nodiscard]] bool isNull() const {
-            return ptr == nullptr;
-        }
+        [[nodiscard]] bool isNull() const;
     };
 }
 
