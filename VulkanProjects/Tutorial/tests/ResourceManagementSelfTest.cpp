@@ -79,6 +79,12 @@ namespace {
         auto merged = allocator.allocate(Bytes::fromKiB(4), Alignment(Bytes::fromSizeT(16)));
         require(merged.size == Bytes::fromKiB(4), "buddy allocator did not return merged arena-sized block");
         allocator.deallocate(merged);
+
+        auto aligned64 = allocator.allocate(Bytes::fromSizeT(64), Alignment(Bytes::fromSizeT(64)));
+        allocator.deallocate(aligned64);
+        auto reused64 = allocator.allocate(Bytes::fromSizeT(16), Alignment(Bytes::fromSizeT(16)));
+        require(reused64.alignment == Alignment(Bytes::fromSizeT(64)), "buddy allocator did not reuse a known satisfying alignment");
+        allocator.deallocate(reused64);
     }
 
     void testContinuousMemoryBlockPool() {

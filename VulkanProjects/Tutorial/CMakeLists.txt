@@ -59,6 +59,7 @@ add_executable(Tutorial
         src/SpanAllocator.cpp
         src/ResourceManagement/Memory/AlignedContinuousMemoryBlock.cpp
         src/ResourceManagement/Memory/Alignment.cpp
+        src/ResourceManagement/Memory/BuddyAlloc/AlignedBuddyAllocator.cpp
         src/ResourceManagement/Memory/BuddyAlloc/BuddyAllocator.cpp
         src/ResourceManagement/Memory/BuddyAlloc/BuddyFreeBitmap.cpp
         src/ResourceManagement/Memory/BuddyAlloc/BuddyOrder.cpp
@@ -105,6 +106,7 @@ add_executable(ResourceManagementSelfTest
         src/SpanAllocator.cpp
         src/ResourceManagement/Memory/AlignedContinuousMemoryBlock.cpp
         src/ResourceManagement/Memory/Alignment.cpp
+        src/ResourceManagement/Memory/BuddyAlloc/AlignedBuddyAllocator.cpp
         src/ResourceManagement/Memory/BuddyAlloc/BuddyAllocator.cpp
         src/ResourceManagement/Memory/BuddyAlloc/BuddyFreeBitmap.cpp
         src/ResourceManagement/Memory/BuddyAlloc/BuddyOrder.cpp

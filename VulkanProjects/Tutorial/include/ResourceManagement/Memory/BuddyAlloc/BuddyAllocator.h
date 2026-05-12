@@ -27,25 +27,9 @@ namespace Tutorial::ResourceManagement::Memory::BuddyAlloc {
 
         [[nodiscard]] BuddyAlloc::AlignedBuddyAllocator* getOrCreateAlignedAllocator(Alignment alignment);
 
-        [[nodiscard]] BuddyAlloc::ArenaState* createArena(BuddyAlloc::AlignedBuddyAllocator& allocator);
+        [[nodiscard]] BuddyAlloc::AlignedBuddyAllocator* findAlignedAllocator(Alignment alignment) const;
 
         [[nodiscard]] BuddyAlloc::BuddyOrder orderFor(Bytes size) const;
-
-        [[nodiscard]] Bytes bytesForOrder(BuddyAlloc::BuddyOrder order) const;
-
-        [[nodiscard]] BuddyAlloc::ArenaState* findArenaContaining(BuddyAlloc::AlignedBuddyAllocator& allocator, void* ptr) const;
-
-        [[nodiscard]] bool isBlockFree(const BuddyAlloc::ArenaState& arena, BuddyAlloc::BuddyOrder order, BuddyAlloc::BuddyBlockIndex index) const;
-
-        void setBlockFree(BuddyAlloc::ArenaState& arena, BuddyAlloc::BuddyOrder order, BuddyAlloc::BuddyBlockIndex index, bool value) const;
-
-        void pushFreeBlock(BuddyAlloc::ArenaState& arena, BuddyAlloc::BuddyOrder order, BuddyAlloc::BuddyBlockIndex index);
-
-        [[nodiscard]] BuddyAlloc::FreeBlock* removeFreeBlock(BuddyAlloc::ArenaState& arena, BuddyAlloc::BuddyOrder order, BuddyAlloc::BuddyBlockIndex index);
-
-        [[nodiscard]] BuddyAlloc::BuddyBlockIndex blockIndex(const BuddyAlloc::ArenaState& arena, const void* ptr, BuddyAlloc::BuddyOrder order) const;
-
-        [[nodiscard]] void* ptrForIndex(const BuddyAlloc::ArenaState& arena, BuddyAlloc::BuddyOrder order, BuddyAlloc::BuddyBlockIndex index) const;
 
         void destroyMetadata() noexcept;
 
