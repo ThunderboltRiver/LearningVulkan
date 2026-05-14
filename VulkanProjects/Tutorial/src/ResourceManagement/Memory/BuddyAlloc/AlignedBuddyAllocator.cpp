@@ -1,13 +1,9 @@
 #include "ResourceManagement/Memory/BuddyAlloc/AlignedBuddyAllocator.h"
 
-#include "ResourceManagement/Memory/BuddyAlloc/BuddyFreeBitmap.h"
-
 #include <stdexcept>
 
 namespace Tutorial::ResourceManagement::Memory::BuddyAlloc {
     namespace {
-        constexpr std::size_t BITMAP_WORD_BITS = sizeof(std::uint64_t) * 8;
-
         bool pointerInRange(const void* ptr, const void* begin, const Bytes bytes) {
             const auto address = reinterpret_cast<std::uintptr_t>(ptr);
             const auto start = reinterpret_cast<std::uintptr_t>(begin);
@@ -80,22 +76,9 @@ namespace Tutorial::ResourceManagement::Memory::BuddyAlloc {
         BumpAlloc::BumpAllocator& bumpAllocator
     ) {
         auto* arena = bumpAllocator.allocateArena(alignment);
-        auto* state = new ArenaState{};
-        state->arena = arena;
-        state->next = arenaStates;
+        auto* state = new ArenaState(arena, maxOrder, minBlockSize);
+        state->setNext(arenaStates);
         arenaStates = state;
-
-        for (BuddyOrder order{0}; order <= maxOrder; ++order.value) {
-            state->freeLists[order.value] = nullptr;
-            const std::size_t blockCount = bumpAllocator.getArenaSize().value() / bytesForOrder(order, minBlockSize).value();
-            const std::size_t wordCount = (blockCount + BITMAP_WORD_BITS - 1) / BITMAP_WORD_BITS;
-            state->freeBitmaps[order.value] = BuddyFreeBitmap{
-                new std::uint64_t[wordCount]{},
-                wordCount
-            };
-        }
-
-        pushFreeBlock(*state, maxOrder, BuddyBlockIndex{0}, minBlockSize);
         return state;
     }
 

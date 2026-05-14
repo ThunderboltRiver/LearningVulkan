@@ -2,6 +2,7 @@
 #define TUTORIAL_RESOURCE_MANAGEMENT_MEMORY_BUDDYALLOC_ARENASTATE_H
 
 #include "ResourceManagement/Memory/BuddyAlloc/BuddyFreeBitmap.h"
+#include "ResourceManagement/Memory/BuddyAlloc/BuddyOrder.h"
 #include "ResourceManagement/Memory/BuddyAlloc/BuddyOrderThreshold.h"
 #include "ResourceManagement/Memory/BuddyAlloc/FreeBlock.h"
 #include "ResourceManagement/Memory/BumpAlloc/AlignedArena.h"
@@ -24,6 +25,10 @@ namespace Tutorial::ResourceManagement::Memory::BuddyAlloc {
 
         /** 同じAlignmentを持つ次のアリーナメタデータ。 */
         ArenaState* next;
+
+        ArenaState(BumpAlloc::AlignedArena* arena, BuddyOrder maxOrder, Bytes minBlockSize);
+
+        void setNext(ArenaState* nextArenaState);
 
         ~ArenaState();
     };
