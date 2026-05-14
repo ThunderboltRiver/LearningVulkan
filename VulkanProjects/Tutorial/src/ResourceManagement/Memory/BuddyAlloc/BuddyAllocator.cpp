@@ -128,15 +128,6 @@ namespace Tutorial::ResourceManagement::Memory::BuddyAlloc {
         auto* aligned = _alignedAllocators;
         while (aligned != nullptr) {
             auto* nextAligned = aligned->next;
-            auto* arena = aligned->arenas;
-            while (arena != nullptr) {
-                auto* nextArena = arena->next;
-                for (BuddyOrder order{0}; order <= _maxOrder; ++order.value) {
-                    delete[] arena->freeBitmaps[order.value].words;
-                }
-                delete arena;
-                arena = nextArena;
-            }
             delete aligned;
             aligned = nextAligned;
         }

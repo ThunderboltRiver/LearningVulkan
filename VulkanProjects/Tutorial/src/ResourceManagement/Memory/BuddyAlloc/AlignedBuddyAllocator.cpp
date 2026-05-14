@@ -27,6 +27,19 @@ namespace Tutorial::ResourceManagement::Memory::BuddyAlloc {
         : alignment(alignment), arenas(nullptr), next(next) {
     }
 
+    AlignedBuddyAllocator::~AlignedBuddyAllocator() {
+        auto* arena = arenas;
+        while (arena != nullptr) {
+            auto* nextArena = arena->next;
+            for (std::size_t order = 0; order < BUDDY_ORDER_COUNT; ++order) {
+                delete[] arena->freeBitmaps[order].words;
+            }
+            delete arena;
+            arena = nextArena;
+        }
+        arenas = nullptr;
+    }
+
     bool AlignedBuddyAllocator::satisfies(const Alignment requestedAlignment) const {
         return alignment.bytes().value() % requestedAlignment.bytes().value() == 0;
     }

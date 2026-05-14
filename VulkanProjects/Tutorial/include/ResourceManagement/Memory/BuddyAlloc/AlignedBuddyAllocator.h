@@ -19,6 +19,8 @@ namespace Tutorial::ResourceManagement::Memory::BuddyAlloc {
 
         AlignedBuddyAllocator(Alignment alignment, AlignedBuddyAllocator* next);
 
+        ~AlignedBuddyAllocator();
+
         [[nodiscard]] bool satisfies(Alignment requestedAlignment) const;
 
         [[nodiscard]] AlignedContinuousMemoryBlock tryAllocate(Bytes size, BuddyOrder targetOrder, Bytes minBlockSize, BuddyOrder maxOrder);
