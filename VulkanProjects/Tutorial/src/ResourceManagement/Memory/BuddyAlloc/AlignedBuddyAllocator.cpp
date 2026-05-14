@@ -31,9 +31,6 @@ namespace Tutorial::ResourceManagement::Memory::BuddyAlloc {
         auto* arena = arenas;
         while (arena != nullptr) {
             auto* nextArena = arena->next;
-            for (std::size_t order = 0; order < BUDDY_ORDER_COUNT; ++order) {
-                delete[] arena->freeBitmaps[order].words;
-            }
             delete arena;
             arena = nextArena;
         }

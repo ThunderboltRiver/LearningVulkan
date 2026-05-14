@@ -24,6 +24,8 @@ namespace Tutorial::ResourceManagement::Memory::BuddyAlloc {
 
         /** 同じAlignmentを持つ次のアリーナメタデータ。 */
         ArenaState* next;
+
+        ~ArenaState();
     };
 }
 
