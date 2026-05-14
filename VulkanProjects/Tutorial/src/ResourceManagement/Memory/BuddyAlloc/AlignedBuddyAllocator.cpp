@@ -23,8 +23,13 @@ namespace Tutorial::ResourceManagement::Memory::BuddyAlloc {
         }
     }
 
-    AlignedBuddyAllocator::AlignedBuddyAllocator(const Alignment alignment, AlignedBuddyAllocator* next)
-        : alignment(alignment), arenaStates(nullptr), next(next) {
+    AlignedBuddyAllocator::AlignedBuddyAllocator(
+        const Alignment alignment,
+        const BuddyOrder maxOrder,
+        const Bytes minBlockSize,
+        BumpAlloc::BumpAllocator& bumpAllocator
+    ) : alignment(alignment), arenaStates(nullptr), next(nullptr) {
+        (void)createArena(maxOrder, minBlockSize, bumpAllocator);
     }
 
     AlignedBuddyAllocator::~AlignedBuddyAllocator() {
@@ -35,6 +40,10 @@ namespace Tutorial::ResourceManagement::Memory::BuddyAlloc {
             arena = nextArena;
         }
         arenaStates = nullptr;
+    }
+
+    void AlignedBuddyAllocator::setNext(AlignedBuddyAllocator* nextAllocator) {
+        next = nextAllocator;
     }
 
     bool AlignedBuddyAllocator::satisfies(const Alignment requestedAlignment) const {

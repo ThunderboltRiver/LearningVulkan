@@ -17,9 +17,11 @@ namespace Tutorial::ResourceManagement::Memory::BuddyAlloc {
         ArenaState* arenaStates;
         AlignedBuddyAllocator* next;
 
-        AlignedBuddyAllocator(Alignment alignment, AlignedBuddyAllocator* next);
+        AlignedBuddyAllocator(Alignment alignment, BuddyOrder maxOrder, Bytes minBlockSize, BumpAlloc::BumpAllocator& bumpAllocator);
 
         ~AlignedBuddyAllocator();
+
+        void setNext(AlignedBuddyAllocator* nextAllocator);
 
         [[nodiscard]] bool satisfies(Alignment requestedAlignment) const;
 

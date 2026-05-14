@@ -44,7 +44,8 @@ namespace Tutorial::ResourceManagement::Memory::BuddyAlloc {
         if (auto* existing = findAlignedAllocator(alignment); existing != nullptr) {
             return existing;
         }
-        auto* created = new AlignedBuddyAllocator(alignment, _alignedAllocators);
+        auto* created = new AlignedBuddyAllocator(alignment, _maxOrder, _minBlockSize, _bumpAllocator);
+        created->setNext(_alignedAllocators);
         _alignedAllocators = created;
         return created;
     }
