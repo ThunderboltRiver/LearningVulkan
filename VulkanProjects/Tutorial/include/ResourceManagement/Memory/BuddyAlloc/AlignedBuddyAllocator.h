@@ -14,7 +14,7 @@ namespace Tutorial::ResourceManagement::Memory::BuddyAlloc {
      */
     struct AlignedBuddyAllocator {
         Alignment alignment;
-        ArenaState* arenas;
+        ArenaState* arenaStates;
         AlignedBuddyAllocator* next;
 
         AlignedBuddyAllocator(Alignment alignment, AlignedBuddyAllocator* next);

@@ -24,17 +24,17 @@ namespace Tutorial::ResourceManagement::Memory::BuddyAlloc {
     }
 
     AlignedBuddyAllocator::AlignedBuddyAllocator(const Alignment alignment, AlignedBuddyAllocator* next)
-        : alignment(alignment), arenas(nullptr), next(next) {
+        : alignment(alignment), arenaStates(nullptr), next(next) {
     }
 
     AlignedBuddyAllocator::~AlignedBuddyAllocator() {
-        auto* arena = arenas;
+        auto* arena = arenaStates;
         while (arena != nullptr) {
             auto* nextArena = arena->next;
             delete arena;
             arena = nextArena;
         }
-        arenas = nullptr;
+        arenaStates = nullptr;
     }
 
     bool AlignedBuddyAllocator::satisfies(const Alignment requestedAlignment) const {
@@ -73,8 +73,8 @@ namespace Tutorial::ResourceManagement::Memory::BuddyAlloc {
         auto* arena = bumpAllocator.allocateArena(alignment);
         auto* state = new ArenaState{};
         state->arena = arena;
-        state->next = arenas;
-        arenas = state;
+        state->next = arenaStates;
+        arenaStates = state;
 
         for (BuddyOrder order{0}; order <= maxOrder; ++order.value) {
             state->freeLists[order.value] = nullptr;
@@ -99,7 +99,7 @@ namespace Tutorial::ResourceManagement::Memory::BuddyAlloc {
     }
 
     ArenaState* AlignedBuddyAllocator::findArenaContaining(void* ptr, const Bytes arenaSize) const {
-        auto* current = arenas;
+        auto* current = arenaStates;
         while (current != nullptr) {
             if (pointerInRange(ptr, current->arena->block.ptr, arenaSize)) {
                 return current;
@@ -198,7 +198,7 @@ namespace Tutorial::ResourceManagement::Memory::BuddyAlloc {
     ) {
         ArenaState* selectedArena = nullptr;
         BuddyOrder selectedOrder = targetOrder;
-        for (auto* arena = arenas; arena != nullptr && selectedArena == nullptr; arena = arena->next) {
+        for (auto* arena = arenaStates; arena != nullptr && selectedArena == nullptr; arena = arena->next) {
             for (BuddyOrder order = targetOrder; order <= maxOrder; ++order.value) {
                 if (arena->freeLists[order.value] != nullptr) {
                     selectedArena = arena;
