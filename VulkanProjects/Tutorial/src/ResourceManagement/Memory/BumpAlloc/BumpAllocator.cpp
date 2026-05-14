@@ -13,8 +13,8 @@ namespace Tutorial::ResourceManagement::Memory::BumpAlloc {
         }
     }
 
-    BumpAlloc::AlignedArena* BumpAllocator::allocateArena(const Alignment alignment) {
-        auto* arena = new BumpAlloc::AlignedArena{
+    AlignedArena* BumpAllocator::allocateArena(const Alignment alignment) {
+        auto* arena = new AlignedArena{
             allocateAlignedMemoryBlock(_arenaSize, alignment),
             _arenaHead
         };

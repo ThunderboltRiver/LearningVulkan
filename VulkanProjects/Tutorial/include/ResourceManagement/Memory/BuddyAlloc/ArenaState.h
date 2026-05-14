@@ -2,6 +2,7 @@
 #define TUTORIAL_RESOURCE_MANAGEMENT_MEMORY_BUDDYALLOC_ARENASTATE_H
 
 #include "ResourceManagement/Memory/BuddyAlloc/BuddyFreeBitmap.h"
+#include "ResourceManagement/Memory/BuddyAlloc/BuddyOrderThreshold.h"
 #include "ResourceManagement/Memory/BuddyAlloc/FreeBlock.h"
 #include "ResourceManagement/Memory/BumpAlloc/AlignedArena.h"
 
@@ -16,10 +17,10 @@ namespace Tutorial::ResourceManagement::Memory::BuddyAlloc {
         BumpAlloc::AlignedArena* arena;
 
         /** orderごとの空きブロックリスト。ブロック本体の先頭をFreeBlockとして使う。 */
-        FreeBlock* freeLists[32];
+        FreeBlock* freeLists[BUDDY_ORDER_THRESHOLD];
 
         /** orderごとの空き状態bitmap。buddy統合時に相方ブロックが空きかを高速に確認する。 */
-        BuddyFreeBitmap freeBitmaps[32];
+        BuddyFreeBitmap freeBitmaps[BUDDY_ORDER_THRESHOLD];
 
         /** 同じAlignmentを持つ次のアリーナメタデータ。 */
         ArenaState* next;

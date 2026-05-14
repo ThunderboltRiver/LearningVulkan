@@ -1,0 +1,12 @@
+#ifndef TUTORIAL_RESOURCE_MANAGEMENT_MEMORY_BUDDYALLOC_BUDDYORDERTHRESHOLD_H
+#define TUTORIAL_RESOURCE_MANAGEMENT_MEMORY_BUDDYALLOC_BUDDYORDERTHRESHOLD_H
+
+#include <cstddef>
+
+namespace Tutorial::ResourceManagement::Memory::BuddyAlloc {
+
+    /** BuddyAllocatorが扱うorder数の閾値。order値は 0 から BUDDY_ORDER_THRESHOLD - 1 までを使う。 */
+    constexpr std::size_t BUDDY_ORDER_THRESHOLD = 32;
+}
+
+#endif //TUTORIAL_RESOURCE_MANAGEMENT_MEMORY_BUDDYALLOC_BUDDYORDERTHRESHOLD_H

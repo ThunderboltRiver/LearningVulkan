@@ -1,5 +1,7 @@
 #include "ResourceManagement/Memory/BuddyAlloc/BuddyAllocator.h"
 
+#include "ResourceManagement/Memory/BuddyAlloc/BuddyOrderThreshold.h"
+
 #include <stdexcept>
 
 namespace Tutorial::ResourceManagement::Memory::BuddyAlloc {
@@ -18,7 +20,7 @@ namespace Tutorial::ResourceManagement::Memory::BuddyAlloc {
         while (current < arenaSize) {
             current = current * 2;
             ++_maxOrder.value;
-            if (_maxOrder.value >= 32) {
+            if (_maxOrder.value >= BUDDY_ORDER_THRESHOLD) {
                 throw std::invalid_argument("BuddyAllocator: too many buddy orders");
             }
         }
