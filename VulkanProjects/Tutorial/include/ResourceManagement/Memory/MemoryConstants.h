@@ -5,9 +5,6 @@
 
 namespace Tutorial::ResourceManagement::Memory {
 
-    /** free listノードを置ける最小ブロックサイズ。 */
-    extern const Bytes MIN_MEMORY_BLOCK_SIZE;
-
     /** BuddyAllocatorへ供給する既定アリーナサイズ。 */
     extern const Bytes DEFAULT_ARENA_SIZE;
 }

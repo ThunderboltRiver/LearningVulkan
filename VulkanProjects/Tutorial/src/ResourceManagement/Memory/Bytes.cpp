@@ -1,5 +1,6 @@
 #include "ResourceManagement/Memory/Bytes.h"
 
+#include <bit>
 #include <limits>
 #include <stdexcept>
 
@@ -24,6 +25,13 @@ namespace Tutorial::ResourceManagement::Memory {
             throw std::overflow_error("Bytes: MiB value overflow");
         }
         return Bytes(value * 1024 * 1024);
+    }
+
+    Bytes Bytes::fromPowerOfTwoExponent(const std::size_t exponent) {
+        if (exponent >= std::numeric_limits<std::size_t>::digits) {
+            throw std::overflow_error("Bytes: power-of-two exponent overflow");
+        }
+        return Bytes(static_cast<std::size_t>(1) << exponent);
     }
 
     std::size_t Bytes::value() const {
@@ -51,6 +59,13 @@ namespace Tutorial::ResourceManagement::Memory {
             throw std::overflow_error("Bytes: power-of-two rounding overflow");
         }
         return Bytes(value + 1);
+    }
+
+    std::size_t Bytes::log2PowerOfTwo() const {
+        if (!isPowerOfTwo()) {
+            throw std::invalid_argument("Bytes: bytes must be a power of two");
+        }
+        return static_cast<std::size_t>(std::countr_zero(_value));
     }
 
     Bytes Bytes::max(const Bytes rhs) const {

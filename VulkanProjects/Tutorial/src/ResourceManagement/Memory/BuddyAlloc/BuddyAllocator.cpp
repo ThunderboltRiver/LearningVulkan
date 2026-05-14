@@ -5,25 +5,39 @@
 #include <stdexcept>
 
 namespace Tutorial::ResourceManagement::Memory::BuddyAlloc {
-    BuddyAllocator::BuddyAllocator(const Bytes arenaSize, const Bytes minBlockSize)
+    BuddyAllocator::BuddyAllocator(const Bytes arenaSize)
         : _bumpAllocator(arenaSize),
           _alignedAllocators(nullptr),
-          _minBlockSize(minBlockSize.max(Bytes::fromSizeT(sizeof(FreeBlock))).roundUpToPowerOfTwo()),
-          _maxOrder{0} {
+          _minBlockSize(calculateMinBlockSize(arenaSize)),
+          _maxOrder(calculateMaxOrder(arenaSize, _minBlockSize)) {
         if (!arenaSize.isPowerOfTwo()) {
             throw std::invalid_argument("BuddyAllocator: arena size must be a power of two");
         }
-        if (_minBlockSize > arenaSize) {
+    }
+
+    Bytes BuddyAllocator::calculateMinBlockSize(const Bytes arenaSize) {
+        const std::size_t arenaExponent = arenaSize.log2PowerOfTwo();
+        const std::size_t thresholdMinExponent = arenaExponent >= BUDDY_ORDER_THRESHOLD
+            ? arenaExponent - BUDDY_ORDER_THRESHOLD
+            : 0;
+        const std::size_t freeBlockExponent = Bytes::fromSizeT(sizeof(FreeBlock)).roundUpToPowerOfTwo().log2PowerOfTwo();
+        const std::size_t minBlockExponent = thresholdMinExponent >= freeBlockExponent
+            ? thresholdMinExponent
+            : freeBlockExponent;
+        return Bytes::fromPowerOfTwoExponent(minBlockExponent);
+    }
+
+    BuddyOrder BuddyAllocator::calculateMaxOrder(const Bytes arenaSize, const Bytes minBlockSize) {
+        if (minBlockSize > arenaSize) {
             throw std::invalid_argument("BuddyAllocator: min block size must not exceed arena size");
         }
-        Bytes current = _minBlockSize;
-        while (current < arenaSize) {
-            current = current * 2;
-            ++_maxOrder.value;
-            if (_maxOrder.value >= BUDDY_ORDER_THRESHOLD) {
-                throw std::invalid_argument("BuddyAllocator: too many buddy orders");
-            }
+        const std::size_t arenaExponent = arenaSize.log2PowerOfTwo();
+        const std::size_t minBlockExponent = minBlockSize.log2PowerOfTwo();
+        const std::size_t maxOrder = arenaExponent - minBlockExponent;
+        if (maxOrder > BUDDY_ORDER_THRESHOLD) {
+            throw std::invalid_argument("BuddyAllocator: too many buddy orders");
         }
+        return BuddyOrder{static_cast<std::uint8_t>(maxOrder)};
     }
 
     AlignedBuddyAllocator* BuddyAllocator::getOrCreateAlignedAllocator(const Alignment alignment) {

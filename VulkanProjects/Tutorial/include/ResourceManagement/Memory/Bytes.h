@@ -26,6 +26,9 @@ namespace Tutorial::ResourceManagement::Memory {
         /** MiB単位の値からBytesを作成する。 */
         static Bytes fromMiB(std::size_t value);
 
+        /** 2^exponent バイトのBytesを作成する。 */
+        static Bytes fromPowerOfTwoExponent(std::size_t exponent);
+
         /** 低レベルAPIへ渡すための裸のバイト数を返す。 */
         [[nodiscard]] std::size_t value() const;
 
@@ -37,6 +40,9 @@ namespace Tutorial::ResourceManagement::Memory {
 
         /** この値以上の最小の2の冪乗へ丸める。 */
         [[nodiscard]] Bytes roundUpToPowerOfTwo() const;
+
+        /** 2の冪乗値として見たときの指数を返す。 */
+        [[nodiscard]] std::size_t log2PowerOfTwo() const;
 
         /** rhsと比較して大きい方のBytesを返す。 */
         [[nodiscard]] Bytes max(Bytes rhs) const;

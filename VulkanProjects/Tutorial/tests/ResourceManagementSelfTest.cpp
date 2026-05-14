@@ -55,6 +55,9 @@ namespace {
         require(Bytes::fromSizeT(1024).isPowerOfTwo(), "1024 must be a power of two");
         require(!Bytes::fromSizeT(3).isPowerOfTwo(), "3 must not be a power of two");
         require(Bytes::fromSizeT(17).roundUpToPowerOfTwo() == Bytes::fromSizeT(32), "power-of-two round-up failed");
+        require(Bytes::fromPowerOfTwoExponent(5) == Bytes::fromSizeT(32), "power-of-two exponent conversion failed");
+        require(Bytes::fromSizeT(32).log2PowerOfTwo() == 5, "power-of-two log2 failed");
+        requireThrows<std::invalid_argument>([] { (void)Bytes::fromSizeT(3).log2PowerOfTwo(); }, "non-power-of-two log2 was not rejected");
         requireThrows<std::invalid_argument>([] { (void)Alignment(Bytes::fromSizeT(3)); }, "non-power-of-two alignment was not rejected");
         requireThrows<std::invalid_argument>([] { (void)Alignment(Bytes::fromSizeT(0)); }, "zero alignment was not rejected");
     }
@@ -68,7 +71,7 @@ namespace {
     }
 
     void testBuddyAllocator() {
-        BuddyAllocator allocator(Bytes::fromKiB(4), Bytes::fromSizeT(16));
+        BuddyAllocator allocator(Bytes::fromKiB(4));
         auto first = allocator.allocate(Bytes::fromSizeT(32), Alignment(Bytes::fromSizeT(16)));
         auto second = allocator.allocate(Bytes::fromSizeT(32), Alignment(Bytes::fromSizeT(16)));
         require(first.ptr != second.ptr, "buddy allocator returned duplicate blocks");

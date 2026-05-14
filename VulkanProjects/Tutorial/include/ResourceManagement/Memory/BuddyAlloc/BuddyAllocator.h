@@ -25,6 +25,10 @@ namespace Tutorial::ResourceManagement::Memory::BuddyAlloc {
         /** このアリーナサイズで取り得る最大order。arenaSize == minBlockSize * 2^_maxOrder。 */
         BuddyAlloc::BuddyOrder _maxOrder;
 
+        [[nodiscard]] static Bytes calculateMinBlockSize(Bytes arenaSize);
+
+        [[nodiscard]] static BuddyAlloc::BuddyOrder calculateMaxOrder(Bytes arenaSize, Bytes minBlockSize);
+
         [[nodiscard]] BuddyAlloc::AlignedBuddyAllocator* getOrCreateAlignedAllocator(Alignment alignment);
 
         [[nodiscard]] BuddyAlloc::AlignedBuddyAllocator* findAlignedAllocator(Alignment alignment) const;
@@ -34,7 +38,7 @@ namespace Tutorial::ResourceManagement::Memory::BuddyAlloc {
         void destroyMetadata() noexcept;
 
     public:
-        explicit BuddyAllocator(Bytes arenaSize = DEFAULT_ARENA_SIZE, Bytes minBlockSize = MIN_MEMORY_BLOCK_SIZE);
+        explicit BuddyAllocator(Bytes arenaSize = DEFAULT_ARENA_SIZE);
 
         BuddyAllocator(const BuddyAllocator&) = delete;
         BuddyAllocator& operator=(const BuddyAllocator&) = delete;

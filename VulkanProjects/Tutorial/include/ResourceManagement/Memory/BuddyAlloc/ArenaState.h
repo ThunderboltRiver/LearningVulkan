@@ -17,10 +17,10 @@ namespace Tutorial::ResourceManagement::Memory::BuddyAlloc {
         BumpAlloc::AlignedArena* arena;
 
         /** orderごとの空きブロックリスト。ブロック本体の先頭をFreeBlockとして使う。 */
-        FreeBlock* freeLists[BUDDY_ORDER_THRESHOLD];
+        FreeBlock* freeLists[BUDDY_ORDER_COUNT];
 
         /** orderごとの空き状態bitmap。buddy統合時に相方ブロックが空きかを高速に確認する。 */
-        BuddyFreeBitmap freeBitmaps[BUDDY_ORDER_THRESHOLD];
+        BuddyFreeBitmap freeBitmaps[BUDDY_ORDER_COUNT];
 
         /** 同じAlignmentを持つ次のアリーナメタデータ。 */
         ArenaState* next;

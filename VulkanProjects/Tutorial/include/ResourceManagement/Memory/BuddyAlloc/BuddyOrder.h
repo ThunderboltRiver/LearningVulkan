@@ -7,7 +7,7 @@ namespace Tutorial::ResourceManagement::Memory::BuddyAlloc {
 
     /**
      * minBlockSize * 2^order のブロック階層を表す値。
-     * BUDDY_ORDER_THRESHOLDで階層数を制限しているため、内部表現は小さい整数で十分。
+     * BUDDY_ORDER_THRESHOLDで最大orderを制限しているため、内部表現は小さい整数で十分。
      */
     struct BuddyOrder {
         std::uint8_t value;
