@@ -29,8 +29,6 @@ namespace Tutorial::ResourceManagement::Memory::BuddyAlloc {
         ArenaState(BumpAlloc::AlignedArena* arena, BuddyOrder maxOrder, Bytes minBlockSize);
 
         void setNext(ArenaState* nextArenaState);
-
-        ~ArenaState();
     };
 }
 
