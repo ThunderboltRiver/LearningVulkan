@@ -40,21 +40,7 @@ namespace Tutorial::ResourceManagement::Memory::BuddyAlloc {
     private:
         [[nodiscard]] ArenaState* createArena(BuddyOrder maxOrder, Bytes minBlockSize, BumpAlloc::BumpAllocator& bumpAllocator);
 
-        [[nodiscard]] static Bytes bytesForOrder(BuddyOrder order, Bytes minBlockSize);
-
         [[nodiscard]] ArenaState* findArenaContaining(void* ptr, Bytes arenaSize) const;
-
-        [[nodiscard]] static BuddyBlockIndex blockIndex(const ArenaState& arenaState, const void* ptr, BuddyOrder order, Bytes minBlockSize);
-
-        [[nodiscard]] static void* ptrForIndex(const ArenaState& arenaState, BuddyOrder order, BuddyBlockIndex index, Bytes minBlockSize);
-
-        [[nodiscard]] static bool isBlockFree(const ArenaState& arenaState, BuddyOrder order, BuddyBlockIndex index);
-
-        static void setBlockFree(ArenaState& arenaState, BuddyOrder order, BuddyBlockIndex index, bool value);
-
-        static void pushFreeBlock(ArenaState& arenaState, BuddyOrder order, BuddyBlockIndex index, Bytes minBlockSize);
-
-        [[nodiscard]] static FreeBlock* removeFreeBlock(ArenaState& arenaState, BuddyOrder order, BuddyBlockIndex index, Bytes minBlockSize);
 
         [[nodiscard]] AlignedContinuousMemoryBlock allocateFromExistingArena(Bytes size, BuddyOrder targetOrder, Bytes minBlockSize, BuddyOrder maxOrder);
     };

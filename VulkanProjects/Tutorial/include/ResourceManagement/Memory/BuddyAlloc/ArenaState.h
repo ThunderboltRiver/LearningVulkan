@@ -29,6 +29,20 @@ namespace Tutorial::ResourceManagement::Memory::BuddyAlloc {
         ArenaState(BumpAlloc::AlignedArena* arena, BuddyOrder maxOrder, Bytes minBlockSize);
 
         void setNext(ArenaState* nextArenaState);
+
+        [[nodiscard]] bool findAvailableOrder(BuddyOrder targetOrder, BuddyOrder maxOrder, BuddyOrder& selectedOrder) const;
+
+        [[nodiscard]] BuddyBlockIndex blockIndex(const void* ptr, BuddyOrder order, Bytes minBlockSize) const;
+
+        [[nodiscard]] void* ptrForIndex(BuddyOrder order, BuddyBlockIndex index, Bytes minBlockSize) const;
+
+        [[nodiscard]] bool isBlockFree(BuddyOrder order, BuddyBlockIndex index) const;
+
+        void setBlockFree(BuddyOrder order, BuddyBlockIndex index, bool value);
+
+        void pushFreeBlock(BuddyOrder order, BuddyBlockIndex index, Bytes minBlockSize);
+
+        [[nodiscard]] FreeBlock* removeFreeBlock(BuddyOrder order, BuddyBlockIndex index, Bytes minBlockSize);
     };
 }
 
