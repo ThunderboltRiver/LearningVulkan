@@ -16,6 +16,8 @@ namespace Tutorial::ResourceManagement::Memory::BuddyAlloc {
         std::uint64_t* words;
         std::size_t wordCount;
 
+        BuddyFreeBitmap();
+
         explicit BuddyFreeBitmap(std::size_t blockCount);
 
         BuddyFreeBitmap(const BuddyFreeBitmap&) = delete;

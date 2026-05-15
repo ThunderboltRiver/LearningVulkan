@@ -29,11 +29,11 @@ namespace Tutorial::ResourceManagement::Memory::BuddyAlloc {
     }
 
     AlignedBuddyAllocator::~AlignedBuddyAllocator() {
-        auto* arena = arenaStates;
-        while (arena != nullptr) {
-            auto* nextArena = arena->next;
-            delete arena;
-            arena = nextArena;
+        auto* arenaState = arenaStates;
+        while (arenaState != nullptr) {
+            auto* nextArenaState = arenaState->next;
+            delete arenaState;
+            arenaState = nextArenaState;
         }
         arenaStates = nullptr;
     }
@@ -102,13 +102,13 @@ namespace Tutorial::ResourceManagement::Memory::BuddyAlloc {
     }
 
     BuddyBlockIndex AlignedBuddyAllocator::blockIndex(
-        const ArenaState& arena,
+        const ArenaState& arenaState,
         const void* ptr,
         const BuddyOrder order,
         const Bytes minBlockSize
     ) {
         const auto address = reinterpret_cast<std::uintptr_t>(ptr);
-        const auto base = reinterpret_cast<std::uintptr_t>(arena.arena->block.ptr);
+        const auto base = reinterpret_cast<std::uintptr_t>(arenaState.arena->block.ptr);
         const auto offset = address - base;
         const auto blockSize = bytesForOrder(order, minBlockSize).value();
         if (offset % blockSize != 0) {
@@ -118,61 +118,61 @@ namespace Tutorial::ResourceManagement::Memory::BuddyAlloc {
     }
 
     void* AlignedBuddyAllocator::ptrForIndex(
-        const ArenaState& arena,
+        const ArenaState& arenaState,
         const BuddyOrder order,
         const BuddyBlockIndex index,
         const Bytes minBlockSize
     ) {
-        const auto base = reinterpret_cast<std::uintptr_t>(arena.arena->block.ptr);
+        const auto base = reinterpret_cast<std::uintptr_t>(arenaState.arena->block.ptr);
         return reinterpret_cast<void*>(base + bytesForOrder(order, minBlockSize).value() * index.value);
     }
 
     void AlignedBuddyAllocator::setBlockFree(
-        ArenaState& arena,
+        ArenaState& arenaState,
         const BuddyOrder order,
         const BuddyBlockIndex index,
         const bool value
     ) {
-        arena.freeBitmaps[order.value].setFree(index, value);
+        arenaState.freeBitmaps[order.value].setFree(index, value);
     }
 
     bool AlignedBuddyAllocator::isBlockFree(
-        const ArenaState& arena,
+        const ArenaState& arenaState,
         const BuddyOrder order,
         const BuddyBlockIndex index
     ) {
-        return arena.freeBitmaps[order.value].isFree(index);
+        return arenaState.freeBitmaps[order.value].isFree(index);
     }
 
     void AlignedBuddyAllocator::pushFreeBlock(
-        ArenaState& arena,
+        ArenaState& arenaState,
         const BuddyOrder order,
         const BuddyBlockIndex index,
         const Bytes minBlockSize
     ) {
-        auto* block = static_cast<FreeBlock*>(ptrForIndex(arena, order, index, minBlockSize));
-        block->next = arena.freeLists[order.value];
-        arena.freeLists[order.value] = block;
-        setBlockFree(arena, order, index, true);
+        auto* block = static_cast<FreeBlock*>(ptrForIndex(arenaState, order, index, minBlockSize));
+        block->next = arenaState.freeLists[order.value];
+        arenaState.freeLists[order.value] = block;
+        setBlockFree(arenaState, order, index, true);
     }
 
     FreeBlock* AlignedBuddyAllocator::removeFreeBlock(
-        ArenaState& arena,
+        ArenaState& arenaState,
         const BuddyOrder order,
         const BuddyBlockIndex index,
         const Bytes minBlockSize
     ) {
         FreeBlock* previous = nullptr;
-        auto* current = arena.freeLists[order.value];
-        void* expected = ptrForIndex(arena, order, index, minBlockSize);
+        auto* current = arenaState.freeLists[order.value];
+        void* expected = ptrForIndex(arenaState, order, index, minBlockSize);
         while (current != nullptr) {
             if (current == expected) {
                 if (previous == nullptr) {
-                    arena.freeLists[order.value] = current->next;
+                    arenaState.freeLists[order.value] = current->next;
                 } else {
                     previous->next = current->next;
                 }
-                setBlockFree(arena, order, index, false);
+                setBlockFree(arenaState, order, index, false);
                 current->next = nullptr;
                 return current;
             }
@@ -188,33 +188,33 @@ namespace Tutorial::ResourceManagement::Memory::BuddyAlloc {
         const Bytes minBlockSize,
         const BuddyOrder maxOrder
     ) {
-        ArenaState* selectedArena = nullptr;
+        ArenaState* selectedArenaState = nullptr;
         BuddyOrder selectedOrder = targetOrder;
-        for (auto* arena = arenaStates; arena != nullptr && selectedArena == nullptr; arena = arena->next) {
+        for (auto* arenaState = arenaStates; arenaState != nullptr && selectedArenaState == nullptr; arenaState = arenaState->next) {
             for (BuddyOrder order = targetOrder; order <= maxOrder; ++order.value) {
-                if (arena->freeLists[order.value] != nullptr) {
-                    selectedArena = arena;
+                if (arenaState->freeLists[order.value] != nullptr) {
+                    selectedArenaState = arenaState;
                     selectedOrder = order;
                     break;
                 }
             }
         }
 
-        if (selectedArena == nullptr) {
+        if (selectedArenaState == nullptr) {
             return emptyBlock(alignment);
         }
 
-        auto* block = selectedArena->freeLists[selectedOrder.value];
-        const BuddyBlockIndex selectedIndex = blockIndex(*selectedArena, block, selectedOrder, minBlockSize);
-        if (removeFreeBlock(*selectedArena, selectedOrder, selectedIndex, minBlockSize) == nullptr) {
+        auto* block = selectedArenaState->freeLists[selectedOrder.value];
+        const BuddyBlockIndex selectedIndex = blockIndex(*selectedArenaState, block, selectedOrder, minBlockSize);
+        if (removeFreeBlock(*selectedArenaState, selectedOrder, selectedIndex, minBlockSize) == nullptr) {
             throw std::runtime_error("AlignedBuddyAllocator: selected free block disappeared");
         }
 
         while (selectedOrder > targetOrder) {
             --selectedOrder.value;
-            const BuddyBlockIndex leftIndex = blockIndex(*selectedArena, block, selectedOrder, minBlockSize);
+            const BuddyBlockIndex leftIndex = blockIndex(*selectedArenaState, block, selectedOrder, minBlockSize);
             const BuddyBlockIndex rightIndex{leftIndex.value ^ 1};
-            pushFreeBlock(*selectedArena, selectedOrder, rightIndex, minBlockSize);
+            pushFreeBlock(*selectedArenaState, selectedOrder, rightIndex, minBlockSize);
         }
 
         return AlignedContinuousMemoryBlock{block, bytesForOrder(targetOrder, minBlockSize), alignment};
@@ -226,23 +226,23 @@ namespace Tutorial::ResourceManagement::Memory::BuddyAlloc {
         const Bytes minBlockSize,
         const BuddyOrder maxOrder
     ) {
-        auto* arena = findArenaContaining(block.ptr, bytesForOrder(maxOrder, minBlockSize));
-        if (arena == nullptr) {
+        auto* arenaState = findArenaContaining(block.ptr, bytesForOrder(maxOrder, minBlockSize));
+        if (arenaState == nullptr) {
             throw std::invalid_argument("AlignedBuddyAllocator: block does not belong to this allocator");
         }
 
-        BuddyBlockIndex index = blockIndex(*arena, block.ptr, order, minBlockSize);
+        BuddyBlockIndex index = blockIndex(*arenaState, block.ptr, order, minBlockSize);
         while (order < maxOrder) {
             const BuddyBlockIndex buddyIndex{index.value ^ 1};
-            if (!isBlockFree(*arena, order, buddyIndex)) {
+            if (!isBlockFree(*arenaState, order, buddyIndex)) {
                 break;
             }
-            if (removeFreeBlock(*arena, order, buddyIndex, minBlockSize) == nullptr) {
+            if (removeFreeBlock(*arenaState, order, buddyIndex, minBlockSize) == nullptr) {
                 throw std::runtime_error("AlignedBuddyAllocator: bitmap and free list are out of sync");
             }
             index.value /= 2;
             ++order.value;
         }
-        pushFreeBlock(*arena, order, index, minBlockSize);
+        pushFreeBlock(*arenaState, order, index, minBlockSize);
     }
 }

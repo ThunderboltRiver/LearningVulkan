@@ -44,17 +44,17 @@ namespace Tutorial::ResourceManagement::Memory::BuddyAlloc {
 
         [[nodiscard]] ArenaState* findArenaContaining(void* ptr, Bytes arenaSize) const;
 
-        [[nodiscard]] static BuddyBlockIndex blockIndex(const ArenaState& arena, const void* ptr, BuddyOrder order, Bytes minBlockSize);
+        [[nodiscard]] static BuddyBlockIndex blockIndex(const ArenaState& arenaState, const void* ptr, BuddyOrder order, Bytes minBlockSize);
 
-        [[nodiscard]] static void* ptrForIndex(const ArenaState& arena, BuddyOrder order, BuddyBlockIndex index, Bytes minBlockSize);
+        [[nodiscard]] static void* ptrForIndex(const ArenaState& arenaState, BuddyOrder order, BuddyBlockIndex index, Bytes minBlockSize);
 
-        [[nodiscard]] static bool isBlockFree(const ArenaState& arena, BuddyOrder order, BuddyBlockIndex index);
+        [[nodiscard]] static bool isBlockFree(const ArenaState& arenaState, BuddyOrder order, BuddyBlockIndex index);
 
-        static void setBlockFree(ArenaState& arena, BuddyOrder order, BuddyBlockIndex index, bool value);
+        static void setBlockFree(ArenaState& arenaState, BuddyOrder order, BuddyBlockIndex index, bool value);
 
-        static void pushFreeBlock(ArenaState& arena, BuddyOrder order, BuddyBlockIndex index, Bytes minBlockSize);
+        static void pushFreeBlock(ArenaState& arenaState, BuddyOrder order, BuddyBlockIndex index, Bytes minBlockSize);
 
-        [[nodiscard]] static FreeBlock* removeFreeBlock(ArenaState& arena, BuddyOrder order, BuddyBlockIndex index, Bytes minBlockSize);
+        [[nodiscard]] static FreeBlock* removeFreeBlock(ArenaState& arenaState, BuddyOrder order, BuddyBlockIndex index, Bytes minBlockSize);
 
         [[nodiscard]] AlignedContinuousMemoryBlock allocateFromExistingArena(Bytes size, BuddyOrder targetOrder, Bytes minBlockSize, BuddyOrder maxOrder);
     };

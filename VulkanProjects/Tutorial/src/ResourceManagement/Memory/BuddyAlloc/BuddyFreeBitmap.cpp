@@ -5,6 +5,10 @@ namespace Tutorial::ResourceManagement::Memory::BuddyAlloc {
         constexpr std::size_t BITMAP_WORD_BITS = sizeof(std::uint64_t) * 8;
     }
 
+    BuddyFreeBitmap::BuddyFreeBitmap()
+        : words(nullptr), wordCount(0) {
+    }
+
     BuddyFreeBitmap::BuddyFreeBitmap(const std::size_t blockCount)
         : words(nullptr),
           wordCount((blockCount + BITMAP_WORD_BITS - 1) / BITMAP_WORD_BITS) {
