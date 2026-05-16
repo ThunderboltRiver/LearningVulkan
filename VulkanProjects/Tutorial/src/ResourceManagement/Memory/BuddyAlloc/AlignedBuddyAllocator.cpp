@@ -1,5 +1,7 @@
 #include "ResourceManagement/Memory/BuddyAlloc/AlignedBuddyAllocator.h"
 
+#include "ResourceManagement/Memory/BuddyAlloc/BuddyOrderThreshold.h"
+
 #include <stdexcept>
 
 namespace Tutorial::ResourceManagement::Memory::BuddyAlloc {
@@ -21,11 +23,13 @@ namespace Tutorial::ResourceManagement::Memory::BuddyAlloc {
 
     AlignedBuddyAllocator::AlignedBuddyAllocator(
         const Alignment alignment,
-        const BuddyOrder maxOrder,
-        const Bytes minBlockSize,
         BumpAlloc::BumpAllocator& bumpAllocator
-    ) : alignment(alignment), arenaStates(nullptr), next(nullptr) {
-        (void)createArena(maxOrder, minBlockSize, bumpAllocator);
+    ) : alignment(alignment),
+        arenaStates(nullptr),
+        next(nullptr),
+        minBlockSize(calculateMinBlockSize(bumpAllocator.getArenaSize())),
+        maxOrder(calculateMaxOrder(bumpAllocator.getArenaSize(), minBlockSize)) {
+        (void)createArena(bumpAllocator);
     }
 
     AlignedBuddyAllocator::~AlignedBuddyAllocator() {
@@ -46,34 +50,63 @@ namespace Tutorial::ResourceManagement::Memory::BuddyAlloc {
         return alignment.bytes().value() % requestedAlignment.bytes().value() == 0;
     }
 
-    AlignedContinuousMemoryBlock AlignedBuddyAllocator::tryAllocate(
-        const Bytes size,
-        const BuddyOrder targetOrder,
-        const Bytes minBlockSize,
-        const BuddyOrder maxOrder
-    ) {
-        (void)size;
+    AlignedContinuousMemoryBlock AlignedBuddyAllocator::tryAllocate(const Bytes size) {
+        const BuddyOrder targetOrder = orderFor(size.max(alignment.bytes()));
         if (targetOrder > maxOrder) {
             return emptyBlock(alignment);
         }
-        return allocateFromExistingArena(targetOrder, minBlockSize, maxOrder);
+        return allocateFromExistingArena(targetOrder);
     }
 
     AlignedContinuousMemoryBlock AlignedBuddyAllocator::allocateWithNewArena(
-        const BuddyOrder targetOrder,
-        const Bytes minBlockSize,
-        const BuddyOrder maxOrder,
+        const Bytes size,
         BumpAlloc::BumpAllocator& bumpAllocator
     ) {
-        (void)createArena(maxOrder, minBlockSize, bumpAllocator);
-        return allocateFromExistingArena(targetOrder, minBlockSize, maxOrder);
+        const BuddyOrder targetOrder = orderFor(size.max(alignment.bytes()));
+        (void)createArena(bumpAllocator);
+        return allocateFromExistingArena(targetOrder);
     }
 
-    ArenaState* AlignedBuddyAllocator::createArena(
-        const BuddyOrder maxOrder,
-        const Bytes minBlockSize,
-        BumpAlloc::BumpAllocator& bumpAllocator
-    ) {
+    Bytes AlignedBuddyAllocator::calculateMinBlockSize(const Bytes arenaSize) {
+        const std::size_t arenaExponent = arenaSize.log2PowerOfTwo();
+        const std::size_t thresholdMinExponent = arenaExponent >= BUDDY_ORDER_THRESHOLD
+            ? arenaExponent - BUDDY_ORDER_THRESHOLD
+            : 0;
+        const std::size_t freeBlockExponent = Bytes::fromSizeT(sizeof(FreeBlock)).roundUpToPowerOfTwo().log2PowerOfTwo();
+        const std::size_t minBlockExponent = thresholdMinExponent >= freeBlockExponent
+            ? thresholdMinExponent
+            : freeBlockExponent;
+        return Bytes::fromPowerOfTwoExponent(minBlockExponent);
+    }
+
+    BuddyOrder AlignedBuddyAllocator::calculateMaxOrder(const Bytes arenaSize, const Bytes minBlockSize) {
+        if (minBlockSize > arenaSize) {
+            throw std::invalid_argument("AlignedBuddyAllocator: min block size must not exceed arena size");
+        }
+        const std::size_t arenaExponent = arenaSize.log2PowerOfTwo();
+        const std::size_t minBlockExponent = minBlockSize.log2PowerOfTwo();
+        const std::size_t maxOrderValue = arenaExponent - minBlockExponent;
+        if (maxOrderValue > BUDDY_ORDER_THRESHOLD) {
+            throw std::invalid_argument("AlignedBuddyAllocator: too many buddy orders");
+        }
+        return BuddyOrder{static_cast<std::uint8_t>(maxOrderValue)};
+    }
+
+    BuddyOrder AlignedBuddyAllocator::orderFor(const Bytes size) const {
+        const Bytes rounded = size.max(minBlockSize).roundUpToPowerOfTwo();
+        if (rounded > maxOrder.bytesFor(minBlockSize)) {
+            throw std::invalid_argument("AlignedBuddyAllocator: requested size exceeds arena size");
+        }
+        BuddyOrder order{0};
+        Bytes current = minBlockSize;
+        while (current < rounded) {
+            current = current * 2;
+            ++order.value;
+        }
+        return order;
+    }
+
+    ArenaState* AlignedBuddyAllocator::createArena(BumpAlloc::BumpAllocator& bumpAllocator) {
         auto* arena = bumpAllocator.allocateArena(alignment);
         auto* state = new ArenaState(arena, maxOrder, minBlockSize);
         state->setNext(arenaStates);
@@ -94,7 +127,6 @@ namespace Tutorial::ResourceManagement::Memory::BuddyAlloc {
 
     ArenaState* AlignedBuddyAllocator::findArenaStateWithAvailableOrder(
         const BuddyOrder targetOrder,
-        const BuddyOrder maxOrder,
         BuddyOrder& selectedOrder
     ) const {
         for (auto* arenaState = arenaStates; arenaState != nullptr; arenaState = arenaState->next) {
@@ -106,18 +138,16 @@ namespace Tutorial::ResourceManagement::Memory::BuddyAlloc {
     }
 
     AlignedContinuousMemoryBlock AlignedBuddyAllocator::allocateFromExistingArena(
-        const BuddyOrder targetOrder,
-        const Bytes minBlockSize,
-        const BuddyOrder maxOrder
+        const BuddyOrder targetOrder
     ) {
         BuddyOrder selectedOrder = targetOrder;
-        ArenaState* selectedArenaState = findArenaStateWithAvailableOrder(targetOrder, maxOrder, selectedOrder);
+        ArenaState* selectedArenaState = findArenaStateWithAvailableOrder(targetOrder, selectedOrder);
 
         if (selectedArenaState == nullptr) {
             return emptyBlock(alignment);
         }
 
-        // フリーリストから使用するブロックを取り出し、フリーリストの分割を行う
+        // orderのフリーリストから使用するブロックを１つ取り出し、フリーリストの分割を行う
         // TODO:一つのメソッドにまとめ、関数名を変える
         auto* block = selectedArenaState->popSelectedFreeBlock(selectedOrder, minBlockSize);
         selectedArenaState->splitBlockUntilTargetOrder(block, selectedOrder, targetOrder, minBlockSize);
@@ -125,12 +155,8 @@ namespace Tutorial::ResourceManagement::Memory::BuddyAlloc {
         return AlignedContinuousMemoryBlock{block, targetOrder.bytesFor(minBlockSize), alignment};
     }
 
-    void AlignedBuddyAllocator::deallocate(
-        const AlignedContinuousMemoryBlock block,
-        BuddyOrder order,
-        const Bytes minBlockSize,
-        const BuddyOrder maxOrder
-    ) {
+    void AlignedBuddyAllocator::deallocate(const AlignedContinuousMemoryBlock block) {
+        BuddyOrder order = orderFor(block.size.max(block.alignment.bytes()));
         auto* arenaState = findArenaContaining(block.ptr, maxOrder.bytesFor(minBlockSize));
         if (arenaState == nullptr) {
             throw std::invalid_argument("AlignedBuddyAllocator: block does not belong to this allocator");

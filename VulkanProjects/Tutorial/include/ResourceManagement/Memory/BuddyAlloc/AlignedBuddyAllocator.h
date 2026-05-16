@@ -16,8 +16,10 @@ namespace Tutorial::ResourceManagement::Memory::BuddyAlloc {
         Alignment alignment;
         ArenaState* arenaStates;
         AlignedBuddyAllocator* next;
+        Bytes minBlockSize;
+        BuddyOrder maxOrder;
 
-        AlignedBuddyAllocator(Alignment alignment, BuddyOrder maxOrder, Bytes minBlockSize, BumpAlloc::BumpAllocator& bumpAllocator);
+        AlignedBuddyAllocator(Alignment alignment, BumpAlloc::BumpAllocator& bumpAllocator);
 
         ~AlignedBuddyAllocator();
 
@@ -25,25 +27,32 @@ namespace Tutorial::ResourceManagement::Memory::BuddyAlloc {
 
         [[nodiscard]] bool satisfies(Alignment requestedAlignment) const;
 
-        [[nodiscard]] AlignedContinuousMemoryBlock tryAllocate(Bytes size, BuddyOrder targetOrder, Bytes minBlockSize, BuddyOrder maxOrder);
+        [[nodiscard]] AlignedContinuousMemoryBlock tryAllocate(Bytes size);
 
-        [[nodiscard]] AlignedContinuousMemoryBlock allocateWithNewArena(
-            BuddyOrder targetOrder,
-            Bytes minBlockSize,
-            BuddyOrder maxOrder,
-            BumpAlloc::BumpAllocator& bumpAllocator
-        );
+        [[nodiscard]] AlignedContinuousMemoryBlock allocateWithNewArena(Bytes size, BumpAlloc::BumpAllocator& bumpAllocator);
 
-        void deallocate(AlignedContinuousMemoryBlock block, BuddyOrder order, Bytes minBlockSize, BuddyOrder maxOrder);
+        void deallocate(AlignedContinuousMemoryBlock block);
 
     private:
-        [[nodiscard]] ArenaState* createArena(BuddyOrder maxOrder, Bytes minBlockSize, BumpAlloc::BumpAllocator& bumpAllocator);
+        [[nodiscard]] static Bytes calculateMinBlockSize(Bytes arenaSize);
+
+        [[nodiscard]] static BuddyOrder calculateMaxOrder(Bytes arenaSize, Bytes minBlockSize);
+
+        [[nodiscard]] BuddyOrder orderFor(Bytes size) const;
+
+        [[nodiscard]] ArenaState* createArena(BumpAlloc::BumpAllocator& bumpAllocator);
 
         [[nodiscard]] ArenaState* findArenaContaining(void* ptr, Bytes arenaSize) const;
 
-        [[nodiscard]] ArenaState* findArenaStateWithAvailableOrder(BuddyOrder targetOrder, BuddyOrder maxOrder, BuddyOrder& selectedOrder) const;
+        /**
+         * 要求order以上のorderに対応するフリーリスト内にブロックがあるアリーナとそのオーダーを取得する。
+         * @param targetOrder 要求order
+         * @param selectedOrder 結果返却用. 要求order以上で、実際に空きが見つかったorder。見つからなかった場合の値は不定。
+         * @return targetOrder以上のorderで空きが見つかったアリーナ状態。見つからなかった場合はnullptr。
+         */
+        [[nodiscard]] ArenaState* findArenaStateWithAvailableOrder(BuddyOrder targetOrder, BuddyOrder& selectedOrder) const;
 
-        [[nodiscard]] AlignedContinuousMemoryBlock allocateFromExistingArena(BuddyOrder targetOrder, Bytes minBlockSize, BuddyOrder maxOrder);
+        [[nodiscard]] AlignedContinuousMemoryBlock allocateFromExistingArena(BuddyOrder targetOrder);
     };
 }
 

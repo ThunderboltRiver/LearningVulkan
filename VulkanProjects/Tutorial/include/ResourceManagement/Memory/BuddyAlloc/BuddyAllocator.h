@@ -2,9 +2,6 @@
 #define TUTORIAL_RESOURCE_MANAGEMENT_MEMORY_BUDDYALLOCATOR_H
 
 #include "ResourceManagement/Memory/BuddyAlloc/AlignedBuddyAllocator.h"
-#include "ResourceManagement/Memory/BuddyAlloc/BuddyBlockIndex.h"
-#include "ResourceManagement/Memory/BuddyAlloc/BuddyOrder.h"
-#include "ResourceManagement/Memory/BuddyAlloc/FreeBlock.h"
 #include "ResourceManagement/Memory/BumpAlloc/BumpAllocator.h"
 
 namespace Tutorial::ResourceManagement::Memory::BuddyAlloc {
@@ -19,21 +16,9 @@ namespace Tutorial::ResourceManagement::Memory::BuddyAlloc {
         /** Alignmentごとに分かれたBuddyAllocator状態の侵入的リスト先頭。 */
         AlignedBuddyAllocator* _alignedAllocators;
 
-        /** order 0 に対応する最小ブロックサイズ。 */
-        Bytes _minBlockSize;
+        [[nodiscard]] AlignedBuddyAllocator* getOrCreateAlignedAllocator(Alignment alignment);
 
-        /** このアリーナサイズで取り得る最大order。arenaSize == minBlockSize * 2^_maxOrder。 */
-        BuddyAlloc::BuddyOrder _maxOrder;
-
-        [[nodiscard]] static Bytes calculateMinBlockSize(Bytes arenaSize);
-
-        [[nodiscard]] static BuddyAlloc::BuddyOrder calculateMaxOrder(Bytes arenaSize, Bytes minBlockSize);
-
-        [[nodiscard]] BuddyAlloc::AlignedBuddyAllocator* getOrCreateAlignedAllocator(Alignment alignment);
-
-        [[nodiscard]] BuddyAlloc::AlignedBuddyAllocator* findAlignedAllocator(Alignment alignment) const;
-
-        [[nodiscard]] BuddyAlloc::BuddyOrder orderFor(Bytes size) const;
+        [[nodiscard]] AlignedBuddyAllocator* findAlignedAllocator(Alignment alignment) const;
 
         void destroyMetadata() noexcept;
 
