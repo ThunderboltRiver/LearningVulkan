@@ -40,7 +40,7 @@ namespace Tutorial::ResourceManagement::Memory::BuddyAlloc {
 
         [[nodiscard]] ArenaState* createArena(BumpAlloc::BumpAllocator& bumpAllocator, Bytes minBlockSize, BuddyOrder maxOrder);
 
-        [[nodiscard]] ArenaState* findArenaContaining(void* ptr, Bytes arenaSize) const;
+        [[nodiscard]] ArenaState* findArenaContaining(void* ptr) const;
 
         /**
          * 要求order以上のorderに対応するフリーリスト内にブロックがあるアリーナとそのオーダーを取得する。

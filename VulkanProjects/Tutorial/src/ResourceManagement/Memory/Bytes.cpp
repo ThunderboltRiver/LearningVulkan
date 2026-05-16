@@ -34,6 +34,10 @@ namespace Tutorial::ResourceManagement::Memory {
         return Bytes(static_cast<std::size_t>(1) << exponent);
     }
 
+    Bytes Bytes::max(const Bytes lhs, const Bytes rhs) {
+        return lhs >= rhs ? lhs : rhs;
+    }
+
     std::size_t Bytes::value() const {
         return _value;
     }
@@ -66,10 +70,6 @@ namespace Tutorial::ResourceManagement::Memory {
             throw std::invalid_argument("Bytes: bytes must be a power of two");
         }
         return static_cast<std::size_t>(std::countr_zero(_value));
-    }
-
-    Bytes Bytes::max(const Bytes rhs) const {
-        return *this >= rhs ? *this : rhs;
     }
 
     bool operator==(const Bytes lhs, const Bytes rhs) {

@@ -19,7 +19,7 @@ namespace Tutorial::ResourceManagement::Memory {
         };
 
         Alignment effectiveAlignment(const Alignment alignment) {
-            return Alignment(alignment.bytes().max(Bytes::fromSizeT(alignof(AllocationHeader))));
+            return Alignment(Bytes::max(alignment.bytes(), Bytes::fromSizeT(alignof(AllocationHeader))));
         }
 
         Bytes mappedBytesFor(const Bytes size, const Alignment alignment) {

@@ -14,7 +14,11 @@ namespace Tutorial::ResourceManagement::Memory {
         Bytes size;
         Alignment alignment;
 
+        [[nodiscard]] static AlignedContinuousMemoryBlock empty(Alignment alignment);
+
         [[nodiscard]] bool isNull() const;
+
+        [[nodiscard]] bool contains(const void* targetPtr) const;
     };
 }
 

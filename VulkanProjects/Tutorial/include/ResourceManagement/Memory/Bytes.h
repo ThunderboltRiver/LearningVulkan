@@ -29,6 +29,9 @@ namespace Tutorial::ResourceManagement::Memory {
         /** 2^exponent バイトのBytesを作成する。 */
         static Bytes fromPowerOfTwoExponent(std::size_t exponent);
 
+        /** 2つのBytesのうち大きい方を返す。 */
+        [[nodiscard]] static Bytes max(Bytes lhs, Bytes rhs);
+
         /** 低レベルAPIへ渡すための裸のバイト数を返す。 */
         [[nodiscard]] std::size_t value() const;
 
@@ -43,9 +46,6 @@ namespace Tutorial::ResourceManagement::Memory {
 
         /** 2の冪乗値として見たときの指数を返す。 */
         [[nodiscard]] std::size_t log2PowerOfTwo() const;
-
-        /** rhsと比較して大きい方のBytesを返す。 */
-        [[nodiscard]] Bytes max(Bytes rhs) const;
 
         friend bool operator==(Bytes lhs, Bytes rhs);
         friend bool operator!=(Bytes lhs, Bytes rhs);
