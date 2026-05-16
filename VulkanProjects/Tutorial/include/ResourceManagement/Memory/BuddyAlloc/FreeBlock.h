@@ -5,8 +5,10 @@ namespace Tutorial::ResourceManagement::Memory::BuddyAlloc {
 
     /**
      * 解放済みブロックの先頭領域をそのままリストノードとして使うための侵入的ノード。
+     * previous/next を持つ双方向リストにすることで、index から算出した node を O(1) で unlink できる。
      */
     struct FreeBlock {
+        FreeBlock* previous;
         FreeBlock* next;
     };
 }

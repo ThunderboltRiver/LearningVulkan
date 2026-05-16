@@ -23,6 +23,12 @@ namespace Tutorial::ResourceManagement::Memory::BuddyAlloc {
         /** orderごとの空き状態bitmap。buddy統合時に相方ブロックが空きかを高速に確認する。 */
         BuddyFreeBitmap freeBitmaps[BUDDY_ORDER_COUNT];
 
+        /** このアリーナで扱う最小ブロックサイズ。order 0 のサイズに相当する。 */
+        Bytes minBlockSize;
+
+        /** このアリーナで扱う最大order。arena全体を表すorderに相当する。 */
+        BuddyOrder maxOrder;
+
         /** 同じAlignmentを持つ次のアリーナメタデータ。 */
         ArenaState* next;
 
@@ -30,23 +36,26 @@ namespace Tutorial::ResourceManagement::Memory::BuddyAlloc {
 
         void setNext(ArenaState* nextArenaState);
 
-        [[nodiscard]] bool findAvailableOrder(BuddyOrder targetOrder, BuddyOrder maxOrder, BuddyOrder& selectedOrder) const;
+        [[nodiscard]] bool findAvailableOrder(BuddyOrder targetOrder, BuddyOrder& selectedOrder) const;
 
-        [[nodiscard]] BuddyBlockIndex blockIndex(const void* ptr, BuddyOrder order, Bytes minBlockSize) const;
+        [[nodiscard]] void *useBlockWithSplittingFreeList(BuddyOrder selectedOrder, BuddyOrder targetOrder);
 
-        [[nodiscard]] void* ptrForIndex(BuddyOrder order, BuddyBlockIndex index, Bytes minBlockSize) const;
+        void unuseBlockWithMergingFreeList(void* ptr, BuddyOrder order);
+
+    private:
+        [[nodiscard]] BuddyBlockIndex blockIndex(const void* ptr, BuddyOrder order) const;
+
+        [[nodiscard]] void* ptrForIndex(BuddyOrder order, BuddyBlockIndex index) const;
 
         [[nodiscard]] bool isBlockFree(BuddyOrder order, BuddyBlockIndex index) const;
 
         void setBlockFree(BuddyOrder order, BuddyBlockIndex index, bool value);
 
-        void pushFreeBlock(BuddyOrder order, BuddyBlockIndex index, Bytes minBlockSize);
+        void addFreeBlock(BuddyOrder order, BuddyBlockIndex index);
 
-        [[nodiscard]] FreeBlock* removeFreeBlock(BuddyOrder order, BuddyBlockIndex index, Bytes minBlockSize);
+        [[nodiscard]] FreeBlock* removeFreeBlock(BuddyOrder order, BuddyBlockIndex index);
 
-        [[nodiscard]] FreeBlock* popSelectedFreeBlock(BuddyOrder selectedOrder, Bytes minBlockSize);
-
-        void splitBlockUntilTargetOrder(void* block, BuddyOrder selectedOrder, BuddyOrder targetOrder, Bytes minBlockSize);
+        [[nodiscard]] FreeBlock* removeFreeBlock(BuddyOrder order);
     };
 }
 

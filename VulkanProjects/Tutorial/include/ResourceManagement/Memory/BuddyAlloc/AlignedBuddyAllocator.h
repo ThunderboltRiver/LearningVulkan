@@ -16,8 +16,6 @@ namespace Tutorial::ResourceManagement::Memory::BuddyAlloc {
         Alignment alignment;
         ArenaState* arenaStates;
         AlignedBuddyAllocator* next;
-        Bytes minBlockSize;
-        BuddyOrder maxOrder;
 
         AlignedBuddyAllocator(Alignment alignment, BumpAlloc::BumpAllocator& bumpAllocator);
 
@@ -40,7 +38,7 @@ namespace Tutorial::ResourceManagement::Memory::BuddyAlloc {
 
         [[nodiscard]] BuddyOrder orderFor(Bytes size) const;
 
-        [[nodiscard]] ArenaState* createArena(BumpAlloc::BumpAllocator& bumpAllocator);
+        [[nodiscard]] ArenaState* createArena(BumpAlloc::BumpAllocator& bumpAllocator, Bytes minBlockSize, BuddyOrder maxOrder);
 
         [[nodiscard]] ArenaState* findArenaContaining(void* ptr, Bytes arenaSize) const;
 

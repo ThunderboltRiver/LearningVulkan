@@ -61,6 +61,7 @@ add_executable(Tutorial
         src/ResourceManagement/Memory/Alignment.cpp
         src/ResourceManagement/Memory/BuddyAlloc/AlignedBuddyAllocator.cpp
         src/ResourceManagement/Memory/BuddyAlloc/ArenaState.cpp
+        src/ResourceManagement/Memory/BuddyAlloc/BuddyBlockIndex.cpp
         src/ResourceManagement/Memory/BuddyAlloc/BuddyAllocator.cpp
         src/ResourceManagement/Memory/BuddyAlloc/BuddyFreeBitmap.cpp
         src/ResourceManagement/Memory/BuddyAlloc/BuddyOrder.cpp
@@ -109,6 +110,7 @@ add_executable(ResourceManagementSelfTest
         src/ResourceManagement/Memory/Alignment.cpp
         src/ResourceManagement/Memory/BuddyAlloc/AlignedBuddyAllocator.cpp
         src/ResourceManagement/Memory/BuddyAlloc/ArenaState.cpp
+        src/ResourceManagement/Memory/BuddyAlloc/BuddyBlockIndex.cpp
         src/ResourceManagement/Memory/BuddyAlloc/BuddyAllocator.cpp
         src/ResourceManagement/Memory/BuddyAlloc/BuddyFreeBitmap.cpp
         src/ResourceManagement/Memory/BuddyAlloc/BuddyOrder.cpp
