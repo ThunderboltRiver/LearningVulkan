@@ -55,9 +55,22 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 add_executable(Tutorial
         src/main.cpp
         src/Application.cpp
-        src/PlacementStackAllocator.cpp
         src/Span.cpp
         src/SpanAllocator.cpp
+        src/ResourceManagement/Memory/AlignedContinuousMemoryBlock.cpp
+        src/ResourceManagement/Memory/Alignment.cpp
+        src/ResourceManagement/Memory/BuddyAlloc/AlignedBuddyAllocator.cpp
+        src/ResourceManagement/Memory/BuddyAlloc/ArenaState.cpp
+        src/ResourceManagement/Memory/BuddyAlloc/BuddyBlockIndex.cpp
+        src/ResourceManagement/Memory/BuddyAlloc/BuddyAllocator.cpp
+        src/ResourceManagement/Memory/BuddyAlloc/BuddyFreeBitmap.cpp
+        src/ResourceManagement/Memory/BuddyAlloc/BuddyOrder.cpp
+        src/ResourceManagement/Memory/BumpAlloc/BumpAllocator.cpp
+        src/ResourceManagement/Memory/Bytes.cpp
+        src/ResourceManagement/Memory/ContinuousMemoryBlockPool.cpp
+        src/ResourceManagement/Memory/LargeSizeAllocator.cpp
+        src/ResourceManagement/Memory/MemoryConstants.cpp
+        src/ResourceManagement/Memory/OsMemory.cpp
         src/Graphics/FrameBufferSize.cpp
         src/Graphics/Pixel.cpp
         src/Graphics/VulkanInstanceCreationStrategy.cpp
@@ -89,6 +102,27 @@ add_executable(Tutorial
         src/Graphics/VulkanInstanceReadModel.cpp
         src/SpanView.cpp
 )
+
+add_executable(ResourceManagementSelfTest
+        tests/ResourceManagementSelfTest.cpp
+        src/SpanAllocator.cpp
+        src/ResourceManagement/Memory/AlignedContinuousMemoryBlock.cpp
+        src/ResourceManagement/Memory/Alignment.cpp
+        src/ResourceManagement/Memory/BuddyAlloc/AlignedBuddyAllocator.cpp
+        src/ResourceManagement/Memory/BuddyAlloc/ArenaState.cpp
+        src/ResourceManagement/Memory/BuddyAlloc/BuddyBlockIndex.cpp
+        src/ResourceManagement/Memory/BuddyAlloc/BuddyAllocator.cpp
+        src/ResourceManagement/Memory/BuddyAlloc/BuddyFreeBitmap.cpp
+        src/ResourceManagement/Memory/BuddyAlloc/BuddyOrder.cpp
+        src/ResourceManagement/Memory/BumpAlloc/BumpAllocator.cpp
+        src/ResourceManagement/Memory/Bytes.cpp
+        src/ResourceManagement/Memory/ContinuousMemoryBlockPool.cpp
+        src/ResourceManagement/Memory/LargeSizeAllocator.cpp
+        src/ResourceManagement/Memory/MemoryConstants.cpp
+        src/ResourceManagement/Memory/OsMemory.cpp
+)
+
+target_include_directories(ResourceManagementSelfTest PRIVATE include)
 
 # Tutorialターゲットのヘッダをインポートする
 target_include_directories(Tutorial PRIVATE include)
