@@ -43,6 +43,10 @@ namespace Tutorial::ResourceManagement::Memory::BuddyAlloc {
         void pushFreeBlock(BuddyOrder order, BuddyBlockIndex index, Bytes minBlockSize);
 
         [[nodiscard]] FreeBlock* removeFreeBlock(BuddyOrder order, BuddyBlockIndex index, Bytes minBlockSize);
+
+        [[nodiscard]] FreeBlock* popSelectedFreeBlock(BuddyOrder selectedOrder, Bytes minBlockSize);
+
+        void splitBlockUntilTargetOrder(void* block, BuddyOrder selectedOrder, BuddyOrder targetOrder, Bytes minBlockSize);
     };
 }
 

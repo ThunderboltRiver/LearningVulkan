@@ -28,7 +28,6 @@ namespace Tutorial::ResourceManagement::Memory::BuddyAlloc {
         [[nodiscard]] AlignedContinuousMemoryBlock tryAllocate(Bytes size, BuddyOrder targetOrder, Bytes minBlockSize, BuddyOrder maxOrder);
 
         [[nodiscard]] AlignedContinuousMemoryBlock allocateWithNewArena(
-            Bytes size,
             BuddyOrder targetOrder,
             Bytes minBlockSize,
             BuddyOrder maxOrder,
@@ -42,7 +41,9 @@ namespace Tutorial::ResourceManagement::Memory::BuddyAlloc {
 
         [[nodiscard]] ArenaState* findArenaContaining(void* ptr, Bytes arenaSize) const;
 
-        [[nodiscard]] AlignedContinuousMemoryBlock allocateFromExistingArena(Bytes size, BuddyOrder targetOrder, Bytes minBlockSize, BuddyOrder maxOrder);
+        [[nodiscard]] ArenaState* findArenaStateWithAvailableOrder(BuddyOrder targetOrder, BuddyOrder maxOrder, BuddyOrder& selectedOrder) const;
+
+        [[nodiscard]] AlignedContinuousMemoryBlock allocateFromExistingArena(BuddyOrder targetOrder, Bytes minBlockSize, BuddyOrder maxOrder);
     };
 }
 

@@ -56,18 +56,17 @@ namespace Tutorial::ResourceManagement::Memory::BuddyAlloc {
         if (targetOrder > maxOrder) {
             return emptyBlock(alignment);
         }
-        return allocateFromExistingArena(size, targetOrder, minBlockSize, maxOrder);
+        return allocateFromExistingArena(targetOrder, minBlockSize, maxOrder);
     }
 
     AlignedContinuousMemoryBlock AlignedBuddyAllocator::allocateWithNewArena(
-        const Bytes size,
         const BuddyOrder targetOrder,
         const Bytes minBlockSize,
         const BuddyOrder maxOrder,
         BumpAlloc::BumpAllocator& bumpAllocator
     ) {
         (void)createArena(maxOrder, minBlockSize, bumpAllocator);
-        return allocateFromExistingArena(size, targetOrder, minBlockSize, maxOrder);
+        return allocateFromExistingArena(targetOrder, minBlockSize, maxOrder);
     }
 
     ArenaState* AlignedBuddyAllocator::createArena(
@@ -93,36 +92,35 @@ namespace Tutorial::ResourceManagement::Memory::BuddyAlloc {
         return nullptr;
     }
 
+    ArenaState* AlignedBuddyAllocator::findArenaStateWithAvailableOrder(
+        const BuddyOrder targetOrder,
+        const BuddyOrder maxOrder,
+        BuddyOrder& selectedOrder
+    ) const {
+        for (auto* arenaState = arenaStates; arenaState != nullptr; arenaState = arenaState->next) {
+            if (arenaState->findAvailableOrder(targetOrder, maxOrder, selectedOrder)) {
+                return arenaState;
+            }
+        }
+        return nullptr;
+    }
+
     AlignedContinuousMemoryBlock AlignedBuddyAllocator::allocateFromExistingArena(
-        const Bytes size,
         const BuddyOrder targetOrder,
         const Bytes minBlockSize,
         const BuddyOrder maxOrder
     ) {
-        ArenaState* selectedArenaState = nullptr;
         BuddyOrder selectedOrder = targetOrder;
-        for (auto* arenaState = arenaStates; arenaState != nullptr && selectedArenaState == nullptr; arenaState = arenaState->next) {
-            if (arenaState->findAvailableOrder(targetOrder, maxOrder, selectedOrder)) {
-                selectedArenaState = arenaState;
-            }
-        }
+        ArenaState* selectedArenaState = findArenaStateWithAvailableOrder(targetOrder, maxOrder, selectedOrder);
 
         if (selectedArenaState == nullptr) {
             return emptyBlock(alignment);
         }
 
-        auto* block = selectedArenaState->freeLists[selectedOrder.value];
-        const BuddyBlockIndex selectedIndex = selectedArenaState->blockIndex(block, selectedOrder, minBlockSize);
-        if (selectedArenaState->removeFreeBlock(selectedOrder, selectedIndex, minBlockSize) == nullptr) {
-            throw std::runtime_error("AlignedBuddyAllocator: selected free block disappeared");
-        }
-
-        while (selectedOrder > targetOrder) {
-            --selectedOrder.value;
-            const BuddyBlockIndex leftIndex = selectedArenaState->blockIndex(block, selectedOrder, minBlockSize);
-            const BuddyBlockIndex rightIndex{leftIndex.value ^ 1};
-            selectedArenaState->pushFreeBlock(selectedOrder, rightIndex, minBlockSize);
-        }
+        // フリーリストから使用するブロックを取り出し、フリーリストの分割を行う
+        // TODO:一つのメソッドにまとめ、関数名を変える
+        auto* block = selectedArenaState->popSelectedFreeBlock(selectedOrder, minBlockSize);
+        selectedArenaState->splitBlockUntilTargetOrder(block, selectedOrder, targetOrder, minBlockSize);
 
         return AlignedContinuousMemoryBlock{block, targetOrder.bytesFor(minBlockSize), alignment};
     }

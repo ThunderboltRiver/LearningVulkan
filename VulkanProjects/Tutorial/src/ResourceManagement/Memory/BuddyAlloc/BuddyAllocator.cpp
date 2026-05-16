@@ -102,7 +102,7 @@ namespace Tutorial::ResourceManagement::Memory::BuddyAlloc {
 
         // 既存allocatorでは割り当てできなかった場合だけ、要求alignment専用のallocatorへアリーナを追加する。
         const BuddyOrder targetOrder = orderFor(size.max(alignment.bytes()));
-        return requestedAllocator->allocateWithNewArena(size, targetOrder, _minBlockSize, _maxOrder, _bumpAllocator);
+        return requestedAllocator->allocateWithNewArena(targetOrder, _minBlockSize, _maxOrder, _bumpAllocator);
     }
 
     void BuddyAllocator::deallocate(const AlignedContinuousMemoryBlock block) {

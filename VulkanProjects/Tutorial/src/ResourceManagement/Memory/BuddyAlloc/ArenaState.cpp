@@ -109,4 +109,30 @@ namespace Tutorial::ResourceManagement::Memory::BuddyAlloc {
         }
         return nullptr;
     }
+
+    FreeBlock* ArenaState::popSelectedFreeBlock(
+        const BuddyOrder selectedOrder,
+        const Bytes minBlockSize
+    ) {
+        auto* block = freeLists[selectedOrder.value];
+        const BuddyBlockIndex selectedIndex = blockIndex(block, selectedOrder, minBlockSize);
+        if (removeFreeBlock(selectedOrder, selectedIndex, minBlockSize) == nullptr) {
+            throw std::runtime_error("ArenaState: selected free block disappeared");
+        }
+        return block;
+    }
+
+    void ArenaState::splitBlockUntilTargetOrder(
+        void* block,
+        BuddyOrder selectedOrder,
+        const BuddyOrder targetOrder,
+        const Bytes minBlockSize
+    ) {
+        while (selectedOrder > targetOrder) {
+            --selectedOrder.value;
+            const BuddyBlockIndex leftIndex = blockIndex(block, selectedOrder, minBlockSize);
+            const BuddyBlockIndex rightIndex{leftIndex.value ^ 1};
+            pushFreeBlock(selectedOrder, rightIndex, minBlockSize);
+        }
+    }
 }
