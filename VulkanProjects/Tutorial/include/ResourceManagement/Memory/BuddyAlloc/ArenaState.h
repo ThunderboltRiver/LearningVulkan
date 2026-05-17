@@ -49,6 +49,8 @@ namespace Tutorial::ResourceManagement::Memory::BuddyAlloc {
 
         [[nodiscard]] bool isBlockFree(BuddyOrder order, BuddyBlockIndex index) const;
 
+        void ensureFreeBitmapExists(BuddyOrder order);
+
         void setBlockFree(BuddyOrder order, BuddyBlockIndex index, bool value);
 
         void addFreeBlock(BuddyOrder order, BuddyBlockIndex index);

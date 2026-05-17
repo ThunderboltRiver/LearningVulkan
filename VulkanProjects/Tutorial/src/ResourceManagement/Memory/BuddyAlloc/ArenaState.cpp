@@ -13,11 +13,9 @@ namespace Tutorial::ResourceManagement::Memory::BuddyAlloc {
         minBlockSize(minBlockSize),
         maxOrder(maxOrder),
         next(nullptr) {
-        // orderごとのフリーリスト・フリービットマップの初期化
+        // orderごとのフリーリストだけ初期化する。bitmapは、そのorderに最初のfree blockを追加するときに遅延確保する。
         for (BuddyOrder order{0}; order <= maxOrder; order = order.next()) {
             freeLists[order.value()] = nullptr;
-            const std::size_t blockCount = arena->block.size.value() / order.bytesFor(minBlockSize).value();
-            freeBitmaps[order.value()] = BuddyFreeBitmap(blockCount);
         }
 
         auto* block = static_cast<FreeBlock*>(arena->block.ptr);
@@ -26,6 +24,7 @@ namespace Tutorial::ResourceManagement::Memory::BuddyAlloc {
 
         // 最初はmaxOrderのフリーリストにアリーナ全体が空きブロックとして存在する状態にする
         freeLists[maxOrder.value()] = block;
+        ensureFreeBitmapExists(maxOrder);
         freeBitmaps[maxOrder.value()].setFree(BuddyBlockIndex{0}, true);
     }
 
@@ -72,11 +71,24 @@ namespace Tutorial::ResourceManagement::Memory::BuddyAlloc {
         return freeBitmaps[order.value()].isFree(index);
     }
 
+    void ArenaState::ensureFreeBitmapExists(const BuddyOrder order) {
+        if (freeBitmaps[order.value()].exists()) {
+            return;
+        }
+        const std::size_t blockCount = arena->block.size.value() / order.bytesFor(minBlockSize).value();
+        freeBitmaps[order.value()] = BuddyFreeBitmap(blockCount);
+    }
+
     void ArenaState::setBlockFree(
         const BuddyOrder order,
         const BuddyBlockIndex index,
         const bool value
     ) {
+        if (value) {
+            ensureFreeBitmapExists(order);
+        } else if (!freeBitmaps[order.value()].exists()) {
+            return;
+        }
         freeBitmaps[order.value()].setFree(index, value);
     }
 

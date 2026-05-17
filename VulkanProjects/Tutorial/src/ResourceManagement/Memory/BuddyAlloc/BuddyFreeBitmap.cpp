@@ -35,7 +35,14 @@ namespace Tutorial::ResourceManagement::Memory::BuddyAlloc {
         return *this;
     }
 
+    bool BuddyFreeBitmap::exists() const {
+        return words != nullptr;
+    }
+
     bool BuddyFreeBitmap::isFree(const BuddyBlockIndex index) const {
+        if (!exists()) {
+            return false;
+        }
         const auto bitmapWordIndex = index.value() / BITMAP_WORD_BITS;
         const auto bitIndexInWord = index.value() % BITMAP_WORD_BITS;
         return (words[bitmapWordIndex] & (std::uint64_t{1} << bitIndexInWord)) != 0;
