@@ -37,9 +37,6 @@ namespace Tutorial::ResourceManagement::Memory::BuddyAlloc {
         BuddyFreeBitmap(BuddyFreeBitmap&& other) noexcept;
         BuddyFreeBitmap& operator=(BuddyFreeBitmap&& other) noexcept;
 
-        /** bitmap領域が作成済みかどうかを返す。未作成の場合、そのorderにはまだfree blockが登録されていない。 */
-        [[nodiscard]] bool exists() const;
-
         /** index のブロックが free list 上に存在するかを返す。 */
         [[nodiscard]] bool isFree(BuddyBlockIndex index) const;
 

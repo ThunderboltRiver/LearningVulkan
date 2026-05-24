@@ -11,9 +11,7 @@ namespace Tutorial::ResourceManagement::Memory::BuddyAlloc {
     ) : alignment(alignment),
         arenaStates(nullptr),
         next(nullptr) {
-        const Bytes minBlockSize = calculateMinBlockSize(bumpAllocator.getArenaSize());
-        const BuddyOrder maxOrder = calculateMaxOrder(bumpAllocator.getArenaSize(), minBlockSize);
-        (void)createArena(bumpAllocator, minBlockSize, maxOrder);
+        (void)createArena(bumpAllocator);
     }
 
     AlignedBuddyAllocator::~AlignedBuddyAllocator() {
@@ -35,7 +33,7 @@ namespace Tutorial::ResourceManagement::Memory::BuddyAlloc {
     }
 
     AlignedContinuousMemoryBlock AlignedBuddyAllocator::tryAllocate(const Bytes size) {
-        const BuddyOrder targetOrder = orderFor(Bytes::max(size, alignment.bytes()));
+        const BuddyOrder targetOrder = orderFor(size);
         if (targetOrder > arenaStates->maxOrder) {
             return AlignedContinuousMemoryBlock::empty(alignment);
         }
@@ -46,34 +44,9 @@ namespace Tutorial::ResourceManagement::Memory::BuddyAlloc {
         const Bytes size,
         BumpAlloc::BumpAllocator& bumpAllocator
     ) {
-        const BuddyOrder targetOrder = orderFor(Bytes::max(size, alignment.bytes()));
-        (void)createArena(bumpAllocator, arenaStates->minBlockSize, arenaStates->maxOrder);
+        const BuddyOrder targetOrder = orderFor(size);
+        (void)createArena(bumpAllocator);
         return allocateFromExistingArena(targetOrder);
-    }
-
-    Bytes AlignedBuddyAllocator::calculateMinBlockSize(const Bytes arenaSize) {
-        const std::size_t arenaExponent = arenaSize.log2PowerOfTwo();
-        const std::size_t thresholdMinExponent = arenaExponent >= BUDDY_ORDER_THRESHOLD
-            ? arenaExponent - BUDDY_ORDER_THRESHOLD
-            : 0;
-        const std::size_t freeBlockExponent = Bytes::fromSizeT(sizeof(FreeBlock)).roundUpToPowerOfTwo().log2PowerOfTwo();
-        const std::size_t minBlockExponent = thresholdMinExponent >= freeBlockExponent
-            ? thresholdMinExponent
-            : freeBlockExponent;
-        return Bytes::fromPowerOfTwoExponent(minBlockExponent);
-    }
-
-    BuddyOrder AlignedBuddyAllocator::calculateMaxOrder(const Bytes arenaSize, const Bytes minBlockSize) {
-        if (minBlockSize > arenaSize) {
-            throw std::invalid_argument("AlignedBuddyAllocator: min block size must not exceed arena size");
-        }
-        const std::size_t arenaExponent = arenaSize.log2PowerOfTwo();
-        const std::size_t minBlockExponent = minBlockSize.log2PowerOfTwo();
-        const std::size_t maxOrderValue = arenaExponent - minBlockExponent;
-        if (maxOrderValue > BUDDY_ORDER_THRESHOLD) {
-            throw std::invalid_argument("AlignedBuddyAllocator: too many buddy orders");
-        }
-        return BuddyOrder{maxOrderValue};
     }
 
     BuddyOrder AlignedBuddyAllocator::orderFor(const Bytes size) const {
@@ -92,13 +65,9 @@ namespace Tutorial::ResourceManagement::Memory::BuddyAlloc {
         return order;
     }
 
-    ArenaState* AlignedBuddyAllocator::createArena(
-        BumpAlloc::BumpAllocator& bumpAllocator,
-        const Bytes minBlockSize,
-        const BuddyOrder maxOrder
-    ) {
+    ArenaState* AlignedBuddyAllocator::createArena(BumpAlloc::BumpAllocator& bumpAllocator) {
         auto* arena = bumpAllocator.allocateArena(alignment);
-        auto* state = new ArenaState(arena, maxOrder, minBlockSize);
+        auto* state = new ArenaState(arena);
         state->setNext(arenaStates);
         arenaStates = state;
         return state;
@@ -143,7 +112,7 @@ namespace Tutorial::ResourceManagement::Memory::BuddyAlloc {
     }
 
     void AlignedBuddyAllocator::deallocate(const AlignedContinuousMemoryBlock block) {
-        BuddyOrder order = orderFor(Bytes::max(block.size, block.alignment.bytes()));
+        BuddyOrder order = orderFor(block.size);
         auto* arenaState = findArenaContaining(block.ptr);
         if (arenaState == nullptr) {
             throw std::invalid_argument("AlignedBuddyAllocator: block does not belong to this allocator");

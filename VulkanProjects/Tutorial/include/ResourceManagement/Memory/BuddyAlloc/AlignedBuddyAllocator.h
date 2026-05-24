@@ -32,13 +32,9 @@ namespace Tutorial::ResourceManagement::Memory::BuddyAlloc {
         void deallocate(AlignedContinuousMemoryBlock block);
 
     private:
-        [[nodiscard]] static Bytes calculateMinBlockSize(Bytes arenaSize);
-
-        [[nodiscard]] static BuddyOrder calculateMaxOrder(Bytes arenaSize, Bytes minBlockSize);
-
         [[nodiscard]] BuddyOrder orderFor(Bytes size) const;
 
-        [[nodiscard]] ArenaState* createArena(BumpAlloc::BumpAllocator& bumpAllocator, Bytes minBlockSize, BuddyOrder maxOrder);
+        [[nodiscard]] ArenaState* createArena(BumpAlloc::BumpAllocator& bumpAllocator);
 
         [[nodiscard]] ArenaState* findArenaContaining(void* ptr) const;
 

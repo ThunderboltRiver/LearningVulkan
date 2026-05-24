@@ -1,6 +1,7 @@
 #ifndef TUTORIAL_RESOURCE_MANAGEMENT_MEMORY_BUDDYALLOC_ARENASTATE_H
 #define TUTORIAL_RESOURCE_MANAGEMENT_MEMORY_BUDDYALLOC_ARENASTATE_H
 
+#include "ResourceManagement/Memory/Alignment.h"
 #include "ResourceManagement/Memory/BuddyAlloc/BuddyFreeBitmap.h"
 #include "ResourceManagement/Memory/BuddyAlloc/BuddyOrder.h"
 #include "ResourceManagement/Memory/BuddyAlloc/BuddyOrderThreshold.h"
@@ -32,7 +33,7 @@ namespace Tutorial::ResourceManagement::Memory::BuddyAlloc {
         /** 同じAlignmentを持つ次のアリーナメタデータ。 */
         ArenaState* next;
 
-        ArenaState(BumpAlloc::AlignedArena* arena, BuddyOrder maxOrder, Bytes minBlockSize);
+        explicit ArenaState(BumpAlloc::AlignedArena* arena);
 
         void setNext(ArenaState* nextArenaState);
 
@@ -43,15 +44,15 @@ namespace Tutorial::ResourceManagement::Memory::BuddyAlloc {
         void unuseBlockWithMergingFreeList(void* ptr, BuddyOrder order);
 
     private:
+        [[nodiscard]] static Bytes calculateMinBlockSize(Bytes arenaSize, Alignment alignment);
+
+        [[nodiscard]] static BuddyOrder calculateMaxOrder(Bytes arenaSize, Bytes minBlockSize);
+
+        void initializeFreeBlockTracking();
+
         [[nodiscard]] BuddyBlockIndex blockIndex(const void* ptr, BuddyOrder order) const;
 
         [[nodiscard]] void* ptrForIndex(BuddyOrder order, BuddyBlockIndex index) const;
-
-        [[nodiscard]] bool isBlockFree(BuddyOrder order, BuddyBlockIndex index) const;
-
-        void ensureFreeBitmapExists(BuddyOrder order);
-
-        void setBlockFree(BuddyOrder order, BuddyBlockIndex index, bool value);
 
         void addFreeBlock(BuddyOrder order, BuddyBlockIndex index);
 
