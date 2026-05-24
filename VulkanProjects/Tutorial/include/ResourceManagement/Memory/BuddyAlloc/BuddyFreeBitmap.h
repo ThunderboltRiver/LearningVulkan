@@ -11,7 +11,7 @@ namespace Tutorial::ResourceManagement::Memory::BuddyAlloc {
     /**
      * あるorderに属するブロック群の空き状態を表すbitmap。
      * bit が 1 のとき、その BuddyBlockIndex のブロックが free list 上に存在する。
-     * ArenaState の freeLists と同期して更新し、buddy 統合時の free 判定を高速化する。
+     * OrderFreeBlocks の free list と同期して更新し、buddy 統合時の free 判定を高速化する。
      */
     struct BuddyFreeBitmap {
 

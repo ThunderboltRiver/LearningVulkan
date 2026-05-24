@@ -5,24 +5,21 @@
 #include "ResourceManagement/Memory/BuddyAlloc/BuddyFreeBitmap.h"
 #include "ResourceManagement/Memory/BuddyAlloc/BuddyOrder.h"
 #include "ResourceManagement/Memory/BuddyAlloc/BuddyOrderThreshold.h"
-#include "ResourceManagement/Memory/BuddyAlloc/FreeBlock.h"
+#include "ResourceManagement/Memory/BuddyAlloc/OrderFreeBlocks.h"
 #include "ResourceManagement/Memory/BumpAlloc/AlignedArena.h"
 
 namespace Tutorial::ResourceManagement::Memory::BuddyAlloc {
 
     /**
      * 1つのアリーナに紐づくBuddyAllocator用メタデータ。
-     * freeLists と freeBitmaps は同じ空き状態を表し、更新は helper 経由で同期する。
+     * orderごとのfree block集合を持ち、buddy分割・統合時の状態を管理する。
      */
     struct ArenaState {
         /** このメタデータが管理する実アリーナ。 */
         BumpAlloc::AlignedArena* arena;
 
-        /** orderごとの空きブロックリスト。ブロック本体の先頭をFreeBlockとして使う。 */
-        FreeBlock* freeLists[BUDDY_ORDER_COUNT];
-
-        /** orderごとの空き状態bitmap。buddy統合時に相方ブロックが空きかを高速に確認する。 */
-        BuddyFreeBitmap freeBitmaps[BUDDY_ORDER_COUNT];
+        /** orderごとの空きブロック集合。free list と bitmap を同じ型の中で同期する。 */
+        OrderFreeBlocks freeBlocks[BUDDY_ORDER_COUNT];
 
         /** このアリーナで扱う最小ブロックサイズ。order 0 のサイズに相当する。 */
         Bytes minBlockSize;

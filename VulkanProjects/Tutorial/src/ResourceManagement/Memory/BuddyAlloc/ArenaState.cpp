@@ -6,8 +6,7 @@ namespace Tutorial::ResourceManagement::Memory::BuddyAlloc {
     ArenaState::ArenaState(
         BumpAlloc::AlignedArena* arena
     ) : arena(arena),
-        freeLists{},
-        freeBitmaps{},
+        freeBlocks{},
         minBlockSize(calculateMinBlockSize(arena->block.size, arena->block.alignment)),
         maxOrder(calculateMaxOrder(arena->block.size, minBlockSize)),
         next(nullptr) {
@@ -18,9 +17,8 @@ namespace Tutorial::ResourceManagement::Memory::BuddyAlloc {
         // orderごとのフリーリストとフリービットマップを事前に初期化する。
         // アリーナ作成時に必要なbitmap領域を確保しておくことで、allocate/deallocate中のnewを避ける。
         for (BuddyOrder order{0}; order <= maxOrder; order = order.next()) {
-            freeLists[order.value()] = nullptr;
             const std::size_t blockCount = arena->block.size.value() / order.bytesFor(minBlockSize).value();
-            freeBitmaps[order.value()] = BuddyFreeBitmap(blockCount);
+            freeBlocks[order.value()] = OrderFreeBlocks(blockCount);
         }
 
         // 最初はmaxOrderのフリーリストにアリーナ全体が空きブロックとして存在する状態にする
@@ -64,7 +62,7 @@ namespace Tutorial::ResourceManagement::Memory::BuddyAlloc {
         BuddyOrder& selectedOrder
     ) const {
         for (BuddyOrder order = targetOrder; order <= maxOrder; order = order.next()) {
-            if (freeLists[order.value()] != nullptr) {
+            if (freeBlocks[order.value()].hasFreeBlock()) {
                 selectedOrder = order;
                 return true;
             }
@@ -99,45 +97,21 @@ namespace Tutorial::ResourceManagement::Memory::BuddyAlloc {
         const BuddyBlockIndex index
     ) {
         auto* block = static_cast<FreeBlock*>(ptrForIndex(order, index));
-        block->previous = nullptr;
-        block->next = freeLists[order.value()];
-        if (freeLists[order.value()] != nullptr) {
-            freeLists[order.value()]->previous = block;
-        }
-        freeLists[order.value()] = block;
-        freeBitmaps[order.value()].setFree(index, true);
+        freeBlocks[order.value()].add(block, index);
     }
 
     FreeBlock* ArenaState::removeFreeBlock(
         const BuddyOrder order,
         const BuddyBlockIndex index
     ) {
-        if (!freeBitmaps[order.value()].isFree(index)) {
-            return nullptr;
-        }
-
         auto* block = static_cast<FreeBlock*>(ptrForIndex(order, index));
-        // 前後のブロックを繋ぎ直す
-        if (block->previous == nullptr) {
-            freeLists[order.value()] = block->next;
-        } else {
-            block->previous->next = block->next;
-        }
-        if (block->next != nullptr) {
-            block->next->previous = block->previous;
-        }
-
-        // bitmapを更新して、ブロックをfreeリストから切り離す
-        freeBitmaps[order.value()].setFree(index, false);
-        block->previous = nullptr;
-        block->next = nullptr;
-        return block;
+        return freeBlocks[order.value()].remove(block, index);
     }
 
     FreeBlock* ArenaState::removeFreeBlock(
         const BuddyOrder order
     ) {
-        auto* block = freeLists[order.value()];
+        auto* block = freeBlocks[order.value()].firstFreeBlock();
         const BuddyBlockIndex selectedIndex = blockIndex(block, order);
         if (removeFreeBlock(order, selectedIndex) == nullptr) {
             throw std::runtime_error("ArenaState: selected free block disappeared");
@@ -175,7 +149,7 @@ namespace Tutorial::ResourceManagement::Memory::BuddyAlloc {
         while (order < maxOrder) {
             const BuddyBlockIndex buddyIndex = index.buddy();
             // 相方がfreeじゃないなら統合ループを抜ける
-            if (!freeBitmaps[order.value()].isFree(buddyIndex)) {
+            if (!freeBlocks[order.value()].isFree(buddyIndex)) {
                 break;
             }
             // 相方がfeeならブロックの統合を行うため、フリーリストから相方を除去する

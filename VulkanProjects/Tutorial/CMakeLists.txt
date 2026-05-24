@@ -65,6 +65,7 @@ add_executable(Tutorial
         src/ResourceManagement/Memory/BuddyAlloc/BuddyAllocator.cpp
         src/ResourceManagement/Memory/BuddyAlloc/BuddyFreeBitmap.cpp
         src/ResourceManagement/Memory/BuddyAlloc/BuddyOrder.cpp
+        src/ResourceManagement/Memory/BuddyAlloc/OrderFreeBlocks.cpp
         src/ResourceManagement/Memory/BumpAlloc/BumpAllocator.cpp
         src/ResourceManagement/Memory/Bytes.cpp
         src/ResourceManagement/Memory/ContinuousMemoryBlockPool.cpp
@@ -114,6 +115,7 @@ add_executable(ResourceManagementSelfTest
         src/ResourceManagement/Memory/BuddyAlloc/BuddyAllocator.cpp
         src/ResourceManagement/Memory/BuddyAlloc/BuddyFreeBitmap.cpp
         src/ResourceManagement/Memory/BuddyAlloc/BuddyOrder.cpp
+        src/ResourceManagement/Memory/BuddyAlloc/OrderFreeBlocks.cpp
         src/ResourceManagement/Memory/BumpAlloc/BumpAllocator.cpp
         src/ResourceManagement/Memory/Bytes.cpp
         src/ResourceManagement/Memory/ContinuousMemoryBlockPool.cpp
