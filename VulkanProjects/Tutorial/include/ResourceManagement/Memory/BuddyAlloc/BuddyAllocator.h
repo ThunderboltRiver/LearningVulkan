@@ -4,6 +4,8 @@
 #include "ResourceManagement/Memory/BuddyAlloc/AlignedBuddyAllocator.h"
 #include "ResourceManagement/Memory/BumpAlloc/BumpAllocator.h"
 
+#include <cstddef>
+
 namespace Tutorial::ResourceManagement::Memory::BuddyAlloc {
 
     /**
@@ -16,14 +18,20 @@ namespace Tutorial::ResourceManagement::Memory::BuddyAlloc {
         /** Alignmentごとに分かれたBuddyAllocator状態の侵入的リスト先頭。 */
         AlignedBuddyAllocator* _alignedAllocators;
 
-        [[nodiscard]] AlignedBuddyAllocator* getOrCreateAlignedAllocator(Alignment alignment);
+        void initializeAlignedAllocators(Alignment minAlignment, std::size_t alignmentCount);
+
+        void addAlignedAllocator(Alignment alignment);
 
         [[nodiscard]] AlignedBuddyAllocator* findAlignedAllocator(Alignment alignment) const;
+
+        [[nodiscard]] AlignedBuddyAllocator* findSatisfyingAlignedAllocator(
+            Alignment alignment
+        ) const;
 
         void destroyMetadata() noexcept;
 
     public:
-        explicit BuddyAllocator(Bytes arenaSize = DEFAULT_ARENA_SIZE);
+        BuddyAllocator(Alignment minAlignment, std::size_t alignmentCount, Bytes arenaSize);
 
         BuddyAllocator(const BuddyAllocator&) = delete;
         BuddyAllocator& operator=(const BuddyAllocator&) = delete;

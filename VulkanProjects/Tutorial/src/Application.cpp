@@ -23,7 +23,11 @@ namespace Tutorial
     void Application::run() {
 
         // ContinuousMemoryBlockPoolのインスタンスを作成してSpanにセットする
-        ContinuousMemoryBlockPool allocator;
+        ContinuousMemoryBlockPool allocator(
+            Alignment(Bytes::fromSizeT(128)),
+            4,
+            Bytes::fromMiB(1)
+        );
         SpanAllocator::setAllocator(&allocator);
 
         // 自身のウィンドウを作成

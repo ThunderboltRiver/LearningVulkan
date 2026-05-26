@@ -4,8 +4,11 @@
 
 namespace Tutorial::ResourceManagement::Memory {
 
-    ContinuousMemoryBlockPool::ContinuousMemoryBlockPool(const Bytes arenaSize)
-        : _buddyAllocator(arenaSize), _largeSizeAllocator() {
+    ContinuousMemoryBlockPool::ContinuousMemoryBlockPool(
+        const Alignment minAlignment,
+        const std::size_t alignmentCount,
+        const Bytes arenaSize
+    ) : _buddyAllocator(minAlignment, alignmentCount, arenaSize), _largeSizeAllocator() {
     }
 
     AlignedContinuousMemoryBlock ContinuousMemoryBlockPool::allocate(const Bytes size, const Alignment alignment) {

@@ -70,7 +70,6 @@ add_executable(Tutorial
         src/ResourceManagement/Memory/Bytes.cpp
         src/ResourceManagement/Memory/ContinuousMemoryBlockPool.cpp
         src/ResourceManagement/Memory/LargeSizeAllocator.cpp
-        src/ResourceManagement/Memory/MemoryConstants.cpp
         src/ResourceManagement/Memory/OsMemory.cpp
         src/Graphics/FrameBufferSize.cpp
         src/Graphics/Pixel.cpp
@@ -120,7 +119,6 @@ add_executable(ResourceManagementSelfTest
         src/ResourceManagement/Memory/Bytes.cpp
         src/ResourceManagement/Memory/ContinuousMemoryBlockPool.cpp
         src/ResourceManagement/Memory/LargeSizeAllocator.cpp
-        src/ResourceManagement/Memory/MemoryConstants.cpp
         src/ResourceManagement/Memory/OsMemory.cpp
 )
 

@@ -71,7 +71,7 @@ namespace {
     }
 
     void testBuddyAllocator() {
-        BuddyAllocator allocator(Bytes::fromKiB(4));
+        BuddyAllocator allocator(Alignment(Bytes::fromSizeT(16)), 3, Bytes::fromKiB(4));
         auto first = allocator.allocate(Bytes::fromSizeT(32), Alignment(Bytes::fromSizeT(16)));
         auto second = allocator.allocate(Bytes::fromSizeT(32), Alignment(Bytes::fromSizeT(16)));
         require(first.ptr != second.ptr, "buddy allocator returned duplicate blocks");
@@ -86,12 +86,12 @@ namespace {
         auto aligned64 = allocator.allocate(Bytes::fromSizeT(64), Alignment(Bytes::fromSizeT(64)));
         allocator.deallocate(aligned64);
         auto reused64 = allocator.allocate(Bytes::fromSizeT(16), Alignment(Bytes::fromSizeT(16)));
-        require(reused64.alignment == Alignment(Bytes::fromSizeT(64)), "buddy allocator did not reuse a known satisfying alignment");
+        require(reused64.alignment == Alignment(Bytes::fromSizeT(16)), "buddy allocator did not prefer the exact preinitialized alignment");
         allocator.deallocate(reused64);
     }
 
     void testContinuousMemoryBlockPool() {
-        ContinuousMemoryBlockPool pool(Bytes::fromKiB(4));
+        ContinuousMemoryBlockPool pool(Alignment(Bytes::fromSizeT(16)), 3, Bytes::fromKiB(4));
         auto small = pool.allocate(Bytes::fromSizeT(128), Alignment(Bytes::fromSizeT(32)));
         require(small.size <= Bytes::fromKiB(4), "small allocation should come from buddy allocator");
         require(isAligned(small.ptr, Alignment(Bytes::fromSizeT(32))), "small pool allocation alignment failed");
@@ -104,7 +104,7 @@ namespace {
     }
 
     void testSpanAllocation() {
-        ContinuousMemoryBlockPool pool(Bytes::fromKiB(4));
+        ContinuousMemoryBlockPool pool(Alignment(Bytes::fromSizeT(16)), 3, Bytes::fromKiB(4));
         SpanAllocator::setAllocator(&pool);
         {
             auto span = Span<int>::stackAlloc(3);

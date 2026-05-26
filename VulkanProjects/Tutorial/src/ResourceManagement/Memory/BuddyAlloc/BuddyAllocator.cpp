@@ -3,22 +3,35 @@
 #include <stdexcept>
 
 namespace Tutorial::ResourceManagement::Memory::BuddyAlloc {
-    BuddyAllocator::BuddyAllocator(const Bytes arenaSize)
+    BuddyAllocator::BuddyAllocator(const Alignment minAlignment, const std::size_t alignmentCount, const Bytes arenaSize)
         : _bumpAllocator(arenaSize),
           _alignedAllocators(nullptr) {
         if (!arenaSize.isPowerOfTwo()) {
             throw std::invalid_argument("BuddyAllocator: arena size must be a power of two");
         }
+        if (alignmentCount == 0) {
+            throw std::invalid_argument("BuddyAllocator: alignment count must be greater than 0");
+        }
+        initializeAlignedAllocators(minAlignment, alignmentCount);
     }
 
-    AlignedBuddyAllocator* BuddyAllocator::getOrCreateAlignedAllocator(const Alignment alignment) {
-        if (auto* existing = findAlignedAllocator(alignment); existing != nullptr) {
-            return existing;
+    void BuddyAllocator::initializeAlignedAllocators(const Alignment minAlignment, const std::size_t alignmentCount) {
+        Bytes alignmentBytes = minAlignment.bytes();
+        for (std::size_t i = 1; i < alignmentCount; ++i) {
+            alignmentBytes = alignmentBytes * 2;
         }
+        for (std::size_t i = alignmentCount; i > 0; --i) {
+            addAlignedAllocator(Alignment(alignmentBytes));
+            if (i > 1) {
+                alignmentBytes = alignmentBytes / 2;
+            }
+        }
+    }
+
+    void BuddyAllocator::addAlignedAllocator(const Alignment alignment) {
         auto* created = new AlignedBuddyAllocator(alignment, _bumpAllocator);
         created->setNext(_alignedAllocators);
         _alignedAllocators = created;
-        return created;
     }
 
     AlignedBuddyAllocator* BuddyAllocator::findAlignedAllocator(const Alignment alignment) const {
@@ -32,29 +45,52 @@ namespace Tutorial::ResourceManagement::Memory::BuddyAlloc {
         return nullptr;
     }
 
+    AlignedBuddyAllocator* BuddyAllocator::findSatisfyingAlignedAllocator(
+        const Alignment alignment
+    ) const {
+        for (auto* allocator = _alignedAllocators; allocator != nullptr; allocator = allocator->next) {
+            if (allocator->alignment == alignment) {
+                continue;
+            }
+            if (!allocator->satisfies(alignment)) {
+                continue;
+            }
+            return allocator;
+        }
+        return nullptr;
+    }
+
     AlignedContinuousMemoryBlock BuddyAllocator::allocate(const Bytes size, const Alignment alignment) {
         if (size.isZero()) {
             throw std::invalid_argument("BuddyAllocator: size must be greater than 0");
         }
 
-        // まず要求alignmentそのものに対応するAlignedBuddyAllocatorを必ず用意する。
-        // これにより、大きいalignmentのallocatorが先に存在していても、小さいalignment専用のアリーナを持てる。
-        auto* requestedAllocator = getOrCreateAlignedAllocator(alignment);
-
-        // 既存のAlignedBuddyAllocatorのうち、要求alignmentを満たせるものへ順に割り当てを試みる。
-        // 例: 64バイトalignmentのallocatorは、16バイトalignment要求も満たせる。
-        for (auto* allocator = _alignedAllocators; allocator != nullptr; allocator = allocator->next) {
-            if (!allocator->satisfies(alignment)) {
-                continue;
-            }
-            auto block = allocator->tryAllocate(size);
+        auto* requestedAllocator = findAlignedAllocator(alignment);
+        if (requestedAllocator != nullptr) {
+            auto block = requestedAllocator->tryAllocate(size);
             if (!block.isNull()) {
                 return block;
             }
         }
 
-        // 既存allocatorでは割り当てできなかった場合だけ、要求alignment専用のallocatorへアリーナを追加する。
-        return requestedAllocator->allocateWithNewArena(size, _bumpAllocator);
+        // 既存のAlignedBuddyAllocatorのうち、要求alignmentを満たせるものへ順に割り当てを試みる。
+        // 例: 64バイトalignmentのallocatorは、16バイトalignment要求も満たせる。
+        auto* satisfyingAllocator = findSatisfyingAlignedAllocator(alignment);
+        if (satisfyingAllocator != nullptr) {
+            auto block = satisfyingAllocator->tryAllocate(size);
+            if (!block.isNull()) {
+                return block;
+            }
+        }
+
+        // 既存allocatorでは割り当てできなかった場合だけ、対応済みalignmentのallocatorへアリーナを追加する。
+        if (requestedAllocator != nullptr) {
+            return requestedAllocator->allocateWithNewArena(size, _bumpAllocator);
+        }
+        if (satisfyingAllocator != nullptr) {
+            return satisfyingAllocator->allocateWithNewArena(size, _bumpAllocator);
+        }
+        throw std::invalid_argument("BuddyAllocator: unsupported alignment");
     }
 
     void BuddyAllocator::deallocate(const AlignedContinuousMemoryBlock block) {

@@ -2,7 +2,6 @@
 #define TUTORIAL_RESOURCE_MANAGEMENT_MEMORY_BUMPALLOCATOR_H
 
 #include "ResourceManagement/Memory/BumpAlloc/AlignedArena.h"
-#include "ResourceManagement/Memory/MemoryConstants.h"
 
 namespace Tutorial::ResourceManagement::Memory::BumpAlloc {
 
@@ -18,7 +17,7 @@ namespace Tutorial::ResourceManagement::Memory::BumpAlloc {
         AlignedArena* _arenaHead;
 
     public:
-        explicit BumpAllocator(Bytes arenaSize = DEFAULT_ARENA_SIZE);
+        explicit BumpAllocator(Bytes arenaSize);
 
         BumpAllocator(const BumpAllocator&) = delete;
         BumpAllocator& operator=(const BumpAllocator&) = delete;

@@ -4,6 +4,8 @@
 #include "ResourceManagement/Memory/BuddyAlloc/BuddyAllocator.h"
 #include "ResourceManagement/Memory/LargeSizeAllocator.h"
 
+#include <cstddef>
+
 namespace Tutorial::ResourceManagement::Memory {
 
     /**
@@ -18,7 +20,7 @@ namespace Tutorial::ResourceManagement::Memory {
         LargeSizeAllocator _largeSizeAllocator;
 
     public:
-        explicit ContinuousMemoryBlockPool(Bytes arenaSize = DEFAULT_ARENA_SIZE);
+        ContinuousMemoryBlockPool(Alignment minAlignment, std::size_t alignmentCount, Bytes arenaSize);
 
         ContinuousMemoryBlockPool(const ContinuousMemoryBlockPool&) = delete;
         ContinuousMemoryBlockPool& operator=(const ContinuousMemoryBlockPool&) = delete;
