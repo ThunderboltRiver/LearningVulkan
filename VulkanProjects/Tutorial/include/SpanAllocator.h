@@ -4,15 +4,16 @@
 
 #ifndef TUTORIAL_SPANALLOCATOR_H
 #define TUTORIAL_SPANALLOCATOR_H
-#include "PlacementStackAllocator.h"
+
+#include "ResourceManagement/Memory/ContinuousMemoryBlockPool.h"
 
 // Spanの割り当てに使用するアロケータを管理するクラス
 struct SpanAllocator {
-    inline static PlacementStackAllocator* allocator = nullptr;
+    inline static Tutorial::ResourceManagement::Memory::ContinuousMemoryBlockPool* allocator = nullptr;
 
-    static PlacementStackAllocator *getAllocator();
+    static Tutorial::ResourceManagement::Memory::ContinuousMemoryBlockPool* getAllocator();
 
-    static void setAllocator(PlacementStackAllocator* pAllocator);
+    static void setAllocator(Tutorial::ResourceManagement::Memory::ContinuousMemoryBlockPool* pAllocator);
 
     static void resetAllocator() noexcept;
 };

@@ -1,0 +1,7 @@
+#ifndef TUTORIAL_RESOURCE_MANAGEMENT_MEMORY_MEMORYBLOCK_H
+#define TUTORIAL_RESOURCE_MANAGEMENT_MEMORY_MEMORYBLOCK_H
+
+#include "ResourceManagement/Memory/AlignedContinuousMemoryBlock.h"
+#include "ResourceManagement/Memory/Alignment.h"
+
+#endif //TUTORIAL_RESOURCE_MANAGEMENT_MEMORY_MEMORYBLOCK_H

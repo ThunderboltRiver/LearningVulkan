@@ -5,9 +5,9 @@
 #include "WindowHelper/ApplicationWindow.h"
 #include <iostream>
 
-#include "PlacementStackAllocator.h"
 #include "SpanAllocator.h"
 #include "Graphics/VulkanInstance.h"
+#include "ResourceManagement/Memory/ContinuousMemoryBlockPool.h"
 #include "WindowHelper/WindowRequiredVulkanExtensionsProvider.h"
 #include "Graphics/VulkanPhysicalDeviceSelectionStrategy.h"
 #include "Application.h"
@@ -22,8 +22,12 @@ namespace Tutorial
 
     void Application::run() {
 
-        // PlacementStackAllocatorのインスタンスを作成してSpanにセットする
-        PlacementStackAllocator allocator(STACK_ALLOCATOR_12_MB_CAPACITY);
+        // ContinuousMemoryBlockPoolのインスタンスを作成してSpanにセットする
+        ContinuousMemoryBlockPool allocator(
+            Alignment(Bytes::fromSizeT(128)),
+            4,
+            Bytes::fromMiB(1)
+        );
         SpanAllocator::setAllocator(&allocator);
 
         // 自身のウィンドウを作成
